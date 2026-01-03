@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     Router.register("orders", () => OrdersPage.init())
     Router.register("order-form", () => OrderFormPage.init())
     Router.register("orders/order-detail", () => OrderDetailPage.init())
+    Router.register("chat", () => ChatPage.render())
 
     Router.init()
   } catch (err) {
