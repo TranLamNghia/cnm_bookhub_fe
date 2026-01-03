@@ -1,0 +1,7 @@
+/* Order Form Specific Styles - Add to pages/order_form.html via style tag or generic CSS */
+/* Since we don't have CSS loader, injecting via JS in render or relying on existing classes.
+   Let's assume we can add a <style> block in the HTML for specific granular styles 
+   or add to css/table.css / css/layout.css.
+   For now, I'll rely on global classes + some specific overrides inline or in this block 
+   to be appended.
+*/

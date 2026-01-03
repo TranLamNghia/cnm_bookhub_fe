@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="css/pages/users.css">
+<div class="page-header">
+    <div>
+        <p class="modern-subtitle">Xem, chỉnh sửa và quản lý người dùng trên hệ thống.</p>
+    </div>
+    <div class="header-actions">
+        <button class="btn btn-primary" id="add-user-btn">
+            <i class="fa-solid fa-plus"></i> Thêm người dùng mới
+        </button>
+    </div>
+</div>
+
+<!-- Toolbar Section -->
+<div class="modern-toolbar">
+    <div class="search-box-modern">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="search-user-input" placeholder="Tìm kiếm người dùng...">
+    </div>
+
+    <div class="toolbar-actions">
+        <button class="btn-modern-outline" id="export-user-btn">
+            <i class="fa-solid fa-download"></i> Xuất Excel
+        </button>
+    </div>
+</div>
+
+<!-- Table Card Section -->
+<div class="card">
+    <!-- Empty State -->
+    <div id="user-empty-state" class="empty-state" style="display: none;">
+        <div class="empty-icon">
+            <i class="fa-solid fa-users"></i>
+        </div>
+        <h3 class="empty-title">Chưa có người dùng nào</h3>
+        <p class="empty-desc">Hệ thống chưa ghi nhận tài khoản người dùng nào. Hãy thêm người dùng mới.</p>
+        <button class="btn btn-primary" id="add-first-user">
+            <i class="fa-solid fa-plus"></i> Thêm người dùng mới
+        </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th width="40"><input type="checkbox" class="custom-checkbox"></th>
+                    <th width="80">ID</th>
+                    <th>Họ và Tên</th>
+                    <th>Email</th>
+                    <th>Số điện thoại</th>
+                    <th>Vai trò</th>
+                    <th>Ngày tạo</th>
+                    <th width="120" style="text-align: right;">Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="users-tbody">
+                <!-- User rows will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container"
+        style="display: flex; justify-content: flex-end; align-items: center; padding: 20px 0; border-top: 1px solid #e2e8f0; margin-top: 16px;">
+        <div class="pagination"
+            style="display: flex; gap: 8px; background: #f8fafc; padding: 4px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <button class="page-btn disabled"
+                style="width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent; color: #94a3b8; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                <i class="fa-solid fa-chevron-left" style="font-size: 12px;"></i>
+            </button>
+
+            <button class="page-btn active"
+                style="width: 36px; height: 36px; border-radius: 8px; border: none; background: white; color: #6366f1; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: pointer;">1</button>
+            <button class="page-btn"
+                style="width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent; color: #64748b; font-weight: 500; cursor: pointer; transition: all 0.2s;">2</button>
+            <button class="page-btn"
+                style="width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent; color: #64748b; font-weight: 500; cursor: pointer; transition: all 0.2s;">3</button>
+            <span class="page-dots"
+                style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #94a3b8;">...</span>
+            <button class="page-btn"
+                style="width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent; color: #64748b; font-weight: 500; cursor: pointer; transition: all 0.2s;">8</button>
+
+            <button class="page-btn"
+                style="width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                <i class="fa-solid fa-chevron-right" style="font-size: 12px;"></i>
+            </button>
+        </div>
+    </div>
+</div>

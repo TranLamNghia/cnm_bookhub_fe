@@ -1,0 +1,143 @@
+<link rel="stylesheet" href="css/pages/user_form.css">
+<div class="page-header" style="margin-bottom: 0;">
+    <div>
+        <button class="btn-back" id="btn-back-user" style="margin-bottom: 8px;">
+            <i class="fa-solid fa-arrow-left"></i> <span id="btn-back-user-text">Quay lại</span>
+        </button>
+        <p class="page-title" id="user-form-title">Thông tin người dùng</p>
+    </div>
+</div>
+
+<div class="user-detail-container">
+    <!-- LEFT SIDEBAR: PROFILE CARD -->
+    <div class="card-modern" style="height: fit-content;">
+        <div class="profile-header-bg"></div>
+
+        <div class="profile-avatar-container">
+            <img id="user-avatar-preview" class="profile-avatar"
+                src="https://ui-avatars.com/api/?name=User&background=random">
+            <div class="avatar-edit-btn" id="btn-change-avatar" style="display: none;"
+                onclick="document.getElementById('user-avatar-input').click()">
+                <i class="fa-solid fa-pencil"></i>
+            </div>
+            <input type="file" id="user-avatar-input" style="display: none;">
+        </div>
+
+        <div class="profile-info">
+            <div class="profile-name" id="profile-name-display">Loading...</div>
+            <div class="profile-email" id="profile-email-display">loading...</div>
+            <div id="profile-status-badge" class="status-badge status-active">Hoạt động</div>
+        </div>
+
+        <div class="profile-stats">
+            <div class="stat-row">
+                <span class="stat-label">ID Người dùng</span>
+                <span class="stat-value" id="profile-id-display">#---</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Ngày tham gia</span>
+                <span class="stat-value" id="profile-join-date">---</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT CONTENT: INFO FORMS -->
+    <div>
+        <!-- CARD 1: PERSONAL INFO -->
+        <div class="card-modern" style="padding: 24px;">
+            <div class="section-header">
+                <i class="fa-solid fa-user" style="color: #3b82f6;"></i>
+                <h3 class="section-title">Thông tin cá nhân</h3>
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label class="form-label">Họ và tên</label>
+                    <input type="text" id="user-name" class="form-control-modern" placeholder="Nguyễn Văn A" disabled>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Số điện thoại</label>
+                    <input type="text" id="user-phone" class="form-control-modern" placeholder="0912345678" disabled>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" id="user-email" class="form-control-modern" placeholder="email@example.com"
+                    disabled>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Avatar URL</label>
+                <div style="position: relative;">
+                    <i class="fa-solid fa-link"
+                        style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                    <input type="text" id="user-avatar-url" class="form-control-modern" style="padding-left: 36px;"
+                        placeholder="https://..." disabled>
+                </div>
+            </div>
+        </div>
+
+        <!-- CARD 2: ROLE & ADDRESS -->
+        <div class="card-modern" style="padding: 24px;">
+            <div class="section-header">
+                <i class="fa-solid fa-map-location-dot" style="color: #3b82f6;"></i>
+                <h3 class="section-title">Vai trò & Địa chỉ</h3>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Vai trò</label>
+                <select id="user-role" class="form-control-modern" disabled>
+                    <option value="user">Khách hàng</option>
+                    <option value="admin">Quản trị viên (Admin)</option>
+                    <option value="superuser">Super User</option>
+                </select>
+            </div>
+
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label class="form-label">Tỉnh/Thành phố</label>
+                    <select id="user-province" class="form-control-modern" disabled>
+                        <option value="">-- Chọn Tỉnh/Thành --</option>
+                        <!-- Options will be loaded via API -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phường/Xã</label>
+                    <select id="user-ward" class="form-control-modern" disabled>
+                        <option value="">-- Chọn Phường/Xã --</option>
+                        <!-- Options will be loaded via API -->
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Địa chỉ chi tiết (số nhà, tên đường)</label>
+                <input type="text" id="user-address" class="form-control-modern" placeholder="Số 123, Đường..."
+                    disabled>
+            </div>
+
+            <!-- Hidden inputs -->
+            <input type="checkbox" id="user-active-switch" style="display: none;">
+            <input type="checkbox" id="user-verified-switch" style="display: none;">
+        </div>
+
+        <!-- Actions -->
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 24px;">
+            <!-- View Mode Actions -->
+            <div id="view-actions">
+                <button class="btn btn-primary" id="btn-edit-user">
+                    <i class="fa-solid fa-pen-to-square"></i> Chỉnh sửa
+                </button>
+            </div>
+
+            <!-- Edit Mode Actions (Hidden by default) -->
+            <div id="edit-actions" style="display: none; gap: 12px;">
+                <button class="btn btn-secondary" id="btn-cancel-user">Hủy bỏ</button>
+                <button class="btn btn-success" id="btn-save-user">
+                    <i class="fa-solid fa-save"></i> Lưu thay đổi
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

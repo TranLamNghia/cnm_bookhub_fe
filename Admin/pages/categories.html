@@ -1,0 +1,53 @@
+<link rel="stylesheet" href="css/pages/categories.css">
+
+<div class="modern-header">
+    <div style="display: flex; justify-content: space-between; align-items: start;">
+        <div>
+            <p class="modern-subtitle">Xem, chỉnh sửa và quản lý các danh mục sách trên hệ thống.</p>
+        </div>
+        <button class="btn btn-primary" id="add-category-btn">
+            <i class="fa-solid fa-plus"></i> Thêm Danh mục mới
+        </button>
+    </div>
+</div>
+
+<div class="modern-toolbar">
+    <div class="search-box-modern">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="search-category-input" placeholder="Tìm kiếm danh mục...">
+    </div>
+
+    <div class="toolbar-actions">
+        <button class="btn-modern-outline">
+            <i class="fa-solid fa-download"></i> Xuất
+        </button>
+    </div>
+</div>
+
+<div class="modern-table-card">
+    <table class="modern-table" id="categories-table">
+        <thead>
+            <tr>
+                <th style="width: 50px;">
+                    <input type="checkbox" class="custom-checkbox">
+                </th>
+                <th style="width: 80px;">ID</th>
+                <th>Tên danh mục</th>
+                <th>Mô tả</th>
+                <th>Số lượng sách</th>
+                <th>Trạng thái</th>
+                <th style="text-align: right;">Hành động</th>
+            </tr>
+        </thead>
+        <tbody id="categories-tbody">
+            <!-- Loaded by JS -->
+        </tbody>
+    </table>
+
+    <!-- Empty State -->
+    <div id="category-empty-state" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">🏷️</div>
+        <div class="empty-state-title">Chưa có danh mục</div>
+        <button class="btn btn-primary" id="add-first-category">Thêm danh mục ngay</button>
+    </div>
+</div>

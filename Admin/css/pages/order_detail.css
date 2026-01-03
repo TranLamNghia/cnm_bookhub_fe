@@ -1,0 +1,236 @@
+.page-order-detail {
+    padding-bottom: 40px;
+}
+
+/* Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.text-subtitle {
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* Grid Layout */
+.order-detail-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+@media (max-width: 1024px) {
+    .order-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .order-detail-left {
+        order: 2;
+        /* Move sidebar to bottom on mobile if desired, or keep top */
+    }
+}
+
+/* Card Styles */
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Customer Card */
+.customer-profile {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.user-avatar-lg {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #eff6ff;
+    color: #3b82f6;
+    font-size: 32px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.customer-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+.customer-type {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.info-item i {
+    color: #3b82f6;
+    margin-right: 12px;
+    margin-top: 3px;
+    width: 16px;
+}
+
+.info-content label {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+.info-content div {
+    color: #334155;
+    font-weight: 500;
+}
+
+/* Order Status Card */
+.status-timeline {
+    position: relative;
+    padding-left: 20px;
+}
+
+/* Product Table */
+.table-custom th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.table-custom td {
+    padding: 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+.product-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.product-thumb {
+    width: 48px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 4px;
+    background: #f1f5f9;
+}
+
+.product-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 2px;
+}
+
+.product-meta {
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* Summary Section */
+.order-summary {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 10px;
+}
+
+.summary-content {
+    width: 300px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #64748b;
+}
+
+.summary-row.total {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed #e2e8f0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #3b82f6;
+}
+
+/* Note Box */
+.note-box {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    gap: 12px;
+}
+
+.note-box i {
+    color: #3b82f6;
+    margin-top: 2px;
+}
+
+.note-title {
+    font-weight: 600;
+    color: #3b82f6;
+    margin-bottom: 4px;
+    font-size: 14px;
+}
+
+.note-text {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.5;
+}

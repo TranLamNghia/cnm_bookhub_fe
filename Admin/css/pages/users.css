@@ -1,0 +1,90 @@
+/* Modern Variables shared/copied from Categories */
+:root {
+    --cat-bg: #f8fafc;
+    --cat-card-bg: #ffffff;
+    --cat-text-main: #334155;
+    --cat-text-sub: #64748b;
+    --cat-accent: #3b82f6;
+    --cat-border: #e2e8f0;
+}
+
+/* Toolbar */
+.modern-toolbar {
+    background: var(--cat-card-bg);
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    border: 1px solid var(--cat-border);
+}
+
+.search-box-modern {
+    position: relative;
+    width: 320px;
+}
+
+.search-box-modern input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    background: #f1f5f9;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: #334155;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.search-box-modern input:focus {
+    background: #fff;
+    border-color: var(--cat-accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.toolbar-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-modern-outline {
+    background: transparent;
+    border: 1px solid var(--cat-border);
+    color: var(--cat-text-main);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-modern-outline:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Table Modern */
+.modern-table-card {
+    background: var(--cat-card-bg);
+    border: 1px solid var(--cat-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Override existing card class if needed or use modern-table-card concurrently */
+.card.modern-table-card {
+    box-shadow: none;
+}

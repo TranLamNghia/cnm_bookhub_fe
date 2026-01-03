@@ -1,0 +1,48 @@
+<div class="page-header">
+  <div>
+    <button class="btn-back" onclick="Router.navigate('books')">
+      <i class="fa-solid fa-arrow-left"></i> Quay lại quản lý sách
+    </button>
+    <p class="page-subtitle">Xem và quản lý thông tin chi tiết của sách</p>
+  </div>
+
+  <div class="page-actions">
+    <button class="btn btn-danger" id="btn-delete">🗑️ Xóa</button>
+    <button class="btn btn-primary" id="btn-edit">✏️ Chỉnh sửa</button>
+  </div>
+</div>
+
+<div class="book-detail">
+  <!-- LEFT -->
+  <div class="book-image-card card">
+    <img id="book-image" src="" alt="Ảnh sách" onerror="this.src=''" />
+
+    <div class="book-status">
+      <span id="book-category" class="badge badge-info">Danh mục</span>
+      <span id="book-stock-status" class="badge badge-success">Còn hàng</span>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="book-info card">
+    <h2 id="book-title">Tên sách</h2>
+    <p class="book-author">Tác giả: <strong id="book-author"></strong></p>
+
+    <div class="book-price">
+      <span>Giá bán:</span>
+      <strong id="book-price">0 đ</strong>
+    </div>
+
+    <div class="book-price">
+      <span>Tồn kho</span>
+      <strong id="book-stock">0</strong>
+    </div>
+
+    <div class="book-description">
+      <h3>Mô tả sách</h3>
+      <p id="book-description">
+        Nội dung mô tả sách sẽ hiển thị ở đây...
+      </p>
+    </div>
+  </div>
+</div>

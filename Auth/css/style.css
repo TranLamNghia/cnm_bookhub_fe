@@ -1,0 +1,373 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Light Mode Variables */
+    --bg-page: #f3f4f6;
+    /* Light Gray Background */
+    --card-bg: #ffffff;
+    /* White Card */
+    --text-main: #111827;
+    /* Dark Text */
+    --text-muted: #6b7280;
+    /* Gray Text */
+    --accent: #2563eb;
+    /* Blue Primary */
+    --accent-hover: #1d4ed8;
+    --input-bg: #f9fafb;
+    /* Very Light Gray Input */
+    --input-border: #d1d5db;
+    /* Light Gray Border */
+    --input-focus: #2563eb;
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-page);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    color: var(--text-main);
+}
+
+/* MAIN WRAPPER FOR SLIDE ANIMATION */
+.main-wrapper {
+    position: relative;
+    width: 900px;
+    height: 600px;
+}
+
+/* Common Card Styles */
+.auth-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.4s ease;
+    /* Bouncy slide + fade */
+    will-change: transform, opacity;
+    border-radius: 20px;
+}
+
+/* 
+   VIEW 1: LOGIN/FORGOT (Supports Flip) 
+   Default State: CENTER, Visible
+*/
+.view-login-forgot {
+    z-index: 5;
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* 
+   VIEW 2: REGISTER 
+   Default State: OFF-SCREEN RIGHT, Hidden
+*/
+.view-register {
+    z-index: 5;
+    transform: translateX(110%);
+    /* Start from Right */
+    opacity: 0;
+    /* Hidden when not active */
+    background-color: var(--card-bg);
+}
+
+/* 
+   VIEW 3 & 4: OTP & RESET (Overlay)
+   Default State: CENTER, Hidden
+*/
+.view-otp,
+.view-reset {
+    z-index: 10;
+    transform: scale(0.95);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.view-otp.active,
+.view-reset.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+    z-index: 20;
+}
+
+
+/* --- STATE: SHOW REGISTER --- */
+
+/* Login moves LEFT and Fades Out */
+.main-wrapper.show-register .view-login-forgot {
+    transform: translateX(-110%);
+    /* Move to Left */
+    opacity: 0;
+    pointer-events: none;
+    /* Prevent clicks when hidden */
+}
+
+/* Register moves CENTER and Fades In */
+.main-wrapper.show-register .view-register {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
+/* --- FLIP CARD LOGIC (Inside view-login-forgot) --- */
+.flip-container {
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    perspective: 1000px;
+}
+
+.flip-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+}
+
+.flip-container.flipped .flip-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-front,
+.flip-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    background-color: var(--card-bg);
+}
+
+/* Front: Login */
+.flip-front {
+    /* Standard default */
+}
+
+/* Back: Forgot PW */
+.flip-back {
+    transform: rotateY(180deg);
+}
+
+
+/* --- LAYOUT & CONTENT --- */
+.auth-left,
+.auth-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 60px;
+}
+
+/* Images */
+.image-side {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.img-bookshelf {
+    background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+}
+
+.img-library {
+    background-image: url('https://images.unsplash.com/photo-1507842217121-9d59754baebc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80');
+}
+
+/* Overlay Text */
+.overlay-text {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    right: 40px;
+    color: white;
+    text-align: left;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Form Styling - Light Mode */
+h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+p.subtitle {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 6px;
+}
+
+input {
+    width: 100%;
+    padding: 12px 16px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+}
+
+input:focus {
+    border-color: var(--input-focus);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.otp-field:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+}
+
+.social-login {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.btn-social {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    background: white;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-social:hover {
+    background-color: #f3f4f6;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+.divider span {
+    padding: 0 10px;
+}
+
+.forgot-link {
+    float: right;
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.link-highlight {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.link-highlight:hover {
+    text-decoration: underline;
+}
+
+/* Back Link */
+.back-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    text-decoration: none;
+    width: fit-content;
+}
+
+.back-link:hover {
+    color: var(--text-main);
+}
+
+/* Hide native password reveal icon (Edge/IE) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+/* Hide scrollbar in SweetAlert2 Toast */
+.swal2-popup.swal2-toast {
+    overflow: hidden !important;
+}

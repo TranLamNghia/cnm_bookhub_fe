@@ -1,0 +1,317 @@
+/* Modern Variables for Categories Page */
+:root {
+    --cat-bg: #f8fafc;
+    /* Darker white/gray background */
+    --cat-card-bg: #ffffff;
+    --cat-text-main: #334155;
+    --cat-text-sub: #64748b;
+    --cat-accent: #3b82f6;
+    /* Blue like the image */
+    --cat-border: #e2e8f0;
+
+    --badge-bg-success: #dcfce7;
+    --badge-text-success: #166534;
+    --badge-bg-warning: #fef9c3;
+    --badge-text-warning: #854d0e;
+    --badge-bg-dark: #f1f5f9;
+    --badge-text-dark: #334155;
+}
+
+/* Page Container Override */
+#app {
+    background-color: var(--cat-bg);
+    min-height: 100vh;
+}
+
+/* Header Section */
+.modern-header {
+    margin-bottom: 32px;
+}
+
+.modern-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+.modern-subtitle {
+    color: var(--cat-text-sub);
+    font-size: 14px;
+}
+
+/* Toolbar */
+.modern-toolbar {
+    background: #1e293b;
+    /* Dark bar like image but maybe lighter for light mode? User said 'style like this' which had dark bar. */
+    /* Wait, user said "Light" style. The image had a DARK bar. 
+       If I make it Light mode, I should invert this. 
+       Let's make it Light Gray/White bar with dark text. */
+    background: var(--cat-card-bg);
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    border: 1px solid var(--cat-border);
+}
+
+.search-box-modern {
+    position: relative;
+    width: 320px;
+}
+
+.search-box-modern input {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    background: #f1f5f9;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: #334155;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.search-box-modern input:focus {
+    background: #fff;
+    border-color: var(--cat-accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+.toolbar-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-modern-outline {
+    background: transparent;
+    border: 1px solid var(--cat-border);
+    color: var(--cat-text-main);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-modern-outline:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+/* Table Modern */
+.modern-table-card {
+    background: var(--cat-card-bg);
+    border: 1px solid var(--cat-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.modern-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.modern-table th {
+    background: #f8fafc;
+    text-align: left;
+    padding: 16px 24px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--cat-border);
+}
+
+.modern-table td {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--cat-border);
+    color: var(--cat-text-main);
+    vertical-align: middle;
+}
+
+.modern-table tr:last-child td {
+    border-bottom: none;
+}
+
+.modern-table tr:hover td {
+    background-color: #f8fafc;
+}
+
+/* Category Info Cell */
+.cat-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.cat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: #eff6ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--cat-accent);
+    font-size: 18px;
+}
+
+.cat-text h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    color: #0f172a;
+}
+
+.cat-slug {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+/* Badges */
+.modern-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-active {
+    background: var(--badge-bg-success);
+    color: var(--badge-text-success);
+}
+
+.badge-draft {
+    background: var(--badge-bg-warning);
+    color: var(--badge-text-warning);
+}
+
+.badge-hidden {
+    background: var(--badge-bg-dark);
+    color: var(--badge-text-dark);
+}
+
+/* Checkbox specific */
+.custom-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #cbd5e1;
+    border-radius: 4px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 14px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #334155;
+    transition: all 0.2s;
+    background: #1e293b;
+    /* Dark bg from image? No user said Light style. Let's stick to Light. */
+    background: #ffffff;
+}
+
+.form-control:focus {
+    border-color: var(--cat-accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.required {
+    color: #ef4444;
+}
+
+.form-hint {
+    font-size: 12px;
+    color: #64748b;
+    display: block;
+    margin-top: 6px;
+}
+
+.breadcrumb {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.breadcrumb-item.active {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+/* Switch Toggle */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #22c55e;
+    /* Green color */
+}
+
+input:checked+.slider:before {
+    transform: translateX(20px);
+}

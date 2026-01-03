@@ -1,0 +1,77 @@
+<link rel="stylesheet" href="css/pages/categories.css">
+
+<div class="page-header">
+    <div>
+        <button class="btn-back" id="btn-back" style="margin-bottom: 8px;">
+            <i class="fa-solid fa-arrow-left"></i> <span id="btn-back-text">Quay lại</span>
+        </button>
+    </div>
+</div>
+
+<p class="modern-subtitle">Thêm danh mục sách mới vào hệ thống để phân loại sản phẩm tốt hơn.</p>
+
+<div class="form-container" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-top: 24px;">
+    <!-- Left Column: Main Info -->
+    <div class="card">
+        <div class="form-group">
+            <label class="form-label">Tên danh mục <span class="required">*</span></label>
+            <input type="text" id="category-name" class="form-control"
+                placeholder="Ví dụ: Tiểu thuyết, Khoa học viễn tưởng...">
+            <small class="form-hint">Tên danh mục phải là duy nhất và không trùng lập.</small>
+        </div>
+
+        <div class="form-group" style="margin-top: 24px;">
+            <label class="form-label">Mô tả</label>
+            <textarea id="category-desc" class="form-control" rows="5"
+                placeholder="Nhập mô tả chi tiết cho danh mục này..."></textarea>
+        </div>
+    </div>
+
+    <!-- Right Column: Status & Settings -->
+    <div class="right-col-stack" style="display: flex; flex-direction: column; gap: 24px;">
+        <!-- Status Card -->
+        <div class="card">
+            <label class="form-label" style="display: block; margin-bottom: 16px;">Trạng thái hiển thị</label>
+
+            <div class="toggle-control" style="display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <div style="font-weight: 600; color: #0f172a;">Kích hoạt</div>
+                    <div style="font-size: 12px; color: #64748b;">Hiển thị danh mục này trên website.</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="category-status" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div id="deleted-at-container"
+                style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0; display: none;">
+                <label class="form-label" style="font-size: 13px; color: #64748b;">Thời gian xóa</label>
+                <input type="text" id="category-deleted-at" class="form-control" readonly
+                    style="background-color: #f1f5f9; color: #64748b; font-size: 13px; border-color: transparent;">
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="card" style="padding: 16px;">
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="btn btn-secondary" id="btn-cancel">Hủy bỏ</button>
+                <button class="btn btn-primary" id="btn-save">
+                    <i class="fa-solid fa-save"></i> Lưu danh mục
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Books List Section -->
+<div class="card" id="books-list-section" style="margin-top: 24px; display: none;">
+    <div style="padding: 16px; border-bottom: 1px solid #e2e8f0;">
+        <h3 class="modern-title" style="font-size: 18px; margin: 0;">Sách trong danh mục</h3>
+        <p class="modern-subtitle" style="margin: 4px 0 0;">Danh sách các cuốn sách thuộc danh mục này.</p>
+    </div>
+    <div id="category-books-container"
+        style="padding: 16px; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px;">
+        <!-- Books will be loaded here -->
+    </div>
+</div>

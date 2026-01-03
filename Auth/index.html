@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập / Đăng ký - Bookstore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="main-wrapper" id="main-wrapper">
+
+        <!-- VIEW 1: LOGIN & FORGOT PASSWORD (FLIP CARD) -->
+        <div class="auth-card view-login-forgot">
+            <div class="flip-container" id="flip-container">
+                <div class="flip-inner">
+
+                    <!-- FRONT: LOGIN -->
+                    <div class="flip-front">
+                        <!-- Left: Form -->
+                        <div class="auth-left">
+                            <h1>Chào mừng trở lại!</h1>
+                            <p class="subtitle">Đăng nhập để bắt đầu tìm sách của bạn.</p>
+
+                            <div class="social-login">
+                                <button class="btn-social">
+                                    <i class="fa-brands fa-google" style="color: #ea4335;"></i> Google
+                                </button>
+                                <button class="btn-social">
+                                    <i class="fa-brands fa-facebook" style="color: #1877f2;"></i> Facebook
+                                </button>
+                            </div>
+
+                            <div class="divider">
+                                <span>HOẶC ĐĂNG NHẬP VỚI EMAIL</span>
+                            </div>
+
+                            <form id="login-form" onsubmit="return false;">
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="login-email" placeholder="admin@bookstore.com" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Mật khẩu <a class="forgot-link" id="go-to-forgot">Quên mật khẩu?</a></label>
+                                    <div style="position: relative;">
+                                        <input type="password" id="login-password" placeholder="••••••••" required
+                                            style="padding-right: 40px;">
+                                        <i class="fa-regular fa-eye toggle-password"
+                                            style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6b7280;"></i>
+                                    </div>
+                                </div>
+
+                                <button class="btn-primary" id="btn-login">Đăng nhập</button>
+                            </form>
+
+                            <p class="text-center" style="margin-top: 24px; font-size: 14px; color: var(--text-muted);">
+                                Chưa có tài khoản? <a class="link-highlight" id="go-to-register">Đăng ký ngay</a>
+                            </p>
+                        </div>
+
+                        <!-- Right: Image -->
+                        <div class="auth-right image-side img-bookshelf">
+                            <div class="overlay-text">
+                                <div
+                                    style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); padding: 12px; border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px;">
+                                    <i class="fa-solid fa-book-open" style="font-size: 24px; color: var(--accent);"></i>
+                                </div>
+                                <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">"Sách là nguồn tri
+                                    thức bất tận."</h2>
+                                <p style="font-size: 16px; opacity: 0.9;">Khám phá hàng ngàn đầu sách hấp dẫn<br>ngay
+                                    hôm nay.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BACK: FORGOT PASSWORD -->
+                    <div class="flip-back">
+                        <!-- Left: Image -->
+                        <div class="auth-left image-side img-bookshelf">
+                            <div class="overlay-text">
+                                <h2 style="font-size: 24px; font-weight: 700;">Khôi phục tài khoản</h2>
+                                <p style="margin-top: 8px;">Chúng tôi luôn sẵn sàng hỗ trợ bạn.</p>
+                            </div>
+                        </div>
+
+                        <!-- Right: Form -->
+                        <div class="auth-right">
+                            <a class="back-link" id="back-to-login-flip">
+                                <i class="fa-solid fa-arrow-left"></i> Quay lại đăng nhập
+                            </a>
+
+                            <h1>Quên mật khẩu?</h1>
+                            <p class="subtitle">Nhập email để nhận mã OTP khôi phục.</p>
+
+                            <form onsubmit="return false;">
+                                <div class="form-group">
+                                    <label>Email đăng ký</label>
+                                    <input type="email" id="forgot-email" placeholder="example@bookstore.com" required>
+                                </div>
+
+                                <button class="btn-primary" id="btn-send-otp">Gửi mã OTP</button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: REGISTER (SLIDE IN FROM LEFT) -->
+        <div class="auth-card view-register">
+            <div class="flip-front"
+                style="border-radius: 20px; overflow: hidden; height: 100%; display: flex; box-shadow: var(--shadow); background-color: var(--card-bg);">
+                <!-- Left: Form -->
+                <div class="auth-left">
+                    <h1>Đăng ký tài khoản</h1>
+                    <p class="subtitle">Nhập thông tin chi tiết để tạo tài khoản mới.</p>
+
+                    <form id="register-form" onsubmit="return false;">
+                        <div class="form-group">
+                            <label>Họ và tên</label>
+                            <input type="text" id="reg-name" placeholder="Nguyễn Văn A" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="reg-email" placeholder="name@example.com" required>
+                        </div>
+
+                        <div style="display: flex; gap: 16px;">
+                            <div class="form-group" style="flex: 1;">
+                                <label>Mật khẩu</label>
+                                <div style="position: relative;">
+                                    <input type="password" id="reg-password" placeholder="••••••••" required
+                                        style="padding-right: 40px;">
+                                    <i class="fa-regular fa-eye toggle-password"
+                                        style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6b7280;"></i>
+                                </div>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Nhập lại mật khẩu</label>
+                                <div style="position: relative;">
+                                    <input type="password" id="reg-confirm" placeholder="••••••••" required
+                                        style="padding-right: 40px;">
+                                    <i class="fa-regular fa-eye toggle-password"
+                                        style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6b7280;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="display: flex; align-items: start; gap: 8px;">
+                            <input type="checkbox" id="terms" style="width: auto; margin-top: 3px;">
+                            <label for="terms"
+                                style="margin: 0; cursor: pointer; font-size: 13px; color: var(--text-muted); line-height: 1.4;">
+                                Tôi đồng ý với <a href="#" class="link-highlight">Điều khoản</a> và <a href="#"
+                                    class="link-highlight">Chính sách bảo mật</a>.
+                            </label>
+                        </div>
+
+                        <button class="btn-primary" id="btn-register">Đăng ký</button>
+                    </form>
+
+                    <div class="divider">
+                        <span>HOẶC ĐĂNG KÝ VỚI</span>
+                    </div>
+
+                    <div class="social-login" style="margin-bottom: 12px;">
+                        <button class="btn-social">
+                            <i class="fa-brands fa-google" style="color: #ea4335;"></i>
+                        </button>
+                        <button class="btn-social">
+                            <i class="fa-brands fa-facebook" style="color: #1877f2;"></i>
+                        </button>
+                    </div>
+
+                    <p class="text-center" style="font-size: 14px; color: var(--text-muted);">
+                        Đã có tài khoản? <a class="link-highlight" id="back-to-login-slide">Đăng nhập ngay</a>
+                    </p>
+                </div>
+
+                <!-- Right: Image -->
+                <div class="auth-right image-side img-bookshelf">
+                    <div class="overlay-text">
+                        <h2 style="font-size: 24px; font-weight: 700; margin-bottom: 8px;">Tri thức là sức mạnh</h2>
+                        <p style="font-size: 16px; opacity: 0.9;">Hệ thống quản lý chuyên nghiệp <br> giúp bạn vận hành
+                            nhà sách hiệu quả.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- VIEW 3: OTP VERIFICATION -->
+        <div class="auth-card view-otp"
+            style="display: flex; align-items: center; justify-content: center; z-index: 10;">
+            <div
+                style="background: white; width: 100%; height: 100%; border-radius: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; text-align: center;">
+                <div
+                    style="background: #eff6ff; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+                    <i class="fa-solid fa-shield-halved" style="font-size: 28px; color: var(--accent);"></i>
+                </div>
+
+                <h1 style="margin-bottom: 12px;">Nhập mã xác thực</h1>
+                <p class="subtitle" style="max-width: 450px; margin: 0 auto 32px auto;">
+                    Vui lòng nhập mã xác thực gồm 6 số chúng tôi vừa gửi đến email
+                    <br><strong>admin@bookstore.com</strong>
+                </p>
+
+                <div class="otp-inputs" style="display: flex; gap: 12px; margin-bottom: 32px;">
+                    <input type="text" maxlength="1"
+                        style="width: 50px; height: 60px; text-align: center; font-size: 24px; font-weight: bold; border-radius: 12px; border: 1px solid var(--input-border);"
+                        class="otp-field">
+                    <input type="text" maxlength="1"
+                        style="width: 50px; height: 60px; text-align: center; font-size: 24px; font-weight: bold; border-radius: 12px; border: 1px solid var(--input-border);"
+                        class="otp-field">
+                    <input type="text" maxlength="1"
+                        style="width: 50px; height: 60px; text-align: center; font-size: 24px; font-weight: bold; border-radius: 12px; border: 1px solid var(--input-border);"
+                        class="otp-field">
+                    <input type="text" maxlength="1"
+                        style="width: 50px; height: 60px; text-align: center; font-size: 24px; font-weight: bold; border-radius: 12px; border: 1px solid var(--input-border);"
+                        class="otp-field">
+                    <input type="text" maxlength="1"
+                        style="width: 50px; height: 60px; text-align: center; font-size: 24px; font-weight: bold; border-radius: 12px; border: 1px solid var(--input-border);"
+                        class="otp-field">
+                    <input type="text" maxlength="1"
+                        style="width: 50px; height: 60px; text-align: center; font-size: 24px; font-weight: bold; border-radius: 12px; border: 1px solid var(--input-border);"
+                        class="otp-field">
+                </div>
+
+                <button class="btn-primary" id="btn-confirm-otp" style="max-width: 360px;">Xác nhận</button>
+
+                <p style="margin-top: 24px; font-size: 14px; color: var(--text-muted);">
+                    Bạn chưa nhận được mã? <a id="btn-resend-otp" class="link-highlight" style="cursor: pointer;">Gửi
+                        lại mã (<span id="otp-timer">45</span>s)</a>
+                </p>
+
+                <a class="back-link" id="back-to-login-otp" style="margin-top: 30px;">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại đăng nhập
+                </a>
+            </div>
+        </div>
+
+        <!-- VIEW 4: RESET PASSWORD -->
+        <div class="auth-card view-reset"
+            style="display: flex; align-items: center; justify-content: center; z-index: 10;">
+            <div
+                style="background: white; width: 100%; height: 100%; border-radius: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px;">
+                <div
+                    style="background: #eff6ff; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 24px;">
+                    <i class="fa-solid fa-lock" style="font-size: 28px; color: var(--accent);"></i>
+                </div>
+
+                <h1 style="margin-bottom: 12px;">Đặt lại mật khẩu</h1>
+                <p class="subtitle" style="max-width: 400px; text-align: center; margin-bottom: 32px;">
+                    Vui lòng nhập mật khẩu mới của bạn bên dưới<br>để truy cập vào tài khoản của bạn.
+                </p>
+
+                <form style="width: 100%; max-width: 360px;" onsubmit="return false;">
+                    <div class="form-group">
+                        <label>Mật khẩu mới</label>
+                        <div style="position: relative;">
+                            <input type="password" id="new-password" placeholder="Nhập mật khẩu mới"
+                                style="padding-right: 40px;">
+                            <i class="fa-regular fa-eye toggle-password"
+                                style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6b7280;"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nhập lại mật khẩu mới</label>
+                        <div style="position: relative;">
+                            <input type="password" id="confirm-new-password" placeholder="Nhập lại mật khẩu"
+                                style="padding-right: 40px;">
+                            <i class="fa-regular fa-eye toggle-password"
+                                style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #6b7280;"></i>
+                        </div>
+                    </div>
+
+                    <button class="btn-primary" id="btn-reset-pass">Đặt lại mật khẩu</button>
+                </form>
+
+                <a class="back-link" id="back-to-login-reset" style="margin-top: 30px;">
+                    <i class="fa-solid fa-arrow-left"></i> Quay lại đăng nhập
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="js/api.js"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>

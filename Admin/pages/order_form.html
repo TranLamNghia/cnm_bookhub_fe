@@ -1,0 +1,173 @@
+<div class="page-header">
+    <div class="header-left">
+        <h2 class="page-title">Tạo Đơn hàng Mới</h2>
+        <p class="text-subtitle">Nhập thông tin chi tiết để tạo đơn hàng thủ công</p>
+    </div>
+    <div class="header-actions">
+        <button class="btn btn-secondary" onclick="Router.navigate('orders')">Hủy bỏ</button>
+        <button class="btn btn-primary" id="btn-save-order">Lưu đơn hàng</button>
+    </div>
+</div>
+
+<div class="order-form-grid">
+    <!-- LEFT COLUMN: Customer & Products -->
+    <div class="order-form-left">
+        <!-- Customer Selection -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-user"></i> Thông tin Khách hàng</h3>
+                <button class="btn-link" onclick="Router.navigate('user-form')">Thêm khách hàng mới</button>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Tìm kiếm khách hàng</label>
+                    <div class="search-input-group">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="customer-search" class="form-control"
+                            placeholder="Nhập tên, số điện thoại hoặc email...">
+                    </div>
+                    <div id="customer-results" class="search-results-dropdown" style="display: none;"></div>
+                </div>
+
+                <!-- Selected Customer Display -->
+                <div id="selected-customer-card" class="selected-item-card" style="display: none;">
+                    <div class="item-icon"><i class="fa-solid fa-user-check"></i></div>
+                    <div class="item-info">
+                        <h4 id="cust-name">Nguyễn Văn A</h4>
+                        <p id="cust-contact">0987 654 321 • nguyenva@example.com</p>
+                        <p id="cust-rank" class="text-warning">Hạng: Vàng</p>
+                    </div>
+                    <button class="btn-icon-sm" id="btn-remove-customer"><i class="fa-solid fa-times"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Selection -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-book"></i> Sản phẩm</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <div class="search-input-group">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="product-search" class="form-control"
+                            placeholder="Tìm sách theo tên hoặc mã ISBN...">
+                        <button class="btn btn-secondary" id="btn-browse-products">Duyệt danh sách</button>
+                    </div>
+                    <div id="product-results" class="search-results-dropdown" style="display: none;"></div>
+                </div>
+
+                <!-- Cart Table -->
+                <table class="table table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th>Sách</th>
+                            <th width="120">Đơn giá</th>
+                            <th width="120">Số lượng</th>
+                            <th width="120">Thành tiền</th>
+                            <th width="50"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items-body">
+                        <!-- Cart Items -->
+                        <tr id="cart-empty-msg">
+                            <td colspan="5" class="text-center text-muted py-4">Chưa có sản phẩm nào được chọn</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Payment & Shipping -->
+    <div class="order-form-right">
+        <!-- Order Summary -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Tổng quan đơn hàng</h3>
+            </div>
+            <div class="card-body">
+                <div class="summary-row">
+                    <span>Tạm tính (<span id="total-items-count">0</span> sách)</span>
+                    <span id="subtotal-amount">0đ</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển</span>
+                    <span id="shipping-fee">30.000đ</span>
+                </div>
+                <div class="summary-row text-success">
+                    <span>Giảm giá</span>
+                    <span id="discount-amount">-0d</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row total-row">
+                    <span>Tổng cộng</span>
+                    <span id="final-total" class="text-primary">0đ</span>
+                </div>
+
+                <div class="form-group mt-3">
+                    <label>Trạng thái đơn hàng</label>
+                    <select id="order-initial-status" class="form-control">
+                        <option value="pending">Chờ xác nhận</option>
+                        <option value="shipping">Đang giao hàng</option>
+                        <option value="completed">Đã hoàn thành</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary btn-block btn-lg mt-3" id="btn-save-order-2">
+                    <i class="fa-solid fa-save"></i> Lưu đơn hàng
+                </button>
+            </div>
+        </div>
+
+        <!-- Payment & Shipping -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-truck"></i> Giao hàng & Thanh toán</h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label>Địa chỉ giao hàng</label>
+                    <input type="text" id="shipping-address" class="form-control"
+                        placeholder="Số 123, Đường ABC, Phường XYZ">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tỉnh / Thành phố</label>
+                        <select id="shipping-province" class="form-control">
+                            <option value="">-- Chọn --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Quận / Huyện</label>
+                        <select id="shipping-district" class="form-control">
+                            <option value="">-- Chọn --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Phương thức thanh toán</label>
+                    <div class="payment-methods">
+                        <label class="payment-option">
+                            <input type="radio" name="payment_method" value="cod" checked>
+                            <span>Tiền mặt (COD)</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment_method" value="banking">
+                            <span>Chuyển khoản</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ghi chú đơn hàng</label>
+                    <textarea id="order-note" class="form-control" rows="3"
+                        placeholder="Ghi chú thêm về giao hàng..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

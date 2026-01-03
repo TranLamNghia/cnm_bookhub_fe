@@ -1,0 +1,75 @@
+<!-- Page Header -->
+<link rel="stylesheet" href="css/pages/books.css">
+<div class="page-header">
+    <p class="page-subtitle">Quản lý và cập nhật sách trong hệ thống</p>
+</div>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+    <div class="card-stat">
+        <div class="card-stat-title">Tổng số sách</div>
+        <div class="card-stat-value" id="total-books">0</div>
+        <div class="card-stat-subtitle">Tất cả sách trong kho</div>
+    </div>
+
+    <div class="card-stat" style="background: linear-gradient(135deg, var(--color-accent) 0%, #16a34a 100%);">
+        <div class="card-stat-title">Còn hàng</div>
+        <div class="card-stat-value" id="in-stock">0</div>
+        <div class="card-stat-subtitle">Sách sẵn sàng bán</div>
+    </div>
+
+    <div class="card-stat" style="background: linear-gradient(135deg, var(--color-danger) 0%, #dc2626 100%);">
+        <div class="card-stat-title">Hết hàng</div>
+        <div class="card-stat-value" id="out-of-stock">0</div>
+        <div class="card-stat-subtitle">Cần cập nhật kho</div>
+    </div>
+</div>
+
+<!-- Action Bar -->
+<div class="action-bar">
+    <div class="action-bar-left">
+        <input type="text" placeholder="Tìm kiếm sách..." id="search-input">
+        <div class="filter-group">
+            <label for="category-filter">Danh mục:</label>
+            <select id="category-filter">
+                <option value="" id="all-category">Tất cả</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="action-bar-right">
+        <button class="btn btn-gradient" id="add-book-btn">+ Thêm sách mới</button>
+    </div>
+</div>
+
+<!-- Content Card with Table -->
+<div class="content-card">
+    <div class="table-container">
+        <table id="books-table">
+            <thead>
+                <tr>
+                    <th style="width: 50px;"></th>
+                    <th>Tên sách</th>
+                    <th>Tác giả</th>
+                    <th>Danh mục</th>
+                    <th>Giá</th>
+                    <th>Tồn kho</th>
+                    <th>Trạng thái</th>
+                    <th style="width: 100px;">Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="books-tbody">
+                <!-- Loaded by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="empty-state" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">📚</div>
+        <div class="empty-state-title">Chưa có sách nào</div>
+        <p class="empty-state-text">Bắt đầu bằng cách thêm một cuốn sách mới vào hệ thống của bạn.</p>
+        <button class="btn btn-primary" id="add-first-book">Thêm sách đầu tiên</button>
+    </div>
+
+    <div class="pagination" id="pagination" style="display: none;"></div>
+</div>
