@@ -1,4 +1,4 @@
-const USE_MOCK_DATA = true; // Set to false to use real API
+const USE_MOCK_DATA = false; // Set to false to use real API
 
 const MOCK_STORAGE_KEY = "BOOKHUB_MOCK_USERS";
 
@@ -83,7 +83,7 @@ const MockHelper = {
 };
 
 window.UsersAPI = {
-    getAll: async function () {
+    getAll: async function (limit = 10, offset = 1, user_name = "") {
         if (USE_MOCK_DATA) {
             // Simulate network delay
             await new Promise(r => setTimeout(r, 300));
@@ -91,7 +91,9 @@ window.UsersAPI = {
         }
 
         // Real API Call
-        return await API.get("/user/getAllUsers");
+        let url = `/user/getAllUsers?limit=${limit}&offset=${offset}`;
+        if (user_name) url += `&user_name=${encodeURIComponent(user_name)}`;
+        return await API.get(url);
     },
 
     getById: async function (id) {
@@ -103,9 +105,9 @@ window.UsersAPI = {
             // Throw error or return null if not found
             throw new Error("User not found (Mock)");
         }
-
+        console.log(id);
         // Real API Call
-        return await API.get(`/user/${id}`);
+        return await API.get(`/user?id=${id}`);
     },
 
     create: async function (data) {

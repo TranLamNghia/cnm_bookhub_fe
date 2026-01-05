@@ -14,19 +14,29 @@ const UsersPage = {
     }
   },
 
-  loadData: async function () {
+  loadData: async function (page = 1) {
     try {
-      const response = await UsersAPI.getAll();
-      // Assuming response is Array or { data: [] }
-      this.currentData = Array.isArray(response) ? response : (response.data || []);
+      this.currentPage = page;
+      const limit = 10;
+      const offset = page; // Using page number as offset as per previous convention
+      const searchInput = document.getElementById("search-user-input");
+      const user_name = searchInput ? searchInput.value : "";
 
-      // Mock data if empty for demonstration (optional, removing for real impl)
-      if (this.currentData.length === 0) {
-        // this.currentData = this.getMockData(); // Uncomment if needed
+      const response = await UsersAPI.getAll(limit, offset, user_name);
+
+      // Handle new response format: { items: [], totalPage: number }
+      // Fallback to array if old format
+      if (Array.isArray(response)) {
+        this.currentData = response;
+        this.totalPages = 1;
+      } else {
+        this.currentData = response.items || [];
+        this.totalPages = response.totalPage || 1;
       }
 
       this.renderTable();
       this.updateStats();
+      this.renderPagination();
     } catch (error) {
       console.error("Error loading users:", error);
       Utils.showToast("error", "Không thể tải danh sách người dùng");
@@ -36,11 +46,7 @@ const UsersPage = {
   updateStats: function () {
     const total = document.getElementById("total-users");
     if (total) total.textContent = this.currentData.length;
-
-    // Update pagination info (basic)
-    const end = Math.min(this.currentData.length, 10); // Logic for page 1
-    if (document.getElementById("user-start-index")) document.getElementById("user-start-index").textContent = this.currentData.length > 0 ? 1 : 0;
-    if (document.getElementById("user-end-index")) document.getElementById("user-end-index").textContent = end;
+    // Note: total items vs total on page not strictly distinguished here without totalItems from API
   },
 
   renderTable: function (data = null) {
@@ -78,7 +84,7 @@ const UsersPage = {
                     <td><strong>${idDisplay}</strong></td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 12px;">
-                            <img src="${user.avatar_url || 'https://ui-avatars.com/api/?name=' + (user.full_name || 'User') + '&background=random'}" 
+                            <img src="${user.image_url || user.avatar_url || 'https://ui-avatars.com/api/?name=' + (user.full_name || 'User') + '&background=random'}" 
                                  alt="${user.full_name}" 
                                  style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                             <div>
@@ -109,13 +115,8 @@ const UsersPage = {
     const searchInput = document.getElementById("search-user-input");
     if (searchInput) {
       searchInput.addEventListener("input", (e) => {
-        const keyword = e.target.value.toLowerCase();
-        const filtered = this.currentData.filter(u =>
-          (u.full_name && u.full_name.toLowerCase().includes(keyword)) ||
-          (u.email && u.email.toLowerCase().includes(keyword)) ||
-          (u.id && String(u.id).includes(keyword))
-        );
-        this.renderTable(filtered);
+        // Trigger server-side search by reloading data
+        this.loadData(1);
       });
     }
 
@@ -133,6 +134,60 @@ const UsersPage = {
     } else {
       Router.navigate(`users/detail`); // Create New
     }
+  },
+
+  renderPagination: function () {
+    // Locate pagination container. Logic similar to BooksPage
+    const container = document.querySelector(".pagination-container .pagination");
+    if (!container) return;
+
+    const totalPages = this.totalPages || 1;
+    let html = "";
+
+    // Previous
+    html += `<button onclick="UsersPage.changePage(${this.currentPage - 1})" class="page-btn ${this.currentPage === 1 ? 'disabled' : ''}" 
+             style="width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent; color: #94a3b8; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                <i class="fa-solid fa-chevron-left" style="font-size: 12px;"></i>
+             </button>`;
+
+    // Page Numbers
+    const start = Math.max(1, this.currentPage - 2);
+    const end = Math.min(totalPages, this.currentPage + 2);
+
+    if (start > 1) {
+      html += this.createPageBtn(1);
+      if (start > 2) html += '<span class="page-dots" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #94a3b8;">...</span>';
+    }
+
+    for (let i = start; i <= end; i++) {
+      html += this.createPageBtn(i);
+    }
+
+    if (end < totalPages) {
+      if (end < totalPages - 1) html += '<span class="page-dots" style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; color: #94a3b8;">...</span>';
+      html += this.createPageBtn(totalPages);
+    }
+
+    // Next
+    html += `<button onclick="UsersPage.changePage(${this.currentPage + 1})" class="page-btn ${this.currentPage === totalPages ? 'disabled' : ''}" 
+             style="width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent; color: #94a3b8; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                <i class="fa-solid fa-chevron-right" style="font-size: 12px;"></i>
+             </button>`;
+
+    container.innerHTML = html;
+  },
+
+  createPageBtn: function (page) {
+    const isActive = page === this.currentPage;
+    const style = isActive
+      ? 'width: 36px; height: 36px; border-radius: 8px; border: none; background: white; color: #6366f1; font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: pointer;'
+      : 'width: 36px; height: 36px; border-radius: 8px; border: none; background: transparent; color: #64748b; font-weight: 500; cursor: pointer; transition: all 0.2s;';
+    return `<button onclick="UsersPage.changePage(${page})" class="page-btn ${isActive ? 'active' : ''}" style="${style}">${page}</button>`;
+  },
+
+  changePage: function (page) {
+    if (page < 1 || page > this.totalPages) return;
+    this.loadData(page);
   },
 
   deleteUser: async function (id) {

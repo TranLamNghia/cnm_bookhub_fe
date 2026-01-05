@@ -1,5 +1,5 @@
 window.CategoriesAPI = {
-  USE_MOCK_DATA: true,
+  USE_MOCK_DATA: false,
   MOCK_KEY: "BOOKHUB_MOCK_CATEGORIES",
 
   getMockData: function () {

@@ -30,9 +30,9 @@ const BooksPage = {
       const keyword = document.getElementById("search-input")?.value || "";
       const category = document.getElementById("category-filter")?.value || "";
 
-      // Gọi API với params (Lưu ý: Bạn cần update API để nhận keyword, category nếu muốn lọc server side cả cái này)
-      // Ở đây giả sử API chỉ mới support limit/offset
-      const response = await BooksAPI.getAllBook(limit, offset);
+      // Gọi API với params (Lưu ý: API đã update để nhận keyword, category)
+      // Signature: getAllBook(limit, offset, category_name, book_name)
+      const response = await BooksAPI.getAllBook(limit, offset, category, keyword);
 
       if (!response) {
         // Xử lý trường hợp lỗi hoặc null

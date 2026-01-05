@@ -1,5 +1,5 @@
 window.BooksAPI = {
-  USE_MOCK_DATA: true,
+  USE_MOCK_DATA: false,
   MOCK_KEY: "BOOKHUB_MOCK_BOOKS",
 
   // Helper to get mock data
@@ -20,7 +20,7 @@ window.BooksAPI = {
     localStorage.setItem(this.MOCK_KEY, JSON.stringify(data));
   },
 
-  getAllBook: async (limit = 10, offset = 1) => {
+  getAllBook: async (limit = 10, offset = 1, category_name = "", book_name = "") => {
     // if (BooksAPI.USE_MOCK_DATA) {
     //   await new Promise(r => setTimeout(r, 300));
     //   const books = BooksAPI.getMockData();
@@ -29,7 +29,11 @@ window.BooksAPI = {
     //     totalPage: 1
     //   };
     // }
-    return await API.request(`/book/getAllBooks?limit=${limit}&offset=${offset}`);
+    let url = `/book/getAllBooks?limit=${limit}&offset=${offset}`;
+    if (category_name) url += `&category_name=${encodeURIComponent(category_name)}`;
+    if (book_name) url += `&book_name=${encodeURIComponent(book_name)}`;
+
+    return await API.request(url);
   },
 
   getBookById: async (id) => {

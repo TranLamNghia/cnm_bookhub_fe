@@ -155,46 +155,21 @@ const CategoryFormPage = {
         const status = document.getElementById("category-status").checked; // true = Active, false = Inactive (Deleted)
         const desc = document.getElementById("category-desc").value;
 
-        // Validation moved to API (Backend)
-        // if (!name.trim()) { ... }
-
         try {
             // Data object
-            const data = { name };
-
-            // If user turns OFF status (Inactive), we imply Delete (set deleted_at)
-            // If user turns ON status (Active), we imply Restore (clear deleted_at)
-            // However, API might not support direct clearing.
-            // Let's assume simulate by passing deleted_at value or calling Delete endpoint.
+            const data = {
+                name: name,
+                description: desc,
+                deleted: !status
+            };
 
             if (this.categoryId) {
-                // // Update Mode
-                // await CategoriesAPI.update(this.categoryId, data);
-
-                // if (!status) {
-                //     // User disabled -> Call Delete to set deleted_at
-                //     await CategoriesAPI.delete(this.categoryId);
-
-                //     // Simulate updating the UI immediately?
-                //     // The user wants to see it populated.
-                //     // Since we might stay on page (?), user didn't say. But usually Save -> Redirect.
-                //     // If we redirect, we won't see it.
-                //     // User said: "nhấn vào button 'Lưu danh mục' thì nó lưu dữ liệu vào trường này"
-                //     // This implies we MIGHT stay on the page.
-                //     // But standard flow is redirect. Let's assume redirect for now as per previous logic.
-                //     // If user wants to see it on THIS form, they would have to re-open it.
-                // }
-                // // If status is TRUE (Active), we should ideally restore. 
-                // // But we don't have restore endpoint. Assuming Update handles it or ignored.
-
+                // Update Mode
+                await CategoriesAPI.update(this.categoryId, data);
                 Utils.showToast("success", "Cập nhật thành công!");
             } else {
                 // Create Mode
-                // If created as Inactive?
-                // const newCat = await CategoriesAPI.create(data);
-                // if (!status && newCat && newCat.id) {
-                //     await CategoriesAPI.delete(newCat.id);
-                // }
+                await CategoriesAPI.create(data);
                 Utils.showToast("success", "Thêm mới thành công!");
             }
 

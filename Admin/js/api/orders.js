@@ -78,31 +78,27 @@ window.OrdersAPI = {
         this.mockDataCache = data;
     },
 
-    getAll: async function (params = {}) { // limit, offset, search, status
-        if (OrdersAPI.USE_MOCK_DATA) {
+    getAll: async function (params = {}) { // limit, offset, order_id, order_status, order_date
+        if (!OrdersAPI.USE_MOCK_DATA) {
             await new Promise(r => setTimeout(r, 400));
             const orders = OrdersAPI.getMockData();
 
             let filtered = orders;
 
             // Filter by Status
-            if (params.status && params.status !== "all") {
-                filtered = filtered.filter(o => o.status === params.status);
+            if (params.order_status && params.order_status !== "all") {
+                filtered = filtered.filter(o => o.status === params.order_status);
             }
 
-            // Search (ID or Customer Name)
-            if (params.search) {
-                const term = params.search.toLowerCase();
-                filtered = filtered.filter(o =>
-                    o.id.toLowerCase().includes(term) ||
-                    o.customer.name.toLowerCase().includes(term) ||
-                    o.customer.email.toLowerCase().includes(term)
-                );
+            // Filter by ID
+            if (params.order_id) {
+                const term = params.order_id.toLowerCase();
+                filtered = filtered.filter(o => o.id.toLowerCase().includes(term));
             }
 
             // Filter by Date
-            if (params.date) {
-                const filterDate = new Date(params.date).toDateString();
+            if (params.order_date) {
+                const filterDate = new Date(params.order_date).toDateString();
                 filtered = filtered.filter(o => new Date(o.created_at).toDateString() === filterDate);
             }
 
@@ -121,7 +117,14 @@ window.OrdersAPI = {
                 totalPage: Math.ceil(filtered.length / limit)
             };
         }
-        return await API.get("/order/getAll", params);
+
+        // Real API Call
+        let url = `/order/getAll?limit=${params.limit}&offset=${params.offset}`;
+        if (params.order_id) url += `&order_id=${encodeURIComponent(params.order_id)}`;
+        if (params.order_status && params.order_status !== 'all') url += `&order_status=${encodeURIComponent(params.order_status)}`;
+        if (params.order_date) url += `&order_date=${encodeURIComponent(params.order_date)}`;
+
+        return await API.get(url);
     },
 
     getById: async function (id) {

@@ -31,9 +31,9 @@ const OrdersPage = {
       const params = {
         limit: this.itemsPerPage,
         offset: this.currentPage,
-        search: this.currentSearch,
-        status: this.currentFilter,
-        date: this.currentDate
+        order_id: this.currentSearch,       // Maps search input to order_id
+        order_status: this.currentFilter,   // Maps filter to order_status
+        order_date: this.currentDate        // Maps date to order_date
       };
 
       const response = await OrdersAPI.getAll(params);

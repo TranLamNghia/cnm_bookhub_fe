@@ -100,6 +100,7 @@ const UserFormPage = {
     loadUserDetail: async function (id) {
         try {
             const user = await UsersAPI.getById(id);
+            console.log(id);
             const userData = user.data || user;
             console.log(userData);
 
@@ -149,9 +150,6 @@ const UserFormPage = {
 
             if (document.getElementById("profile-id-display"))
                 document.getElementById("profile-id-display").textContent = userData.id ? "#" + userData.id.slice(-4).toUpperCase() : "#---";
-
-            if (document.getElementById("profile-join-date"))
-                document.getElementById("profile-join-date").textContent = userData.created_at ? new Date(userData.created_at).toLocaleDateString('vi-VN') : "---";
 
             // Status Badge
             const statusBadge = document.getElementById("profile-status-badge");

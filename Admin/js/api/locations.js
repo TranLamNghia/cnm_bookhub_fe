@@ -1,6 +1,6 @@
 window.LocationsAPI = {
     // Flag để bật/tắt Mock Data cho Location
-    USE_MOCK: true,
+    USE_MOCK: false,
 
     // --- API Methods ---
 
