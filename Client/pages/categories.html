@@ -1,0 +1,130 @@
+<link rel="stylesheet" href="css/pages/categories.css">
+<div class="breadcrumb">
+    <a href="#/">Trang chủ</a>
+    <i class="fa-solid fa-chevron-right"></i>
+    <span>Danh mục Sách</span>
+</div>
+
+<div class="category-page-container">
+    <!-- SIDEBAR FILTERS -->
+    <aside class="sidebar-filters">
+        <div class="filter-group">
+            <h3 class="filter-title">
+                Bộ lọc tìm kiếm
+                <a href="#" class="reset-filter">Xóa tất cả</a>
+            </h3>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="filter-group">
+            <h4 class="filter-subtitle">
+                Thể loại
+                <i class="fa-solid fa-chevron-up"></i>
+            </h4>
+            <div class="filter-list">
+                <label class="custom-checkbox">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    Văn học
+                </label>
+                <label class="custom-checkbox">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    Kinh tế
+                </label>
+                <label class="custom-checkbox">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    Thiếu nhi
+                </label>
+                <label class="custom-checkbox">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    Kỹ năng sống
+                </label>
+                <!-- Hidden items -->
+                <label class="custom-checkbox hidden-item" style="display: none;">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    Ngoại ngữ
+                </label>
+                <label class="custom-checkbox hidden-item" style="display: none;">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    Lịch sử
+                </label>
+                <label class="custom-checkbox hidden-item" style="display: none;">
+                    <input type="checkbox">
+                    <span class="checkmark"></span>
+                    Tâm lý học
+                </label>
+            </div>
+        </div>
+
+        <!-- Price Filter -->
+        <div class="filter-group">
+            <h4 class="filter-subtitle">
+                Khoảng giá
+            </h4>
+            <div class="price-inputs">
+                <input type="text" placeholder="Từ" value="0">
+                <span>-</span>
+                <input type="text" placeholder="Đến" value="500000">
+            </div>
+            <button class="btn-apply-filter">Áp dụng</button>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="category-content">
+        <!-- Page Header -->
+        <div class="cat-header">
+            <h1 class="cat-title"></h1>
+
+            <div class="sort-bar">
+                <div class="search-mini">
+                    <input type="text" placeholder="Tìm kiếm sách...">
+                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+
+                <div class="sort-actions">
+                    <span>Sắp xếp:</span>
+                    <select class="sort-select">
+                        <option>Giá thấp đến cao</option>
+                        <option>Giá cao đến thấp</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="active-filters-row">
+                <span class="filter-chip">Kinh tế</span>
+                <span class="filter-chip">Sách bán chạy</span>
+                <span class="filter-chip">Sách bán chạy</span>
+                <span class="filter-chip">Sách bán chạy</span>
+                <span class="filter-chip">Sách bán chạy</span>
+                <span class="filter-chip">Sách bán chạy</span>
+                <span class="filter-chip">Sách bán chạy</span>
+                <span class="filter-chip">Sách bán chạy</span>
+                <span class="filter-chip">Giảm giá sâu</span>
+                <span class="filter-chip">Freeship</span>
+            </div>
+        </div>
+
+        <!-- Book Grid -->
+        <div class="book-grid" id="category-book-grid">
+            <!-- Items will be rendered by JS -->
+            <div class="loader-spinner">Loading...</div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="page-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <span class="page-dots">...</span>
+            <button class="page-btn">8</button>
+            <button class="page-btn next"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+</div>

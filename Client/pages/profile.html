@@ -1,0 +1,203 @@
+<link rel="stylesheet" href="css/pages/profile.css">
+
+<div class="profile-container">
+    <aside class="profile-sidebar">
+        <div class="user-summary">
+            <img src="https://ui-avatars.com/api/?name=User&background=eff6ff&color=2563eb" alt="Avatar"
+                class="sidebar-avatar" id="sidebar-avatar">
+            <div class="user-meta">
+                <h3 id="sidebar-name">Nguyễn Văn A</h3>
+            </div>
+        </div>
+
+        <nav class="profile-nav">
+            <button class="nav-btn active" data-tab="info">
+                <i class="fa-solid fa-user"></i> Thông tin tài khoản
+            </button>
+            <button class="nav-btn" data-tab="orders">
+                <i class="fa-solid fa-clock-rotate-left"></i> Lịch sử đơn hàng
+            </button>
+            <button class="nav-btn" data-tab="chat">
+                <i class="fa-solid fa-comments"></i> Trợ lý & Chat
+            </button>
+            <button class="nav-btn" data-tab="password">
+                <i class="fa-solid fa-lock"></i> Đổi mật khẩu
+            </button>
+            <button class="nav-btn logout-btn" id="btn-logout-sidebar">
+                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+            </button>
+        </nav>
+    </aside>
+
+    <main class="profile-content">
+        <div id="tab-info" class="tab-pane active">
+            <h2 class="tab-title">Hồ sơ của tôi</h2>
+            <p class="tab-desc">Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
+
+            <div class="profile-form-layout">
+                <div class="form-col">
+                    <div class="form-group">
+                        <label>Họ và tên</label>
+                        <input type="text" class="form-input" value="Nguyễn Văn A" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" class="form-input" value="nguyenvana@gmail.com" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="tel" class="form-input" value="*******567" disabled>
+                    </div>
+
+
+                    <div class="form-group align-top">
+                        <label>Địa chỉ</label>
+                        <div class="address-container">
+                            <div class="address-row">
+                                <select class="form-select" disabled>
+                                    <option>TP. Hồ Chí Minh</option>
+                                    <option>Hà Nội</option>
+                                    <option>Đà Nẵng</option>
+                                </select>
+                                <select class="form-select" disabled>
+                                    <option>Quận 3</option>
+                                    <option>Quận 1</option>
+                                    <option>Quận 5</option>
+                                </select>
+                            </div>
+                            <input type="text" class="form-input" value="123 Đường Nguyễn Thị Minh Khai, Phường 6"
+                                disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-edit" id="btn-edit">Chỉnh sửa thông tin</button>
+                        <button class="btn-cancel hidden" id="btn-cancel">Hủy</button>
+                        <button class="btn-save hidden" id="btn-save">Lưu thay đổi</button>
+                    </div>
+                </div>
+
+                <div class="avatar-col">
+                    <img src="https://ui-avatars.com/api/?name=User&background=random" class="avatar-preview"
+                        id="avatar-preview" alt="Avatar Preview">
+                    <input type="file" id="file-upload" accept="image/*" class="hidden">
+                    <button class="btn-upload" id="btn-upload">Chọn ảnh</button>
+                    <p class="note">Dụng lượng file tối đa 1 MB<br>Định dạng: .JPEG, .PNG</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-orders" class="tab-pane">
+            <h2 class="tab-title">Lịch sử đơn hàng</h2>
+            <p class="tab-desc">Theo dõi chi tiết và trạng thái các đơn hàng bạn đã đặt tại BookStore.</p>
+
+            <div class="order-filters">
+                <div class="search-order">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="VD: #ORD-2023-001">
+                </div>
+                <div class="status-filter">
+                    <i class="fa-solid fa-filter"></i>
+                    <select>
+                        <option>Tất cả trạng thái</option>
+                        <option>Chờ xử lý</option>
+                        <option>Đã xử lý</option>
+                        <option>Đang vận chuyển</option>
+                        <option>Thành công</option>
+                        <option>Đã hủy</option>
+                    </select>
+                </div>
+            </div>
+
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Mã đơn hàng</th>
+                        <th>Ngày đặt</th>
+                        <th>Số lượng sản phẩm</th>
+                        <th>Tổng tiền</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="orders-list"></tbody>
+            </table>
+
+            <div class="pagination-orders"></div>
+        </div>
+
+        <div id="tab-chat" class="tab-pane">
+            <div class="chat-layout">
+                <div class="chat-header-area">
+                    <div class="ai-info">
+                        <div class="ai-avatar"><img src="https://api.dicebear.com/9.x/bottts-neutral/svg?seed=bookstore"
+                                alt="AI"></div>
+                        <div class="ai-text">
+                            <h3>Trợ lý AI BookHub <span>(AI Chat)</span></h3>
+                            <p>Luôn sẵn sàng hỗ trợ 24/7</p>
+                        </div>
+                    </div>
+                    <div class="chat-mode-switch">
+                        <button class="mode-btn active" data-mode="ai">Chat với AI</button>
+                        <button class="mode-btn" data-mode="admin">Chat với Admin</button>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message bot">
+                        <div class="msg-content">
+                            Xin chào! 👋 Tôi là trợ lý ảo của BookHub. Tôi có thể giúp bạn tìm sách theo chủ đề, gợi ý
+                            sách mới nhất, hoặc kiểm tra tình trạng đơn hàng.
+                        </div>
+                    </div>
+                    <div class="message bot">
+                        <div class="msg-content">
+                            Bạn đang tìm kiếm cuốn sách nào hôm nay?
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <button class="btn-attach"><i class="fa-solid fa-plus"></i></button>
+                    <input type="text" placeholder="Nhập câu hỏi của bạn..." id="chat-input">
+                    <button class="btn-mic"><i class="fa-solid fa-microphone"></i></button>
+                    <button class="btn-send" id="btn-chat-send"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-password" class="tab-pane">
+            <h2 class="tab-title">Đổi mật khẩu</h2>
+
+            <div id="otp-section">
+                <div class="form-group" style="max-width: 1000px;">
+                    <label style="width: auto;">Ấn nút <b>Lấy mã xác nhận</b> để nhận mã qua email.</label>
+                </div>
+                <div class="form-group" style="max-width: 1000px;">
+                    <label style="width: auto;"><i class="fa-solid fa-envelope"></i>
+                        mailcuauser@gmail.com</label>
+                    <button class="btn-get-code" id="btn-get-code"
+                        style="background: #dc2626; color: white; border: none; padding: 6px 12px; border-radius: 4px; margin-left: 16px; cursor: pointer;">Lấy
+                        mã xác nhận</button>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-input" id="otp-input" placeholder="Nhập mã xác nhận"
+                        style="width: 200px">
+                </div>
+                <button class="btn-save" id="btn-confirm-otp">Xác nhận</button>
+            </div>
+
+            <div id="password-section" class="hidden">
+                <div class="form-group" style="max-width: 600px;">
+                    <label>Mật khẩu mới</label>
+                    <input type="password" class="form-input" id="new-password">
+                </div>
+                <div class="form-group" style="max-width: 600px;">
+                    <label>Xác nhận mật khẩu mới</label>
+                    <input type="password" class="form-input" id="confirm-password">
+                </div>
+                <button class="btn-save" id="btn-update-pass" style="margin-left: 140px;">Cập nhật mật khẩu</button>
+            </div>
+        </div>
+    </main>
+</div>

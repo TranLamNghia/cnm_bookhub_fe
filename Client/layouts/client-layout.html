@@ -1,36 +1,31 @@
 <!-- HEADER -->
 <header>
-    <a href="#/" class="logo">
-        <i class="fa-solid fa-book-open-reader"></i>
-        BookStore
-    </a>
+    <div class="header-container">
+        <!-- Logo -->
+        <a href="#/" class="logo">
+            <i class="fa-solid fa-book-open-reader"></i>
+            <span>BookHub</span>
+        </a>
 
-    <div class="search-bar">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" placeholder="Tìm kiếm sách theo tên, tác giả...">
-    </div>
+        <!-- Navigation -->
+        <nav class="nav-links">
+            <a href="#/" class="nav-item" data-route="home">Trang chủ</a>
+            <a href="#/categories" class="nav-item" data-route="categories">Danh mục sách</a>
+        </nav>
 
-    <nav class="nav-links">
-        <a href="#/" class="nav-item" data-route="home">Trang chủ</a>
-        <a href="#/categories" class="nav-item" data-route="categories">Danh mục</a>
-        <a href="#/books" class="nav-item" data-route="books">Tủ sách</a>
-        <a href="#/contact" class="nav-item" data-route="contact">Liên hệ</a>
-    </nav>
+        <!-- Actions -->
+        <div class="header-actions">
+            <div class="icon-btn" id="btn-cart-header">
+                <i class="fa-solid fa-cart-shopping"></i>
+            </div>
 
-    <div class="header-actions">
-        <div class="icon-btn">
-            <i class="fa-regular fa-bell"></i>
-            <div class="badge">3</div>
-        </div>
-        <div class="icon-btn">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <div class="badge">2</div>
-        </div>
-
-        <!-- User Profile -->
-        <div class="user-profile" id="user-profile-header">
-            <div class="avatar" style="background: #e5e7eb;"></div>
-            <span class="user-name">Loading...</span>
+            <!-- Auth Container: Will be populated by JS -->
+            <div id="auth-container" class="auth-container">
+                <!-- Fallback/Loading state -->
+                <div class="auth-loading">
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+                </div>
+            </div>
         </div>
     </div>
 </header>

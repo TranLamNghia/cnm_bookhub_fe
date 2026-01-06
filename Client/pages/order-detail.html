@@ -1,0 +1,119 @@
+<link rel="stylesheet" href="css/pages/order-detail.css">
+
+<div class="order-detail-container">
+    <div class="header-section">
+        <a href="#/profile" class="btn-back-order">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách đơn hàng
+        </a>
+        <div>
+            <h1 class="page-title">Đơn hàng <span id="header-order-id">#12345</span></h1>
+            <div class="order-date">Ngày đặt: <span id="order-date">24/10/2023 | 14:30</span></div>
+        </div>
+    </div>
+
+    <div class="content-layout">
+        <!-- LEFT COLUMN -->
+        <div class="main-column">
+            <!-- PRODUCTS -->
+            <div class="card product-card">
+                <div class="card-header">
+                    <h3>Sản phẩm đã mua</h3>
+                    <span class="product-count">3 sản phẩm</span>
+                </div>
+                <div class="product-list" id="detail-product-list">
+                    <!-- Populated by JS -->
+                    <div class="product-item">
+                        <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=800&auto=format&fit=crop"
+                            alt="Book">
+                        <div class="prod-info">
+                            <div class="prod-name">Đắc Nhân Tâm</div>
+                            <div class="prod-author">Dale Carnegie</div>
+                        </div>
+                        <div class="prod-price">120.000đ</div>
+                        <div class="prod-qty">1</div>
+                        <div class="prod-total">120.000đ</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SHIPPING INFO -->
+            <div class="card shipping-card">
+                <div class="card-header">
+                    <h3>Thông tin giao hàng</h3>
+                </div>
+                <div class="shipping-grid">
+                    <div class="ship-col">
+                        <label>NGƯỜI NHẬN</label>
+                        <div class="ship-val font-bold">Nguyễn Văn A</div>
+                        <div class="ship-val">+84 987 654 321</div>
+                    </div>
+                    <div class="ship-col">
+                        <label>ĐỊA CHỈ</label>
+                        <div class="ship-val font-bold">123 Đường Nguyễn Huệ, Phường Bến Nghé</div>
+                        <div class="ship-val">Quận 1, TP. Hồ Chí Minh</div>
+                    </div>
+                    <div class="ship-col">
+                        <label>PHƯƠNG THỨC VẬN CHUYỂN</label>
+                        <div class="ship-val font-bold">Giao hàng tiêu chuẩn</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="side-column">
+            <!-- STATUS -->
+            <!-- NOTE: The screenshot design shows this as a blue banner top right -->
+            <div class="status-card">
+                <div class="status-icon">
+                    <i class="fa-regular fa-clock"></i>
+                </div>
+                <div>
+                    <h3 class="status-title">CHỜ THANH TOÁN</h3>
+                    <p class="status-desc">Đơn hàng của bạn đã được ghi nhận.</p>
+                </div>
+            </div>
+
+            <!-- SUMMARY -->
+            <div class="card summary-card">
+                <div class="card-header">
+                    <h3>Tổng quan thanh toán</h3>
+                </div>
+                <div class="summary-row">
+                    <span>Tạm tính</span>
+                    <span>300.000đ</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển</span>
+                    <span>30.000đ</span>
+                </div>
+                <div class="summary-row">
+                    <span>Giảm giá</span>
+                    <span class="text-success">-0đ</span>
+                </div>
+                <div class="summary-divider"></div>
+                <div class="summary-row total">
+                    <span>Tổng cộng</span>
+                    <span class="total-price">330.000đ</span>
+                </div>
+            </div>
+
+            <!-- PAYMENT METHOD -->
+            <div class="card payment-card">
+                <div class="card-header">
+                    <h3>Phương thức thanh toán</h3>
+                </div>
+                <div class="payment-method-box">
+                    <div class="pm-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
+                    <div class="pm-info">
+                        <div class="pm-name">Thanh toán tiền mặt</div>
+                        <div class="pm-desc">Thanh toán khi nhận hàng (COD)</div>
+                    </div>
+                </div>
+                <div class="secure-note"><i class="fa-solid fa-lock"></i> Thanh toán bảo mật và an toàn</div>
+            </div>
+        </div>
+    </div>
+</div>

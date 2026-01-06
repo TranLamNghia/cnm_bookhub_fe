@@ -11,18 +11,27 @@ const Router = {
     },
 
     handleRoute: function () {
-        let hash = window.location.hash.slice(1);
-        if (!hash) hash = 'home'; // Default route
+        let hash = window.location.hash.slice(1); // Remove '#'
 
-        // Check exact match first
-        let renderFunction = this.routes[hash];
+        // Handle parameters (ignored for now in matching, but useful to have)
+        const [path, query] = hash.split('?');
 
-        // If not found, try dynamic routes (not implemented yet for Client)
+        // Normalize path: remove leading slash if present
+        let routeName = path;
+        if (routeName && routeName.startsWith('/')) {
+            routeName = routeName.slice(1);
+        }
+
+        // Default to home if empty
+        if (!routeName) routeName = 'home';
+
+        // Check exact match
+        let renderFunction = this.routes[routeName];
 
         if (renderFunction) {
             renderFunction();
         } else {
-            console.warn(`Route ${hash} not found`);
+            console.warn(`Route ${routeName} not found`);
             // Fallback to home or 404
             if (this.routes['home']) this.routes['home']();
         }

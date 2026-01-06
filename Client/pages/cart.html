@@ -1,0 +1,110 @@
+<link rel="stylesheet" href="css/pages/cart.css">
+<main>
+    <section class="cart-page">
+        <div class="cart-container">
+            <!-- Left: Cart items -->
+            <div class="cart-items">
+                <div class="page-header">
+                    <h1>Giỏ hàng của tôi</h1>
+                    <p class="muted">Bạn đang có <span class="item-count">3</span> sản phẩm trong giỏ hàng</p>
+                </div>
+
+                <div class="cart-item">
+                    <img class="cover"
+                        src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=400"
+                        alt="cover">
+                    <div class="info">
+                        <div class="title">Đắc Nhân Tâm</div>
+                        <div class="author muted">Dale Carnegie · Bìa mềm</div>
+                    </div>
+                    <div class="price">75.000 đ</div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus">−</button>
+                        <input class="qty-input" type="number" value="2" min="1">
+                        <button class="qty-btn plus">+</button>
+                    </div>
+                    <div class="line-price">150.000 đ</div>
+                    <button class="remove">Xóa</button>
+                </div>
+
+                <div class="cart-item">
+                    <img class="cover"
+                        src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=400"
+                        alt="cover">
+                    <div class="info">
+                        <div class="title">Nhà Giả Kim</div>
+                        <div class="author muted">Paulo Coelho · Bìa cứng</div>
+                    </div>
+                    <div class="price">80.000 đ</div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus">−</button>
+                        <input class="qty-input" type="number" value="1" min="1">
+                        <button class="qty-btn plus">+</button>
+                    </div>
+                    <div class="line-price">80.000 đ</div>
+                    <button class="remove">Xóa</button>
+                </div>
+
+                <div class="cart-item">
+                    <img class="cover"
+                        src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=400"
+                        alt="cover">
+                    <div class="info">
+                        <div class="title">Tuổi Trẻ Đáng Giá Bao Nhiêu</div>
+                        <div class="author muted">Rosie Nguyễn · Bìa mềm</div>
+                    </div>
+                    <div class="price">90.000 đ</div>
+                    <div class="qty-control">
+                        <button class="qty-btn minus">−</button>
+                        <input class="qty-input" type="number" value="1" min="1">
+                        <button class="qty-btn plus">+</button>
+                    </div>
+                    <div class="line-price">90.000 đ</div>
+                    <button class="remove">Xóa</button>
+                </div>
+
+                <a class="continue" href="#/categories">← Tiếp tục mua sắm</a>
+            </div>
+
+            <!-- Right: Order summary -->
+            <aside class="order-summary">
+                <div class="summary-card">
+                    <h3>Thông tin đơn hàng</h3>
+                    <div class="summary-row">
+                        <div>Tạm tính (<span class="summary-count">3</span> sản phẩm)</div>
+                        <div class="muted summary-subtotal">320.000 đ</div>
+                    </div>
+                    <div class="summary-row">
+                        <div>Phí vận chuyển</div>
+                        <div class="muted">Miễn phí</div>
+                    </div>
+
+                    <hr>
+
+                    <div class="payment-methods">
+                        <h4>Phương thức thanh toán</h4>
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="cod" checked>
+                            <span class="radio-mark"></span>
+                            <span>Tiền mặt khi nhận hàng (COD)</span>
+                        </label>
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="online">
+                            <span class="radio-mark"></span>
+                            <span>Thanh toán online (VNPay, Paypal)</span>
+                        </label>
+                    </div>
+
+                    <hr>
+
+                    <div class="summary-total">
+                        <div>Tổng cộng</div>
+                        <div class="total-amount">304.000 đ</div>
+                    </div>
+
+                    <button class="btn-checkout">Tiến hành thanh toán</button>
+                </div>
+            </aside>
+        </div>
+    </section>
+</main>

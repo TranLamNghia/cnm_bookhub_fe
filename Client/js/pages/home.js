@@ -5,7 +5,6 @@ const HomePage = {
     },
 
     initEvents: function () {
-        // Init carousel, listeners for home page
-        console.log("Home Page Loaded");
+
     }
 };
