@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- ELEMENTS ---
+    const API_BASE = "http://localhost:8000/api"; // Added API_BASE definition
     const mainWrapper = document.getElementById("main-wrapper");
     const flipContainer = document.getElementById("flip-container");
 
@@ -90,30 +91,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- MOCK LOGIC (For Demo Video) ---
-            if (password === "12345678") {
-                showToast("Đăng nhập thành công!", "success");
-
-                // Role-based Redirect Logic (Mock)
-                if (email.startsWith("admin@")) {
-                    setTimeout(() => window.location.href = "../Admin/index.html", 1000);
-                } else {
-                    setTimeout(() => window.location.href = "../Client/index.html", 1000);
-                }
-            } else {
-                showToast("Sai email hoặc mật khẩu!", "error");
-            }
-
-            /* --- API INTEGRATION ---
+            /* --- API INTEGRATION --- */
             setLoading(loginBtn, true);
             try {
                 const response = await AuthAPI.login(email, password);
                 if (response.success) {
                     showToast(response.message, "success");
-                    
-                    // Role-based Redirect Logic (API)
-                    // Assuming response.user.role exists
-                    if (response.user && response.user.role === 'admin') {
+
+                    // Store token
+                    if (response.token) {
+                        localStorage.setItem("authToken", response.token);
+                    }
+
+                    // Role-based Redirect Logic (Basic for now)
+                    // You might need to fetch /users/me to get role if not in login response
+                    if (email.startsWith("admin@")) {
                         setTimeout(() => window.location.href = "../Admin/index.html", 1000);
                     } else {
                         setTimeout(() => window.location.href = "../Client/index.html", 1000);
@@ -122,11 +114,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     showToast(response.message, "error");
                 }
             } catch (error) {
+                console.error(error);
                 showToast("Lỗi kết nối server!", "error");
             } finally {
                 setLoading(loginBtn, false);
             }
-            */
         });
     }
 
@@ -155,12 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- MOCK LOGIC (For Demo Video) ---
-            showToast("Đăng ký thành công! Vui lòng đăng nhập.", "success");
-            mainWrapper.classList.remove("show-register"); // Slide to login
-            document.querySelector("#login-form input[type='email']").value = email;
-
-            /* --- API INTEGRATION ---
+            /* --- API INTEGRATION --- */
             setLoading(registerBtn, true);
             try {
                 const response = await AuthAPI.register({ name, email, password: pass });
@@ -176,7 +163,6 @@ document.addEventListener("DOMContentLoaded", () => {
             } finally {
                 setLoading(registerBtn, false);
             }
-            */
         });
     }
 
@@ -382,4 +368,76 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+});
+
+
+
+const API_BASE_URL = "http://localhost:8000/api";
+
+// SOCIAL LOGIN
+async function loginWithGoogle() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/google/authorize`, {
+            credentials: 'include' // Important: To allow setting 'state' cookie for OAuth
+        });
+        const data = await response.json();
+        if (data.authorization_url) {
+            window.location.href = data.authorization_url;
+        } else {
+            console.error("Không tìm thấy link đăng nhập Google:", data);
+            alert("Lỗi cấu hình đăng nhập Google!");
+        }
+    } catch (error) {
+        console.error("Lỗi kết nối Google Login:", error);
+    }
+}
+
+async function loginWithGithub() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/github/authorize`, {
+            credentials: 'include' // Important: To allow setting 'state' cookie for OAuth
+        });
+        const data = await response.json();
+        if (data.authorization_url) {
+            window.location.href = data.authorization_url;
+        } else {
+            console.error("Không tìm thấy link đăng nhập Github:", data);
+            alert("Lỗi cấu hình đăng nhập Github!");
+        }
+    } catch (error) {
+        console.error("Lỗi kết nối Github Login:", error);
+    }
+}
+
+// --- EVENT LISTENERS SETUP ---
+document.addEventListener("DOMContentLoaded", () => {
+    // LOGIN VIEW BUTTONS
+    const btnLoginGoogle = document.getElementById("btn-login-google");
+    const btnLoginGithub = document.getElementById("btn-login-github");
+
+    if (btnLoginGoogle) {
+        btnLoginGoogle.addEventListener("click", loginWithGoogle);
+        console.log("Login Google button attached");
+    } else {
+        console.warn("Login Google button NOT found (Check IDs in index.html)");
+    }
+
+    if (btnLoginGithub) {
+        btnLoginGithub.addEventListener("click", loginWithGithub);
+    }
+
+    // REGISTER VIEW BUTTONS
+    const btnRegisterGoogle = document.getElementById("btn-register-google");
+    const btnRegisterGithub = document.getElementById("btn-register-github");
+
+    if (btnRegisterGoogle) {
+        btnRegisterGoogle.addEventListener("click", loginWithGoogle);
+        console.log("Register Google button attached");
+    } else {
+        console.error("Register Google button NOT found");
+    }
+
+    if (btnRegisterGithub) {
+        btnRegisterGithub.addEventListener("click", loginWithGithub);
+    }
 });
