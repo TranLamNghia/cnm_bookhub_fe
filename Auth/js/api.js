@@ -201,5 +201,29 @@ const AuthAPI = {
                 message: "Lỗi kết nối server!"
             };
         }
+    },
+
+    /**
+     * API: Get Current User Profile
+     * @param {string} token 
+     */
+    async getProfile(token) {
+        try {
+            const response = await fetch(`${this.baseUrl}/users/me`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const user = await response.json();
+                return { success: true, user: user };
+            }
+            return { success: false };
+        } catch (error) {
+            console.error("Get Profile Error:", error);
+            return { success: false };
+        }
     }
 };

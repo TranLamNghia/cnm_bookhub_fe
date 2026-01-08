@@ -94,24 +94,35 @@ document.addEventListener("DOMContentLoaded", () => {
             /* --- API INTEGRATION --- */
             setLoading(loginBtn, true);
             try {
+                // 1. Login to get Token
                 const response = await AuthAPI.login(email, password);
-                if (response.success) {
+
+                if (response.success && response.token) {
                     showToast(response.message, "success");
 
-                    // Store token
-                    if (response.token) {
-                        localStorage.setItem("authToken", response.token);
-                    }
+                    // 2. Store Token
+                    localStorage.setItem("authToken", response.token);
 
-                    // Role-based Redirect Logic (Basic for now)
-                    // You might need to fetch /users/me to get role if not in login response
-                    if (email.startsWith("admin@")) {
-                        setTimeout(() => window.location.href = "../Admin/index.html", 1000);
+                    // 3. Fetch User Profile to check Role
+                    const profile = await AuthAPI.getProfile(response.token);
+
+                    if (profile.success && profile.user) {
+                        // 4. Role-based Redirect
+                        // is_superuser = true -> Admin
+                        // is_superuser = false -> Client
+                        if (profile.user.is_superuser) {
+                            setTimeout(() => window.location.href = "../Admin/index.html", 1000);
+                        } else {
+                            setTimeout(() => window.location.href = "../Client/index.html", 1000);
+                        }
                     } else {
+                        // Fallback if profile fails (default to Client)
+                        console.warn("Could not fetch profile, defaulting to Client");
                         setTimeout(() => window.location.href = "../Client/index.html", 1000);
                     }
+
                 } else {
-                    showToast(response.message, "error");
+                    showToast(response.message || "Đăng nhập thất bại", "error");
                 }
             } catch (error) {
                 console.error(error);
@@ -410,7 +421,44 @@ async function loginWithGithub() {
 }
 
 // --- EVENT LISTENERS SETUP ---
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    // --- CHECK FOR SOCIAL LOGIN TOKEN ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const error = urlParams.get('error');
+
+    if (token) {
+        // 1. Store Token
+        localStorage.setItem("authToken", token);
+
+        // Clear URL (Run immediately to hide token)
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        // 2. Fetch Profile & Redirect
+        try {
+            const profile = await AuthAPI.getProfile(token);
+            if (profile.success && profile.user) {
+                // Show toast? usage might be tricky if redirecting fast
+                // Just redirect
+                if (profile.user.is_superuser) {
+                    window.location.href = "../Admin/index.html";
+                } else {
+                    window.location.href = "../Client/index.html";
+                }
+                return; // Stop further execution
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    } else if (error) {
+        // showToast might not be defined/ready if script order issues, 
+        // but usually fine inside DOMContentLoaded
+        // We need to wait for elements? showToast uses Swal.
+        // Let's use alert or wait a bit.
+        console.error("Social Login Error:", error);
+        alert("Đăng nhập thất bại: " + error);
+    }
+
     // LOGIN VIEW BUTTONS
     const btnLoginGoogle = document.getElementById("btn-login-google");
     const btnLoginGithub = document.getElementById("btn-login-github");
