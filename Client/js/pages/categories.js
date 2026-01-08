@@ -1,44 +1,143 @@
 const CategoriesPage = {
+    state: {
+        limit: 10,
+        offset: 0,
+        category_id: null,
+        book_name: '',
+        min_price: null,
+        max_price: null,
+        isLoading: false,
+        hasMore: true
+    },
+
     render: async function () {
         await Layout.renderBody('pages/categories.html');
         this.init();
     },
 
-    init: function () {
-        this.renderBooks();
+    init: async function () {
+        this.initEvents();
+        await this.loadCategories();
+        this.state.offset = 0;
+        this.state.hasMore = true;
+        await this.loadBooks(false);
+        this.initInfiniteScroll();
     },
 
-    renderBooks: function () {
+    loadCategories: async function () {
+        const container = document.getElementById('category-filter-list');
+        if (!container) return;
+
+        try {
+            let categories = await CategoriesAPI.getCategoryName();
+
+            if (typeof categories === 'string') {
+                try {
+                    categories = JSON.parse(categories);
+                } catch (e) {
+                    console.error("Failed to parse categories JSON:", e);
+                    categories = [];
+                }
+            }
+
+            let list = categories;
+            if (!Array.isArray(list)) {
+                if (categories && Array.isArray(categories.data)) {
+                    list = categories.data;
+                } else {
+                    list = [];
+                }
+            }
+
+            if (list.length === 0) {
+                container.innerHTML = '<p>Không có danh mục nào.</p>';
+                return;
+            }
+
+            let html = '';
+            list.forEach(cat => {
+                html += `
+                <div class="category-item ${this.state.category_id == cat.id ? 'active' : ''}" data-id="${cat.id}">
+                    ${cat.name}
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            this.attachCategoryListeners();
+
+        } catch (error) {
+            console.error(error);
+            container.innerHTML = '<p class="error-text">Lỗi tải danh mục.</p>';
+        }
+    },
+
+    loadBooks: async function (isAppend = false) {
         const grid = document.getElementById("category-book-grid");
-        if (!grid) return;
+        const loader = document.getElementById("infinite-scroll-trigger");
+        const sentinel = document.getElementById("scroll-sentinel");
 
-        // Mock Data for Books
-        const books = [
-            { id: 1, title: "Của Cải Của Các Dân Tộc", author: "Adam Smith", price: "200.000đ", oldPrice: "250.000đ", img: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800", discount: "-20%" },
-            { id: 2, title: "Nghĩ Giàu Làm Giàu", author: "Napoleon Hill", price: "115.000đ", oldPrice: null, img: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800", discount: null },
-            { id: 3, title: "Dạy Con Làm Giàu (Tập 1)", author: "Robert Kiyosaki", price: "85.000đ", oldPrice: null, img: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=800", discount: "Best Seller" },
-            { id: 4, title: "Nhà Đầu Tư Thông Minh", author: "Benjamin Graham", price: "189.000đ", oldPrice: null, img: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=800", discount: null },
-            { id: 5, title: "Bắt Đầu Với Câu Hỏi Tại Sao", author: "Simon Sinek", price: "108.000đ", oldPrice: null, img: "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=800", discount: null },
-            { id: 6, title: "Không Đến Một: Bài Học Về Khởi Nghiệp", author: "Peter Thiel", price: "105.000đ", oldPrice: "150.000đ", img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&q=80&w=800", discount: "-30%" },
-            { id: 7, title: "Nguyên Tắc: Cuộc Sống Và Công Việc", author: "Ray Dalio", price: "350.000đ", oldPrice: null, img: "https://images.unsplash.com/photo-1491841550275-ad7854e35ca6?auto=format&fit=crop&q=80&w=800", discount: null },
-            { id: 8, title: "Chiến Lược Đại Dương Xanh", author: "W. Chan Kim", price: "155.000đ", oldPrice: null, img: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=800", discount: null },
-        ];
+        if (!grid || !loader) return;
 
+        if (this.state.isLoading) return;
+        if (!this.state.hasMore && isAppend) return;
+
+        this.state.isLoading = true;
+        loader.style.display = 'block';
+
+        if (!isAppend) {
+            grid.innerHTML = '';
+        }
+
+        try {
+            const params = new URLSearchParams({
+                limit: this.state.limit,
+                offset: this.state.offset
+            });
+            if (this.state.category_id) params.append('category_id', this.state.category_id);
+            if (this.state.book_name) params.append('book_name', this.state.book_name);
+            if (this.state.min_price) params.append('min_price', this.state.min_price);
+            if (this.state.max_price) params.append('max_price', this.state.max_price);
+
+            let books = await BooksAPI.getAllBooksClient(params.toString());
+
+            if (typeof books === 'string') { try { books = JSON.parse(books); } catch (e) { books = []; } }
+
+            let list = Array.isArray(books) ? books : (books?.data || []);
+
+            if (list.length === 0) {
+                this.state.hasMore = false;
+                if (!isAppend) grid.innerHTML = '<div class="empty-state">Không tìm thấy sách.</div>';
+            } else {
+                this.renderBookGrid(list, grid, isAppend);
+
+                if (list.length < this.state.limit) {
+                    this.state.hasMore = true;
+                }
+            }
+
+        } catch (error) {
+            console.error(error);
+            if (!isAppend) grid.innerHTML = '<div class="error-text">Lỗi tải dữ liệu.</div>';
+        } finally {
+            this.state.isLoading = false;
+            loader.style.display = 'none';
+
+            if (sentinel) {
+                sentinel.style.display = 'block';
+            }
+        }
+    },
+
+    renderBookGrid: function (books, grid, isAppend) {
         let html = "";
         books.forEach(book => {
-            let labelHtml = "";
-            if (book.discount) {
-                const isPercent = book.discount.includes("%");
-                // Using different colors based on label type
-                const bg = isPercent ? "#ef4444" : "#F59E0B";
-                labelHtml = `<div class="book-badge" style="background: ${bg};">${book.discount}</div>`;
-            }
+            const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.price);
 
             html += `
                 <div class="book-card" onclick="window.location.hash='#/book-detail?id=${book.id}'">
                     <div class="book-image-container">
-                        ${labelHtml}
-                        <img src="${book.img}" class="book-cover" alt="${book.title}">
+                        <img src="${book.image_url || 'img/default-book.png'}" class="book-cover" alt="${book.title}">
                     </div>
                     <div class="book-info">
                         <h3 class="book-title">${book.title}</h3>
@@ -46,10 +145,9 @@ const CategoriesPage = {
                     </div>
                     <div class="book-footer">
                         <div class="book-price">
-                            ${book.price} 
-                            ${book.oldPrice ? `<span class="old-price">${book.oldPrice}</span>` : ''}
+                            ${price} 
                         </div>
-                        <button class="btn-cart-icon">
+                        <button class="btn-cart-icon" onclick="event.stopPropagation(); CartPage.addToCart(${book.id})">
                             <i class="fa-solid fa-cart-shopping"></i>
                         </button>
                     </div>
@@ -57,42 +155,119 @@ const CategoriesPage = {
             `;
         });
 
-        grid.innerHTML = html;
-        this.initEvents();
+        if (isAppend) {
+            grid.insertAdjacentHTML('beforeend', html);
+        } else {
+            grid.innerHTML = html;
+        }
+    },
+
+    initInfiniteScroll: function () {
+        const sentinel = document.getElementById('scroll-sentinel');
+
+        if (!sentinel) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            const entry = entries[0];
+
+            if (entry.isIntersecting && this.state.hasMore) {
+                this.state.offset += 1;
+                this.loadBooks(true);
+            }
+        }, {
+            root: null,
+            rootMargin: '200px',
+            threshold: 0.1
+        });
+
+        observer.observe(sentinel);
     },
 
     initEvents: function () {
-        // Toggle Filter Category
-        const filterSubtitle = document.querySelector('.filter-group:nth-child(2) .filter-subtitle');
-        const hiddenItems = document.querySelectorAll('.hidden-item');
+        const searchInput = document.querySelector('.search-mini input');
+        const searchBtn = document.querySelector('.search-mini button');
 
-        if (filterSubtitle) {
-            filterSubtitle.addEventListener('click', () => {
-                const icon = filterSubtitle.querySelector('i');
-                const isExpanded = icon.classList.contains('fa-chevron-down');
+        if (searchBtn && searchInput) {
+            searchBtn.addEventListener('click', () => {
+                this.state.book_name = searchInput.value;
+                this.state.offset = 0;
+                this.state.hasMore = true;
+                this.loadBooks(false);
+            });
 
-                if (isExpanded) {
-                    // Collapse
-                    icon.classList.remove('fa-chevron-down');
-                    icon.classList.add('fa-chevron-up');
-                    hiddenItems.forEach(item => item.style.display = 'none');
-                } else {
-                    // Expand
-                    icon.classList.remove('fa-chevron-up');
-                    icon.classList.add('fa-chevron-down');
-                    hiddenItems.forEach(item => item.style.display = 'flex');
+            searchInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') {
+                    this.state.book_name = searchInput.value;
+                    this.state.offset = 0;
+                    this.state.hasMore = true;
+                    this.loadBooks(false);
                 }
             });
         }
 
-        // Reset Filter
+        const applyPriceBtn = document.querySelector('.btn-apply-filter');
+        if (applyPriceBtn) {
+            applyPriceBtn.addEventListener('click', () => {
+                const inputs = document.querySelectorAll('.price-inputs input');
+                if (inputs.length >= 2) {
+                    this.state.min_price = inputs[0].value || null;
+                    this.state.max_price = inputs[1].value || null;
+                }
+
+                const searchInput = document.querySelector('.search-mini input');
+                if (searchInput) {
+                    this.state.book_name = searchInput.value;
+                }
+
+                this.state.offset = 0;
+                this.state.hasMore = true;
+                this.loadBooks(false);
+            });
+        }
+
         const resetBtn = document.querySelector('.reset-filter');
         if (resetBtn) {
             resetBtn.addEventListener('click', (e) => {
                 e.preventDefault();
-                const checkboxes = document.querySelectorAll('.custom-checkbox input[type="checkbox"]');
-                checkboxes.forEach(cb => cb.checked = false);
+                this.state.category_id = null;
+                this.state.book_name = '';
+                this.state.min_price = null;
+                this.state.max_price = null;
+                this.state.offset = 0;
+
+                if (searchInput) searchInput.value = '';
+
+                const items = document.querySelectorAll('.category-item');
+                items.forEach(item => item.classList.remove('active'));
+
+                const priceInputs = document.querySelectorAll('.price-inputs input');
+                priceInputs.forEach(i => i.value = '');
+
+                this.state.hasMore = true;
+                this.loadBooks(false);
             });
         }
+    },
+
+    attachCategoryListeners: function () {
+        const items = document.querySelectorAll('.category-item');
+        items.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const id = item.dataset.id;
+
+                if (this.state.category_id == id) {
+                    this.state.category_id = null;
+                    item.classList.remove('active');
+                } else {
+                    this.state.category_id = id;
+                    items.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                }
+
+                this.state.offset = 0;
+                this.state.hasMore = true;
+                this.loadBooks(false);
+            });
+        });
     }
 };

@@ -21,43 +21,9 @@
                 Thể loại
                 <i class="fa-solid fa-chevron-up"></i>
             </h4>
-            <div class="filter-list">
-                <label class="custom-checkbox">
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                    Văn học
-                </label>
-                <label class="custom-checkbox">
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                    Kinh tế
-                </label>
-                <label class="custom-checkbox">
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                    Thiếu nhi
-                </label>
-                <label class="custom-checkbox">
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                    Kỹ năng sống
-                </label>
-                <!-- Hidden items -->
-                <label class="custom-checkbox hidden-item" style="display: none;">
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                    Ngoại ngữ
-                </label>
-                <label class="custom-checkbox hidden-item" style="display: none;">
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                    Lịch sử
-                </label>
-                <label class="custom-checkbox hidden-item" style="display: none;">
-                    <input type="checkbox">
-                    <span class="checkmark"></span>
-                    Tâm lý học
-                </label>
+            <div class="filter-list" id="category-filter-list">
+                <!-- Categories will be populated here -->
+                <div class="loader-spinner">Loading...</div>
             </div>
         </div>
 
@@ -67,9 +33,9 @@
                 Khoảng giá
             </h4>
             <div class="price-inputs">
-                <input type="text" placeholder="Từ" value="0">
+                <input type="text" placeholder="Từ" value="">
                 <span>-</span>
-                <input type="text" placeholder="Đến" value="500000">
+                <input type="text" placeholder="Đến" value="">
             </div>
             <button class="btn-apply-filter">Áp dụng</button>
         </div>
@@ -84,7 +50,6 @@
             <div class="sort-bar">
                 <div class="search-mini">
                     <input type="text" placeholder="Tìm kiếm sách...">
-                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
 
                 <div class="sort-actions">
@@ -116,15 +81,11 @@
             <div class="loader-spinner">Loading...</div>
         </div>
 
-        <!-- Pagination -->
-        <div class="pagination">
-            <button class="page-btn prev"><i class="fa-solid fa-chevron-left"></i></button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
-            <span class="page-dots">...</span>
-            <button class="page-btn">8</button>
-            <button class="page-btn next"><i class="fa-solid fa-chevron-right"></i></button>
+        <!-- Infinite Scroll Trigger / Loader -->
+        <div id="scroll-sentinel" style="height: 1px; width: 100%; margin-bottom: 20px;"></div>
+
+        <div id="infinite-scroll-trigger" style="text-align: center; padding: 20px; display: none;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: var(--primary);"></i>
         </div>
     </div>
 </div>
