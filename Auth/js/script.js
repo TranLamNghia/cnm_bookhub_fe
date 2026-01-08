@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- ELEMENTS ---
+    const API_BASE = "http://localhost:8000/api"; // Added API_BASE definition
     const mainWrapper = document.getElementById("main-wrapper");
     const flipContainer = document.getElementById("flip-container");
 
@@ -90,43 +91,45 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- MOCK LOGIC (For Demo Video) ---
-            if (password === "12345678") {
-                showToast("Đăng nhập thành công!", "success");
-
-                // Role-based Redirect Logic (Mock)
-                if (email.startsWith("admin@")) {
-                    setTimeout(() => window.location.href = "../Admin/index.html", 1000);
-                } else {
-                    setTimeout(() => window.location.href = "../Client/index.html", 1000);
-                }
-            } else {
-                showToast("Sai email hoặc mật khẩu!", "error");
-            }
-
-            /* --- API INTEGRATION ---
+            /* --- API INTEGRATION --- */
             setLoading(loginBtn, true);
             try {
+                // 1. Login to get Token
                 const response = await AuthAPI.login(email, password);
-                if (response.success) {
+
+                if (response.success && response.token) {
                     showToast(response.message, "success");
-                    
-                    // Role-based Redirect Logic (API)
-                    // Assuming response.user.role exists
-                    if (response.user && response.user.role === 'admin') {
-                        setTimeout(() => window.location.href = "../Admin/index.html", 1000);
+
+                    // 2. Store Token
+                    localStorage.setItem("authToken", response.token);
+
+                    // 3. Fetch User Profile to check Role
+                    const profile = await AuthAPI.getProfile(response.token);
+
+                    if (profile.success && profile.user) {
+                        // 4. Role-based Redirect
+                        // is_superuser = true -> Admin
+                        // is_superuser = false -> Client
+                        if (profile.user.is_superuser) {
+                            setTimeout(() => window.location.href = "../Admin/index.html", 1000);
+                        } else {
+                            setTimeout(() => window.location.href = "../Client/index.html", 1000);
+                        }
                     } else {
+                        // Fallback if profile fails (default to Client)
+                        console.warn("Could not fetch profile, defaulting to Client");
                         setTimeout(() => window.location.href = "../Client/index.html", 1000);
                     }
+
                 } else {
-                    showToast(response.message, "error");
+                    showToast(response.message || "Đăng nhập thất bại", "error");
                 }
             } catch (error) {
+                console.error(error);
                 showToast("Lỗi kết nối server!", "error");
             } finally {
                 setLoading(loginBtn, false);
             }
-            */
         });
     }
 
@@ -155,12 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- MOCK LOGIC (For Demo Video) ---
-            showToast("Đăng ký thành công! Vui lòng đăng nhập.", "success");
-            mainWrapper.classList.remove("show-register"); // Slide to login
-            document.querySelector("#login-form input[type='email']").value = email;
-
-            /* --- API INTEGRATION ---
+            /* --- API INTEGRATION --- */
             setLoading(registerBtn, true);
             try {
                 const response = await AuthAPI.register({ name, email, password: pass });
@@ -176,7 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
             } finally {
                 setLoading(registerBtn, false);
             }
-            */
         });
     }
 
@@ -382,4 +379,113 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+});
+
+
+
+const API_BASE_URL = "http://localhost:8000/api";
+
+// SOCIAL LOGIN
+async function loginWithGoogle() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/google/authorize`, {
+            credentials: 'include' // Important: To allow setting 'state' cookie for OAuth
+        });
+        const data = await response.json();
+        if (data.authorization_url) {
+            window.location.href = data.authorization_url;
+        } else {
+            console.error("Không tìm thấy link đăng nhập Google:", data);
+            alert("Lỗi cấu hình đăng nhập Google!");
+        }
+    } catch (error) {
+        console.error("Lỗi kết nối Google Login:", error);
+    }
+}
+
+async function loginWithGithub() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/github/authorize`, {
+            credentials: 'include' // Important: To allow setting 'state' cookie for OAuth
+        });
+        const data = await response.json();
+        if (data.authorization_url) {
+            window.location.href = data.authorization_url;
+        } else {
+            console.error("Không tìm thấy link đăng nhập Github:", data);
+            alert("Lỗi cấu hình đăng nhập Github!");
+        }
+    } catch (error) {
+        console.error("Lỗi kết nối Github Login:", error);
+    }
+}
+
+// --- EVENT LISTENERS SETUP ---
+document.addEventListener("DOMContentLoaded", async () => {
+    // --- CHECK FOR SOCIAL LOGIN TOKEN ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const error = urlParams.get('error');
+
+    if (token) {
+        // 1. Store Token
+        localStorage.setItem("authToken", token);
+
+        // Clear URL (Run immediately to hide token)
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        // 2. Fetch Profile & Redirect
+        try {
+            const profile = await AuthAPI.getProfile(token);
+            if (profile.success && profile.user) {
+                // Show toast? usage might be tricky if redirecting fast
+                // Just redirect
+                if (profile.user.is_superuser) {
+                    window.location.href = "../Admin/index.html";
+                } else {
+                    window.location.href = "../Client/index.html";
+                }
+                return; // Stop further execution
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    } else if (error) {
+        // showToast might not be defined/ready if script order issues, 
+        // but usually fine inside DOMContentLoaded
+        // We need to wait for elements? showToast uses Swal.
+        // Let's use alert or wait a bit.
+        console.error("Social Login Error:", error);
+        alert("Đăng nhập thất bại: " + error);
+    }
+
+    // LOGIN VIEW BUTTONS
+    const btnLoginGoogle = document.getElementById("btn-login-google");
+    const btnLoginGithub = document.getElementById("btn-login-github");
+
+    if (btnLoginGoogle) {
+        btnLoginGoogle.addEventListener("click", loginWithGoogle);
+        console.log("Login Google button attached");
+    } else {
+        console.warn("Login Google button NOT found (Check IDs in index.html)");
+    }
+
+    if (btnLoginGithub) {
+        btnLoginGithub.addEventListener("click", loginWithGithub);
+    }
+
+    // REGISTER VIEW BUTTONS
+    const btnRegisterGoogle = document.getElementById("btn-register-google");
+    const btnRegisterGithub = document.getElementById("btn-register-github");
+
+    if (btnRegisterGoogle) {
+        btnRegisterGoogle.addEventListener("click", loginWithGoogle);
+        console.log("Register Google button attached");
+    } else {
+        console.error("Register Google button NOT found");
+    }
+
+    if (btnRegisterGithub) {
+        btnRegisterGithub.addEventListener("click", loginWithGithub);
+    }
 });
