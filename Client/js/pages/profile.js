@@ -4,19 +4,134 @@ const ProfilePage = {
         this.init();
     },
 
-    init: function () {
+    init: async function () {
         this.chatInitialized = false;
+
+        // Load static metadata first
+        await this.loadProvinces();
+
         this.loadUserInfo();
         this.initTabs();
+        this.initEvents();
     },
 
-    loadUserInfo: function () {
-        const user = JSON.parse(localStorage.getItem('user_info'));
-        if (user) {
-            const avatar = document.getElementById('sidebar-avatar');
-            const name = document.getElementById('sidebar-name');
-            if (avatar && user.avatar) avatar.src = user.avatar;
-            if (name && user.name) name.textContent = user.name;
+    loadProvinces: async function () {
+        try {
+            const provinces = await LocationAPI.getAllProvinces();
+            const cityEl = document.getElementById('profile-city');
+            if (cityEl) {
+                // Keep default option
+                const defaultOption = cityEl.options[0];
+                cityEl.innerHTML = '';
+                cityEl.appendChild(defaultOption);
+
+                provinces.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.code;
+                    opt.textContent = p.full_name;
+                    cityEl.appendChild(opt);
+                });
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    },
+
+    loadWards: async function (provinceCode, selectedWardCode = null, shouldEnable = true) {
+        try {
+            const districtEl = document.getElementById('profile-district'); // This maps to Wards in this requirement
+            if (!districtEl) return;
+
+            districtEl.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+
+            if (!provinceCode) {
+                districtEl.disabled = true;
+                return;
+            }
+
+            const wards = await LocationAPI.getAllWards(provinceCode);
+            wards.forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w.code; // Use code
+                opt.textContent = w.full_name;
+                districtEl.appendChild(opt);
+            });
+
+            if (shouldEnable) {
+                districtEl.disabled = false;
+            }
+
+            if (selectedWardCode) {
+                districtEl.value = selectedWardCode;
+            }
+
+        } catch (e) {
+            console.error(e);
+        }
+    },
+
+    initEvents: function () {
+        const cityEl = document.getElementById('profile-city');
+        if (cityEl) {
+            cityEl.addEventListener('change', (e) => {
+                this.loadWards(e.target.value);
+            });
+        }
+    },
+
+    loadUserInfo: async function () {
+        try {
+            let user = await UserAPI.getMe();
+            console.log("Logged User Info:", user); // DEBUG
+
+            if (typeof user === 'string') {
+                try { user = JSON.parse(user); } catch (e) { }
+            }
+            console.log("Parsed User:", user); // DEBUG
+
+            // Update Sidebar
+            const avatarSidebar = document.getElementById('sidebar-avatar');
+            const nameSidebar = document.getElementById('sidebar-name');
+            const defaultAvatar = "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.full_name || "User") + "&background=eff6ff&color=2563eb";
+
+            if (avatarSidebar) avatarSidebar.src = user.avatar_url || defaultAvatar;
+            if (nameSidebar) nameSidebar.textContent = user.full_name || user.email || "Người dùng";
+
+            // Update Form Fields
+            const fullnameEl = document.getElementById('profile-fullname');
+            const emailEl = document.getElementById('profile-email');
+            const phoneEl = document.getElementById('profile-phone');
+            const addressEl = document.getElementById('profile-address');
+
+            // Avatar Preview in Edit Mode
+            const avatarPreview = document.getElementById('avatar-preview');
+
+            if (fullnameEl) fullnameEl.value = user.full_name || "";
+            if (emailEl) emailEl.value = user.email || "";
+            if (phoneEl) phoneEl.value = user.phone_number || "";
+            if (addressEl) addressEl.value = user.address_detail || "";
+
+            if (avatarPreview) avatarPreview.src = user.avatar_url || defaultAvatar;
+
+
+            // Handle Address Selection
+            if (user.ward && user.ward.province) {
+                const cityEl = document.getElementById('profile-city');
+                if (cityEl) {
+                    cityEl.value = user.ward.province.code;
+                    // Pass false to keep it disabled in View Mode
+                    await this.loadWards(user.ward.province.code, user.ward.code, false);
+                }
+            }
+
+        } catch (error) {
+            console.error("Error loading user info:", error);
+            if (error.status === 401) {
+                Utils.showToast('error', 'Vui lòng đăng nhập để xem thông tin!');
+                setTimeout(() => window.location.href = '../Auth/index.html', 2000);
+            } else {
+                Utils.showToast('error', 'Không thể tải thông tin người dùng');
+            }
         }
 
         // Logout
@@ -74,7 +189,11 @@ const ProfilePage = {
 
             btnCancel.addEventListener('click', () => {
                 resetForm();
-                // Reload original data if needed
+                if (this.currentUser) {
+                    this.renderUserData(this.currentUser); // Instant revert from cache
+                } else {
+                    this.loadUserInfo(); // Fallback
+                }
             });
 
             btnSave.addEventListener('click', () => {
