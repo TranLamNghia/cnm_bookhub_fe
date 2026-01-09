@@ -1,6 +1,67 @@
+const API_BASE_URL = "http://localhost:8000/api";
+
 const Layout = {
-    init: function () {
+    init: async function () {
+        await this.restoreSession();
         return this.loadLayout();
+    },
+
+    restoreSession: async function () {
+        // 1. Try to get token from URL first
+        const urlParams = new URLSearchParams(window.location.search);
+        let token = urlParams.get('token');
+        const error = urlParams.get('error'); // Handle potential auth errors
+
+        if (token) {
+            // New login via Social
+            localStorage.setItem("authToken", token);
+            // Clean URL immediately
+            const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({}, document.title, cleanUrl);
+        } else {
+            // Restore from Storage
+            token = localStorage.getItem("authToken");
+        }
+
+        if (token) {
+            // 2. Verify and Fetch Profile
+            try {
+                const response = await fetch(`${API_BASE_URL}/users/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const user = await response.json();
+
+                    // Normalize User Object
+                    const userInfo = {
+                        name: user.full_name || user.email.split('@')[0],
+                        avatar: user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=random`,
+                        email: user.email,
+                        id: user.id,
+                        is_superuser: user.is_superuser
+                    };
+                    localStorage.setItem("user_info", JSON.stringify(userInfo));
+
+                    // Update UI
+                    this.checkAuth();
+                } else {
+                    // Token expired or invalid
+                    console.warn("Token invalid, clearing... Status:", response.status);
+                    localStorage.removeItem("authToken");
+                    localStorage.removeItem("user_info");
+                    this.checkAuth(); // Update UI to Guest
+                }
+            } catch (e) {
+                console.error("Fetch User Error:", e);
+                // On network error, maybe keep the token? Or simple fail.
+                // For now, let's not aggressively delete on network error, but UI won't update fully if checkAuth relies on user_info which might be stale.
+            }
+        } else if (error) {
+            // Handle Social Login Error (Optional)
+            console.error("Social Auth Error:", error);
+            // Could show a toast here if SweetAlert is loaded
+        }
     },
 
     loadLayout: function () {
@@ -47,7 +108,7 @@ const Layout = {
         const cartBtn = document.getElementById("btn-cart-header");
         if (cartBtn) {
             cartBtn.addEventListener("click", () => {
-                const token = localStorage.getItem("accessToken");
+                const token = localStorage.getItem("authToken");
                 if (token) {
                     window.location.hash = "#/cart";
                 } else {
@@ -84,7 +145,7 @@ const Layout = {
         const authContainer = document.getElementById("auth-container");
         if (!authContainer) return;
 
-        const token = localStorage.getItem("accessToken");
+        const token = localStorage.getItem("authToken");
         const userStr = localStorage.getItem("user_info"); // Assuming we store user info alongside token
 
         if (token) {
@@ -98,6 +159,7 @@ const Layout = {
                 <div class="user-profile" id="user-profile-btn">
                     <img src="${user.avatar}" class="avatar" alt="Avatar">
                     <span class="user-name">${user.name}</span>
+                    ${user.is_superuser ? '<small style="display:block; font-size: 0.8em; color: var(--primary-color)">(Admin)</small>' : ''}
                 </div>
             `;
 
@@ -116,9 +178,9 @@ const Layout = {
     },
 
     logout: function () {
-        localStorage.removeItem("accessToken");
+        localStorage.removeItem("authToken");
         localStorage.removeItem("user_info");
-        window.location.reload();
+        window.location.href = "index.html";
     },
 
     // Legacy support if needed, but checkAuth replaces it

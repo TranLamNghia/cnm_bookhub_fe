@@ -23,10 +23,7 @@ const ProfilePage = {
         const logoutBtn = document.getElementById('btn-logout-sidebar');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('user_info');
-                window.location.hash = '#/';
-                window.location.reload();
+                Layout.logout();
             });
         }
 
@@ -101,7 +98,11 @@ const ProfilePage = {
                 const file = e.target.files[0];
                 if (file) {
                     if (file.size > 1024 * 1024) {
-                        alert("File quá lớn! Vui lòng chọn ảnh dưới 1MB.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'File quá lớn! Vui lòng chọn ảnh dưới 1MB.'
+                        });
                         return;
                     }
 
