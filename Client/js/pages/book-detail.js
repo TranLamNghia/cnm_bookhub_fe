@@ -10,7 +10,13 @@ const BookDetailPage = {
         const id = params.get('id');
 
         if (!id) {
-            alert("Không tìm thấy ID sách!");
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Không tìm thấy ID sách!',
+                timer: 2000,
+                showConfirmButton: false
+            });
             window.location.hash = '#/';
             return;
         }
@@ -36,8 +42,23 @@ const BookDetailPage = {
             this.updateDOM(data);
 
             // Load related books if category exists
+            // Load related books if category exists
             if (data.category_id) {
                 this.renderRelatedBooks(data.category_id);
+            } else if (data.category_name) {
+                // Fallback: Find ID by name
+                try {
+                    let cats = await CategoriesAPI.getCategoryName();
+                    if (typeof cats === 'string') { try { cats = JSON.parse(cats); } catch (e) { cats = []; } }
+                    const catList = Array.isArray(cats) ? cats : (cats.data || []);
+                    const matched = catList.find(c => c.name === data.category_name);
+
+                    if (matched) {
+                        this.renderRelatedBooks(matched.id);
+                    }
+                } catch (e) {
+                    console.warn("Could not resolve category ID for related books", e);
+                }
             }
 
         } catch (error) {
@@ -92,7 +113,7 @@ const BookDetailPage = {
         if (!container) return;
 
         try {
-            let books = await BooksAPI.getRelatedBooks(categoryId, 4);
+            let books = await BooksAPI.getRelatedBooks(categoryId, 3);
 
             if (typeof books === 'string') {
                 try { books = JSON.parse(books); } catch (e) { }
@@ -159,12 +180,47 @@ const BookDetailPage = {
 
                 const quantity = parseInt(qtyInput.value) || 1;
                 try {
-                    const result = await CartAPI.addToCart(this.currentBook.id, quantity);
-                    alert("Đã thêm vào giỏ hàng thành công!");
-                    // Optional: Update cart badge or global state here
+                    let result = await CartAPI.addToCart(this.currentBook.id, quantity);
+                    if (typeof result === 'string') {
+                        try { result = JSON.parse(result); } catch (e) { }
+                    }
+
+                    console.log(result);
+                    if (result.code != 200) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thất bại',
+                            text: result.message || "Lỗi không xác định",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: 'Đã thêm vào giỏ hàng thành công!',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
                 } catch (error) {
                     console.error(error);
-                    alert("Lỗi thêm vào giỏ hàng: " + (error.message || "Unknown error"));
+
+                    let errorTitle = 'Lỗi';
+                    let errorMsg = "Lỗi thêm vào giỏ hàng: " + (error.message || "Unknown error");
+                    let icon = 'error';
+
+                    if (error.status === 400 || (error.message && error.message.includes("Không đủ số lượng"))) {
+                        errorTitle = 'Hết hàng';
+                        errorMsg = error.message || "Không đủ số lượng sách, hãy giảm số lượng lại!";
+                        icon = 'warning';
+                    }
+
+                    Swal.fire({
+                        icon: icon,
+                        title: errorTitle,
+                        text: errorMsg
+                    });
                 }
             };
         }
