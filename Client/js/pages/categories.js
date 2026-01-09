@@ -6,6 +6,7 @@ const CategoriesPage = {
         book_name: '',
         min_price: null,
         max_price: null,
+        sort_order: 'price_asc',
         isLoading: false,
         hasMore: true
     },
@@ -101,9 +102,20 @@ const CategoriesPage = {
 
             let books = await BooksAPI.getAllBooksClient(params.toString());
 
-            if (typeof books === 'string') { try { books = JSON.parse(books); } catch (e) { books = []; } }
+            // Handle potential string response from some mock servers
+            if (typeof books === 'string') {
+                try { books = JSON.parse(books); } catch (e) { books = []; }
+            }
 
+            // The user said the API returns a direct array [{}, {}, ...]
             let list = Array.isArray(books) ? books : (books?.data || []);
+
+            // Client-side Sort (if API doesn't support it yet)
+            if (this.state.sort_order === 'price_asc') {
+                list.sort((a, b) => a.price - b.price);
+            } else if (this.state.sort_order === 'price_desc') {
+                list.sort((a, b) => b.price - a.price);
+            }
 
             if (list.length === 0) {
                 this.state.hasMore = false;
@@ -111,7 +123,10 @@ const CategoriesPage = {
             } else {
                 this.renderBookGrid(list, grid, isAppend);
 
+                // If fewer items than limit were returned, we reached the end
                 if (list.length < this.state.limit) {
+                    this.state.hasMore = false;
+                } else {
                     this.state.hasMore = true;
                 }
             }
@@ -205,6 +220,16 @@ const CategoriesPage = {
             });
         }
 
+        const sortSelect = document.querySelector('.sort-select');
+        if (sortSelect) {
+            sortSelect.addEventListener('change', (e) => {
+                this.state.sort_order = e.target.value;
+                this.state.offset = 0;
+                this.state.hasMore = true;
+                this.loadBooks(false);
+            });
+        }
+
         const applyPriceBtn = document.querySelector('.btn-apply-filter');
         if (applyPriceBtn) {
             applyPriceBtn.addEventListener('click', () => {
@@ -233,9 +258,11 @@ const CategoriesPage = {
                 this.state.book_name = '';
                 this.state.min_price = null;
                 this.state.max_price = null;
+                this.state.sort_order = 'price_asc';
                 this.state.offset = 0;
 
                 if (searchInput) searchInput.value = '';
+                if (sortSelect) sortSelect.value = 'price_asc';
 
                 const items = document.querySelectorAll('.category-item');
                 items.forEach(item => item.classList.remove('active'));

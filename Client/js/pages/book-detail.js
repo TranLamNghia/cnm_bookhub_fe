@@ -4,44 +4,169 @@ const BookDetailPage = {
         this.init();
     },
 
-    init: function () {
-        // Here we would fetch book details based on Query Param ID
-        this.renderRelatedBooks();
+    init: async function () {
+        // Get ID from URL
+        const params = new URLSearchParams(window.location.hash.split('?')[1]);
+        const id = params.get('id');
 
-        // Mock interactivity for thumbnails
-        window.changeImage = (el) => {
-            const src = el.querySelector('img').src;
-            document.querySelector('.main-image').src = src;
-            document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-        };
+        if (!id) {
+            alert("Không tìm thấy ID sách!");
+            window.location.hash = '#/';
+            return;
+        }
+
+        await this.loadBookDetail(id);
+        this.initEvents();
     },
 
-    renderRelatedBooks: function () {
-        // Mock Related Books
-        const books = [
-            { id: 101, title: "Cây Cam Ngọt Của Tôi", author: "Jose Mauro", price: "86.000đ", img: "https://images.unsplash.com/photo-1629198688000-71f23e745b6e?auto=format&fit=crop&q=80&w=800" },
-            { id: 102, title: "Hoàng Tử Bé", author: "Antoine de Saint-Exupéry", price: "45.000đ", img: "https://images.unsplash.com/photo-1610882648335-ced8fc8fa6b6?auto=format&fit=crop&q=80&w=800" },
-            { id: 103, title: "Mắt Biếc", author: "Nguyễn Nhật Ánh", price: "99.000đ", img: "https://images.unsplash.com/photo-1593351415075-3bac9f45c877?auto=format&fit=crop&q=80&w=800" },
-            { id: 104, title: "Rừng Na Uy", author: "Haruki Murakami", price: "120.000đ", img: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800" },
-        ];
+    loadBookDetail: async function (id) {
+        try {
+            const book = await BooksAPI.getBookById(id);
 
+            // Check if response is string
+            let data = book;
+            if (typeof data === 'string') {
+                try { data = JSON.parse(data); } catch (e) { }
+            }
+
+            // Save current book data for cart interactions
+            this.currentBook = data;
+
+            // Populate DOM
+            this.updateDOM(data);
+
+            // Load related books if category exists
+            if (data.category_id) {
+                this.renderRelatedBooks(data.category_id);
+            }
+
+        } catch (error) {
+            console.error("Error loading book detail:", error);
+            document.querySelector('.book-detail-container').innerHTML =
+                '<div class="error-text" style="text-align:center; padding: 50px;">Không thể tải thông tin sách.</div>';
+        }
+    },
+
+    updateDOM: function (book) {
+        // Title
+        document.title = book.title + " - BookHub";
+        document.querySelector('.product-title').textContent = book.title;
+
+        // Breadcrumb
+        // Update category link/text if available, currently just setting text
+        const breadcrumbCat = document.querySelector('.breadcrumb a[href="#/categories"]');
+        if (breadcrumbCat && book.category_name) breadcrumbCat.textContent = book.category_name;
+        document.querySelector('.breadcrumb span:last-child').textContent = book.title;
+
+        // Meta
+        const authorEl = document.querySelector('.product-meta span:first-child b');
+        if (authorEl) authorEl.textContent = book.author || 'Đang cập nhật';
+
+        const codeEl = document.querySelector('.product-meta span:last-child b');
+        if (codeEl) codeEl.textContent = book.id;
+
+        // Price
+        const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.price);
+        document.querySelector('.current-price').textContent = price;
+
+        // Description
+        const descContainer = document.querySelector('.tab-content');
+        if (descContainer) {
+            // If description contains HTML, use innerHTML, else textContent wrapped in p
+            // Assuming simple text for safety unless specified otherwise. 
+            // Splitting by newline for paragraphs if needed.
+            const desc = book.description || 'Chưa có mô tả.';
+            descContainer.innerHTML = `<p>${desc.replace(/\n/g, '<br>')}</p>`;
+        }
+
+        // Image
+        const img = document.querySelector('.main-image');
+        if (img) {
+            img.src = book.image_url || 'img/default-book.png';
+            img.alt = book.title;
+        }
+    },
+
+    renderRelatedBooks: async function (categoryId) {
         const container = document.getElementById("related-books-list");
         if (!container) return;
 
-        let html = "";
-        books.forEach(book => {
-            html += `
-                <div class="mini-book-item" onclick="window.location.hash='#/book-detail?id=${book.id}'">
-                    <img src="${book.img}" class="mini-book-cover">
-                    <div class="mini-book-info">
-                        <h4>${book.title}</h4>
-                        <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">${book.author}</div>
-                        <div class="mini-book-price">${book.price}</div>
+        try {
+            let books = await BooksAPI.getRelatedBooks(categoryId, 4);
+
+            if (typeof books === 'string') {
+                try { books = JSON.parse(books); } catch (e) { }
+            }
+
+            // Check API response structure (array or object with data)
+            let list = Array.isArray(books) ? books : (books.data || []);
+
+            // Filter out current book if present
+            if (this.currentBook) {
+                list = list.filter(b => b.id != this.currentBook.id);
+            }
+
+            if (list.length === 0) {
+                container.innerHTML = '<p>Không có sách liên quan.</p>';
+                return;
+            }
+
+            let html = "";
+            list.forEach(book => {
+                const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.price);
+                html += `
+                    <div class="mini-book-item" onclick="window.location.hash='#/book-detail?id=${book.id}'; window.location.reload();">
+                        <img src="${book.image_url || 'img/default-book.png'}" class="mini-book-cover">
+                        <div class="mini-book-info">
+                            <h4>${book.title}</h4>
+                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">${book.author}</div>
+                            <div class="mini-book-price">${price}</div>
+                        </div>
                     </div>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
+                `;
+            });
+            container.innerHTML = html;
+
+        } catch (error) {
+            console.error("Error loading related books:", error);
+            container.innerHTML = '<p>Không thể tải sách liên quan.</p>';
+        }
+    },
+
+    initEvents: function () {
+        // Quantity Selector
+        const qtyInput = document.querySelector('.qty-btn-group input');
+        const btnMinus = document.querySelector('.qty-btn-group button:first-child');
+        const btnPlus = document.querySelector('.qty-btn-group button:last-child');
+
+        if (btnMinus && btnPlus && qtyInput) {
+            btnMinus.onclick = () => {
+                let val = parseInt(qtyInput.value) || 1;
+                if (val > 1) qtyInput.value = val - 1;
+            };
+
+            btnPlus.onclick = () => {
+                let val = parseInt(qtyInput.value) || 1;
+                qtyInput.value = val + 1;
+            };
+        }
+
+        // Add to Cart
+        const btnAddCart = document.querySelector('.btn-add-cart');
+        if (btnAddCart) {
+            btnAddCart.onclick = async () => {
+                if (!this.currentBook) return;
+
+                const quantity = parseInt(qtyInput.value) || 1;
+                try {
+                    const result = await CartAPI.addToCart(this.currentBook.id, quantity);
+                    alert("Đã thêm vào giỏ hàng thành công!");
+                    // Optional: Update cart badge or global state here
+                } catch (error) {
+                    console.error(error);
+                    alert("Lỗi thêm vào giỏ hàng: " + (error.message || "Unknown error"));
+                }
+            };
+        }
     }
 };

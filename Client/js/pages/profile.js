@@ -23,10 +23,7 @@ const ProfilePage = {
         const logoutBtn = document.getElementById('btn-logout-sidebar');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('user_info');
-                window.location.hash = '#/';
-                window.location.reload();
+                Layout.logout();
             });
         }
 

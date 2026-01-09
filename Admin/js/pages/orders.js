@@ -81,7 +81,6 @@ const OrdersPage = {
   getStatusBadge: function (status) {
     const badges = {
       'pending': '<span class="badge badge-warning">Chờ xử lý</span>',
-      'processing': '<span class="badge badge-info">Đã xử lý</span>',
       'shipping': '<span class="badge badge-info">Đang vận chuyển</span>',
       'completed': '<span class="badge badge-success">Thành công</span>',
       'cancelled': '<span class="badge badge-danger">Đã hủy</span>'

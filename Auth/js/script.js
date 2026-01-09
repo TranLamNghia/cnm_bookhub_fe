@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- ELEMENTS ---
-    const API_BASE = "http://localhost:8000/api"; // Added API_BASE definition
+    const API_BASE = "http://localhost:5501/api"; // Added API_BASE definition
     const mainWrapper = document.getElementById("main-wrapper");
     const flipContainer = document.getElementById("flip-container");
 

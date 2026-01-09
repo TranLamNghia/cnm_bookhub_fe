@@ -1,3 +1,27 @@
+// window.BooksAPI = {
+//   getAllBooksClient: async (queryParams) => {
+//     let url = `book/getAllBooksClient?`;
+//     if (queryParams) {
+//       url += `&${queryParams}`;
+//     }
+//     return await API.request(url);
+//   },
+
+//   getBookById: async (id) => {
+//     // if (BooksAPI.USE_MOCK_DATA) {
+//     //   await new Promise(r => setTimeout(r, 200));
+//     //   const books = BooksAPI.getMockData();
+//     //   const book = books.find(b => b.id == id);
+//     //   if (book) return book;
+//     //   throw new Error("Sách không tồn tại!");
+//     // }
+//     return await API.request(`/book/getBookById?id=${id}`);
+//   },
+
+//   getRelatedBooks: async (category_id, limit = 4) => {
+//     return await API.request(`/book/getRelatedBooks?category_id=${category_id}&limit=${limit}`);
+//   }
+// };
 window.BooksAPI = {
   getAllBooksClient: async (queryParams) => {
     let url = `/book/getAllBooksClient`;
