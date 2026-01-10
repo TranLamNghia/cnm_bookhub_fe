@@ -1,12 +1,20 @@
 const API = {
-    baseUrl: 'https://c28500f2-d1d8-4ea6-ae8e-cc23a30596e8.mock.pstmn.io',
+    baseUrl: 'https://e367ffd6-066d-44d2-9cbf-921f15303471.mock.pstmn.io',
 
     request: async function (endpoint, method = 'GET', body = null) {
-        const url = `${this.baseUrl}${endpoint}`;
+        // Support absolute URLs
+        const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
         console.log(url);
+
         const headers = {
             'Content-Type': 'application/json',
         };
+
+        // Inject Auth Token
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
 
         const config = {
             method,

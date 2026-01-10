@@ -4,19 +4,156 @@ const ProfilePage = {
         this.init();
     },
 
-    init: function () {
+    init: async function () {
         this.chatInitialized = false;
+
+        // Load static metadata first
+        await this.loadProvinces();
+
         this.loadUserInfo();
         this.initTabs();
+        this.initEvents();
     },
 
-    loadUserInfo: function () {
-        const user = JSON.parse(localStorage.getItem('user_info'));
-        if (user) {
-            const avatar = document.getElementById('sidebar-avatar');
-            const name = document.getElementById('sidebar-name');
-            if (avatar && user.avatar) avatar.src = user.avatar;
-            if (name && user.name) name.textContent = user.name;
+    loadProvinces: async function () {
+        try {
+            let provinces = await LocationAPI.getAllProvinces();
+
+            // Handle double-encoded JSON or internal server string response
+            if (typeof provinces === 'string') {
+                try { provinces = JSON.parse(provinces); } catch (e) { }
+            }
+
+            // Ensure array
+            if (!Array.isArray(provinces)) {
+                console.error("Provinces data is not an array:", provinces);
+                return;
+            }
+
+            const cityEl = document.getElementById('profile-city');
+            if (cityEl) {
+                // Keep default option
+                const defaultOption = cityEl.options[0];
+                cityEl.innerHTML = '';
+                cityEl.appendChild(defaultOption);
+
+                provinces.forEach(p => {
+                    const opt = document.createElement('option');
+                    opt.value = p.code;
+                    opt.textContent = p.full_name;
+                    cityEl.appendChild(opt);
+                });
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    },
+
+    loadWards: async function (provinceCode, selectedWardCode = null, shouldEnable = true) {
+        try {
+            const districtEl = document.getElementById('profile-district'); // This maps to Wards in this requirement
+            if (!districtEl) return;
+
+            districtEl.innerHTML = '<option value="">Chọn Phường/Xã</option>';
+
+            if (!provinceCode) {
+                districtEl.disabled = true;
+                return;
+            }
+
+            let wards = await LocationAPI.getAllWards(provinceCode);
+
+            // Handle double-encoded JSON or internal server string response
+            if (typeof wards === 'string') {
+                try { wards = JSON.parse(wards); } catch (e) { }
+            }
+
+            // Ensure array
+            if (!Array.isArray(wards)) {
+                console.error("Wards data is not an array:", wards);
+                // If invalid data, maybe show empty or don't crash
+                wards = [];
+            }
+
+            wards.forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w.code; // Use code
+                opt.textContent = w.full_name;
+                districtEl.appendChild(opt);
+            });
+
+            if (shouldEnable) {
+                districtEl.disabled = false;
+            }
+
+            if (selectedWardCode) {
+                districtEl.value = selectedWardCode;
+            }
+
+        } catch (e) {
+            console.error(e);
+        }
+    },
+
+    initEvents: function () {
+        const cityEl = document.getElementById('profile-city');
+        if (cityEl) {
+            cityEl.addEventListener('change', (e) => {
+                this.loadWards(e.target.value);
+            });
+        }
+    },
+
+    loadUserInfo: async function () {
+        try {
+            let user = await UserAPI.getMe();
+
+            if (typeof user === 'string') {
+                try { user = JSON.parse(user); } catch (e) { }
+            }
+
+            // Update Sidebar
+            const avatarSidebar = document.getElementById('sidebar-avatar');
+            const nameSidebar = document.getElementById('sidebar-name');
+            const defaultAvatar = "img/user.png";
+
+            if (avatarSidebar) avatarSidebar.src = user.avatar_url || defaultAvatar;
+            if (nameSidebar) nameSidebar.textContent = user.full_name || user.email || "Người dùng";
+
+            // Update Form Fields
+            const fullnameEl = document.getElementById('profile-fullname');
+            const emailEl = document.getElementById('profile-email');
+            const phoneEl = document.getElementById('profile-phone');
+            const addressEl = document.getElementById('profile-address');
+
+            // Avatar Preview in Edit Mode
+            const avatarPreview = document.getElementById('avatar-preview');
+
+            if (fullnameEl) fullnameEl.value = user.full_name || "";
+            if (emailEl) emailEl.value = user.email || "";
+            if (phoneEl) phoneEl.value = user.phone_number || "";
+            if (addressEl) addressEl.value = user.address_detail || "";
+
+            if (avatarPreview) avatarPreview.src = user.avatar_url || defaultAvatar;
+
+
+            // Handle Address Selection
+            if (user.ward && user.ward.province) {
+                const cityEl = document.getElementById('profile-city');
+                if (cityEl) {
+                    cityEl.value = user.ward.province.code;
+                    await this.loadWards(user.ward.province.code, user.ward.code, false);
+                }
+            }
+
+        } catch (error) {
+            console.error("Error loading user info:", error);
+            if (error.status === 401) {
+                Utils.showToast('error', 'Vui lòng đăng nhập để xem thông tin!');
+                setTimeout(() => window.location.href = '../Auth/index.html', 2000);
+            } else {
+                Utils.showToast('error', 'Không thể tải thông tin người dùng');
+            }
         }
 
         // Logout
@@ -74,18 +211,85 @@ const ProfilePage = {
 
             btnCancel.addEventListener('click', () => {
                 resetForm();
-                // Reload original data if needed
+                if (this.currentUser) {
+                    this.renderUserData(this.currentUser); // Instant revert from cache
+                } else {
+                    this.loadUserInfo(); // Fallback
+                }
             });
 
-            btnSave.addEventListener('click', () => {
-                // Mock Save
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Đã lưu thay đổi',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                resetForm();
+            btnSave.addEventListener('click', async () => {
+                // 1. Collect Data
+                const fullname = document.getElementById('profile-fullname').value.trim();
+                const email = document.getElementById('profile-email').value.trim();
+                const phone = document.getElementById('profile-phone').value.trim();
+                const cityCode = document.getElementById('profile-city').value;
+                const wardCode = document.getElementById('profile-district').value; // Mapped to ward_code
+                const addressDetail = document.getElementById('profile-address').value.trim();
+                const avatarUrl = document.getElementById('avatar-preview').src;
+
+                // 2. Validation
+                if (!fullname) {
+                    Utils.showToast('error', 'Vui lòng nhập họ và tên');
+                    return;
+                }
+                if (!email) {
+                    Utils.showToast('error', 'Vui lòng nhập email');
+                    return;
+                }
+                if (!phone) {
+                    Utils.showToast('error', 'Vui lòng nhập số điện thoại');
+                    return;
+                }
+                if (!cityCode || cityCode === "") {
+                    Utils.showToast('error', 'Vui lòng chọn Tỉnh/Thành phố');
+                    return;
+                }
+                if (!wardCode || wardCode === "") {
+                    Utils.showToast('error', 'Vui lòng chọn Phường/Xã');
+                    return;
+                }
+                if (!addressDetail) {
+                    Utils.showToast('error', 'Vui lòng nhập địa chỉ chi tiết');
+                    return;
+                }
+
+                // 3. Call API
+                try {
+                    const payload = {
+                        full_name: fullname,
+                        avatar_url: avatarUrl,
+                        email: email,
+                        phone_number: phone,
+                        ward_code: wardCode,
+                        address_detail: addressDetail
+                    };
+                    let res = await UserAPI.updateMe(payload);
+
+                    if (typeof res === 'string') {
+                        try { res = JSON.parse(res); } catch (e) { }
+                    }
+
+                    if (res && Number(res.code) === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: res.message || 'Cập nhật thông tin thành công',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+
+                        resetForm();
+                        this.loadUserInfo();
+
+                    } else {
+                        throw new Error(res.message || "Update failed");
+                    }
+
+                } catch (e) {
+                    console.error(e);
+                    Utils.showToast('error', 'Không thể cập nhật thông tin: ' + e.message);
+                }
             });
         }
 

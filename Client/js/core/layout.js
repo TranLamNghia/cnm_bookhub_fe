@@ -36,7 +36,7 @@ const Layout = {
                     // Normalize User Object
                     const userInfo = {
                         name: user.full_name || user.email.split('@')[0],
-                        avatar: user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=random`,
+                        avatar: user.avatar_url || "img/user.png",
                         email: user.email,
                         id: user.id,
                         is_superuser: user.is_superuser
@@ -136,9 +136,6 @@ const Layout = {
             // Remove active class (if you add one in CSS)
             link.style.color = "";
         });
-
-        // Find link matching current route
-        // (Just a placeholder logic as we don't have active CSS class yet)
     },
 
     checkAuth: function () {
@@ -152,7 +149,7 @@ const Layout = {
             // --- LOGGED IN STATE ---
             let user = userStr ? JSON.parse(userStr) : {
                 name: "Thành viên",
-                avatar: "https://ui-avatars.com/api/?name=User&background=random"
+                avatar: "img/user.png"
             };
 
             authContainer.innerHTML = `

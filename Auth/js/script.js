@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                 } else {
-                    showToast(response.message || "Đăng nhập thất bại", "error");
+                    showToast("Sai tài khoản hoặc mật khẩu!", "error");
                 }
             } catch (error) {
                 console.error(error);

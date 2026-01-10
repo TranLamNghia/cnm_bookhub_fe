@@ -187,21 +187,9 @@ const BookDetailPage = {
 
                     console.log(result);
                     if (result.code != 200) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Thất bại',
-                            text: result.message || "Lỗi không xác định",
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
+                        Utils.showToast('error', result.message || "Lỗi không xác định");
                     } else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Thành công',
-                            text: 'Đã thêm vào giỏ hàng thành công!',
-                            timer: 1500,
-                            showConfirmButton: false
-                        });
+                        Utils.showToast('success', 'Đã thêm vào giỏ hàng thành công!');
                     }
                 } catch (error) {
                     console.error(error);
@@ -216,11 +204,7 @@ const BookDetailPage = {
                         icon = 'warning';
                     }
 
-                    Swal.fire({
-                        icon: icon,
-                        title: errorTitle,
-                        text: errorMsg
-                    });
+                    Utils.showToast(icon, errorTitle + ": " + errorMsg);
                 }
             };
         }
