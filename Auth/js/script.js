@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // State Variables
     let currentEmail = "";
+    let otpContext = "forgot"; // 'forgot' or 'register'
 
 
     // --- TOAST HELPER (SweetAlert2) ---
@@ -64,7 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // --- LOGIC: FLIP & SLIDE ---
-    if (goToForgot) goToForgot.addEventListener("click", () => flipContainer.classList.add("flipped"));
+    if (goToForgot) goToForgot.addEventListener("click", () => {
+        flipContainer.classList.add("flipped");
+        otpContext = "forgot"; // Set context
+        document.querySelector('.view-otp h1').textContent = "Nhập mã xác thực"; // Reset title default
+    });
     if (backToLoginFlip) backToLoginFlip.addEventListener("click", () => flipContainer.classList.remove("flipped"));
     if (goToRegister) goToRegister.addEventListener("click", () => mainWrapper.classList.add("show-register"));
     if (backToLoginSlide) backToLoginSlide.addEventListener("click", () => mainWrapper.classList.remove("show-register"));
@@ -163,9 +168,24 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 const response = await AuthAPI.register({ name, email, password: pass });
                 if (response.success) {
-                    showToast(response.message, "success");
-                    mainWrapper.classList.remove("show-register");
-                    document.querySelector("#login-form input[type='email']").value = email;
+                    // OLD: showToast(response.message, "success");
+                    // OLD: mainWrapper.classList.remove("show-register");
+
+                    // NEW: Redirect to OTP View
+                    showToast("Đăng ký thành công! Vui lòng kiểm tra mã xác thực.", "success");
+
+                    currentEmail = email;
+                    otpContext = "register";
+
+                    // Update UI text for context
+                    const otpTitle = document.querySelector('.view-otp h1');
+                    const otpSub = document.querySelector('.view-otp .subtitle strong');
+                    if (otpTitle) otpTitle.textContent = "Xác thực tài khoản";
+                    if (otpSub) otpSub.textContent = email;
+
+                    viewOtp.classList.add("active");
+                    startOtpTimer();
+
                 } else {
                     showToast(response.message || "Đăng ký thất bại", "error");
                 }
@@ -190,27 +210,16 @@ document.addEventListener("DOMContentLoaded", () => {
             // --- MOCK LOGIC (For Demo Video) ---
             showToast(`Mã OTP đã gửi đến ${email}`, "success");
             currentEmail = email;
+            otpContext = "forgot";
+
+            // Update UI text for context
+            const otpTitle = document.querySelector('.view-otp h1');
+            const otpSub = document.querySelector('.view-otp .subtitle strong');
+            if (otpTitle) otpTitle.textContent = "Khôi phục tài khoản";
+            if (otpSub) otpSub.textContent = email;
+
             viewOtp.classList.add("active");
             startOtpTimer();
-
-            /* --- API INTEGRATION ---
-            setLoading(sendOtpBtn, true);
-            try {
-                const response = await AuthAPI.sendOtp(email);
-                if (response.success) {
-                    showToast(response.message, "success");
-                    currentEmail = email;
-                    viewOtp.classList.add("active");
-                    startOtpTimer();
-                } else {
-                    showToast(response.message || "Gửi OTP thất bại", "error");
-                }
-            } catch (error) {
-                showToast("Lỗi kết nối server!", "error");
-            } finally {
-                setLoading(sendOtpBtn, false);
-            }
-            */
         });
     }
 
@@ -267,20 +276,6 @@ document.addEventListener("DOMContentLoaded", () => {
             // --- MOCK LOGIC ---
             showToast("Đã gửi mã mới!", "info");
             startOtpTimer();
-
-            /* --- API INTEGRATION ---
-            try {
-                 const response = await AuthAPI.sendOtp(currentEmail);
-                 if(response.success) {
-                     showToast("Đã gửi mã mới!", "info");
-                     startOtpTimer();
-                 } else {
-                     showToast("Gửi lại thất bại!", "error");
-                 }
-            } catch(e) {
-                showToast("Lỗi kết nối!", "error");
-            }
-            */
         });
     }
 
@@ -298,30 +293,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // --- MOCK LOGIC (For Demo Video) ---
             if (otp === "123456") {
-                showToast("Xác thực thành công!", "success");
-                viewReset.classList.add("active");
-                viewOtp.classList.remove("active");
+
+                if (otpContext === "register") {
+                    showToast("Xác thực tài khoản thành công!", "success");
+                    // Wait a bit then go back to login
+                    setTimeout(() => {
+                        resetViews();
+                        // Pre-fill email in login form
+                        const loginEmail = document.getElementById("login-email");
+                        if (loginEmail) loginEmail.value = currentEmail;
+                    }, 1500);
+                } else {
+                    // Forgot Password Flow
+                    showToast("Xác thực thành công!", "success");
+                    viewReset.classList.add("active");
+                    viewOtp.classList.remove("active");
+                }
+
             } else {
                 showToast("Mã OTP không chính xác!", "error");
             }
-
-            /* --- API INTEGRATION ---
-            setLoading(confirmOtpBtn, true);
-            try {
-                const response = await AuthAPI.verifyOtp(currentEmail, otp);
-                if (response.success) {
-                    showToast(response.message, "success");
-                    viewReset.classList.add("active"); 
-                    viewOtp.classList.remove("active");
-                } else {
-                    showToast(response.message, "error");
-                }
-            } catch (error) {
-                showToast("Lỗi kết nối server!", "error");
-            } finally {
-                setLoading(confirmOtpBtn, false);
-            }
-            */
         });
     }
 
