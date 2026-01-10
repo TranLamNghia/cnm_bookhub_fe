@@ -1,0 +1,60 @@
+<div
+    class="success-page-body bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center justify-center p-4 font-display">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-lg p-8 text-center">
+        <!-- Success Icon -->
+        <div class="mb-6 flex justify-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <span class="material-symbols-outlined text-green-500 text-4xl">check_circle</span>
+            </div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Đặt hàng thành công!</h1>
+        <p class="text-gray-500 dark:text-gray-400 mb-8">
+            Cảm ơn bạn đã tin tưởng và đặt mua sách tại cửa hàng của chúng tôi.
+        </p>
+
+        <!-- Order Summary Box -->
+        <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-6 mb-8 text-left">
+            <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Tóm tắt đơn hàng</h3>
+
+            <div class="space-y-4 text-sm">
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-500 dark:text-gray-400">Mã đơn hàng</span>
+                    <span class="font-bold text-gray-900 dark:text-white" id="success-order-id">#......</span>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-500 dark:text-gray-400">Tổng thanh toán</span>
+                    <span class="font-bold text-primary text-lg" id="success-amount">0đ</span>
+                </div>
+
+                <div class="pt-4 border-t border-gray-200 dark:border-gray-600 flex justify-between items-center">
+                    <span class="text-gray-500 dark:text-gray-400">Phương thức thanh toán</span>
+                    <div class="flex items-center gap-2 font-medium text-gray-900 dark:text-white" id="success-method">
+                        <!-- Icon will be injected here -->
+                        <span>...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row gap-3">
+            <button id="btn-view-order"
+                class="flex-1 px-6 py-3 border border-primary text-primary font-bold rounded-xl hover:bg-blue-50 transition-colors flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-xl">receipt_long</span>
+                Xem chi tiết
+            </button>
+            <button id="btn-continue"
+                class="flex-1 px-6 py-3 bg-primary text-white font-bold rounded-xl hover:bg-primary/90 transition-colors flex items-center justify-center gap-2">
+                Tiếp tục mua sắm
+                <span class="material-symbols-outlined text-xl">arrow_forward</span>
+            </button>
+        </div>
+
+        <div class="mt-8 text-xs text-gray-400">
+            Bạn cần hỗ trợ? <a href="#" class="text-primary hover:underline">Liên hệ bộ phận chăm sóc khách hàng</a>
+        </div>
+    </div>
+</div>

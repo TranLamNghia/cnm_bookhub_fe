@@ -67,9 +67,6 @@ const CartPage = {
                 const price = new Intl.NumberFormat('vi-VN').format(item.price) + ' đ';
                 const linePrice = new Intl.NumberFormat('vi-VN').format(item.price * item.quantity) + ' đ';
 
-                // Styling for disabled state
-                // Opacity 0.5 for visual disabled
-                // pointer-events: none for container (no interaction)
                 const boxStyle = isInvalid ? 'opacity: 0.5; pointer-events: none;' : '';
                 // pointer-events: auto for remove button to allow clicking
                 const btnStyle = isInvalid ? 'pointer-events: auto;' : '';
@@ -97,12 +94,6 @@ const CartPage = {
 
         // Re-insert items after header
         header.insertAdjacentHTML('afterend', html);
-
-        // Continue button is at the bottom, ensure it stays or re-append
-        // In current HTML it's at the end. My clearing logic kept it if it has class 'continue'
-        // But the loop above might have removed it if I wasn't careful.
-        // Let's re-append continue link if missing?
-        // Actually, let's strictly target the items.
 
         this.attachEvents();
 
@@ -263,6 +254,132 @@ const CartPage = {
                 handleUpdate(id, newQty, input, linePrice);
             });
         });
+
+        // Checkout Button Logic
+        const checkoutBtn = document.querySelector('.btn-checkout');
+        if (checkoutBtn) {
+            const newBtn = checkoutBtn.cloneNode(true);
+            checkoutBtn.parentNode.replaceChild(newBtn, checkoutBtn);
+
+            newBtn.addEventListener('click', async () => {
+                try {
+                    const parseUser = (u) => {
+                        if (typeof u === 'string') {
+                            try { return JSON.parse(u); } catch (e) { return null; }
+                        }
+                        return u;
+                    }
+
+                    let user = await UserAPI.getMe();
+                    user = parseUser(user);
+
+                    if (!user) {
+                        Utils.showToast('error', 'Không thể xác thực thông tin người dùng');
+                        return;
+                    }
+
+                    const isMissingInfo = !user.phone_number || !user.address_detail || (!user.ward && !user.ward_code);
+
+                    if (isMissingInfo) {
+                        Swal.fire({
+                            title: 'Thiếu thông tin giao hàng',
+                            text: 'Bạn vui lòng cập nhật Số điện thoại và Địa chỉ trước khi thanh toán.',
+                            icon: 'warning',
+                            confirmButtonText: 'Cập nhật ngay',
+                            showCancelButton: true,
+                            cancelButtonText: 'Để sau'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.hash = '#/profile';
+                            }
+                        });
+                        return;
+                    }
+                    // 3. Payment Method Selection
+                    // Read from DOM as UI is already in cart.html
+                    const paymentInput = document.querySelector('input[name="payment"]:checked');
+                    const paymentMethodVal = paymentInput ? paymentInput.value : 'cod';
+                    const isOnline = paymentMethodVal === 'online';
+                    const paymentMethod = isOnline ? 'ONLINE' : 'COD';
+
+                    // 4. Construct Payload
+                    // Calculate totals again to be safe
+                    const subtotal = this.items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+                    const shippingFee = 30000;
+                    const totalAmount = subtotal + shippingFee;
+
+                    const orderPayload = {
+                        customer: {
+                            full_name: user.full_name,
+                            address: `${user.address_detail}, ${user.ward?.full_name || ''}, ${user.ward?.province?.full_name || ''}`,
+                            phone: user.phone_number
+                        },
+                        items: this.items.map(i => ({
+                            book_id: i.book_id || i.id, // Handle potential ID mismatch
+                            title: i.title,
+                            author: i.author,
+                            price: i.price,
+                            quantity: i.quantity,
+                            image_url: i.image_url
+                        })),
+                        total_amount: totalAmount,
+                        shipping_fee: shippingFee,
+                        status: "PENDING", // Initial status
+                        payment_method: paymentMethod,
+                        created_at: new Date().toISOString()
+                    };
+
+                    // 5. Process Payment
+                    if (isOnline) {
+                        // Save order payload to session for the checkout page to use
+                        sessionStorage.setItem('pending_order_data', JSON.stringify(orderPayload));
+
+                        // Redirect to Stripe checkout page
+                        window.location.hash = '#/checkout-stripe';
+                        return; // Stop execution here, let the checkout page handle the rest
+                    }
+
+                    try {
+                        let res = await OrdersAPI.create(orderPayload);
+
+                        if (typeof res === 'string') {
+                            try { res = JSON.parse(res); } catch (e) { }
+                        }
+
+                        if (res && Number(res.code) === 201) {
+                            // Order Created Successfully
+                            // Store order info for Success Page
+                            // Since API might return created order details in res.data, use that if available.
+                            // If not, use our payload.
+
+                            const createdOrder = res.data || orderPayload;
+                            const successInfo = {
+                                id: createdOrder.id || 'Pending', // ID might come from BE
+                                amount: createdOrder.total_amount,
+                                method: createdOrder.payment_method
+                            };
+                            localStorage.setItem('order_success_info', JSON.stringify(successInfo));
+
+                            // Clear Cart UI & State
+                            this.items = [];
+                            this.renderCartItems([]);
+
+                            // Redirect
+                            window.location.hash = '#/success';
+
+                        } else {
+                            throw new Error(res.message || "Create order failed");
+                        }
+                    } catch (err) {
+                        console.error("Create order error:", err);
+                        Swal.fire('Lỗi', 'Không thể tạo đơn hàng: ' + err.message, 'error');
+                    }
+                } catch (error) {
+                    console.error("Checkout validation error:", error);
+                    Utils.showToast('error', 'Có lỗi xảy ra khi kiểm tra thông tin');
+                }
+            });
+        }
     },
 
     handleCartResponse: function (res) {

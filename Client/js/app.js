@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         Router.register("cart", () => CartPage.render());
         Router.register("profile", () => ProfilePage.render());
         Router.register("order-detail", () => OrderDetailPage.render());
+        Router.register("checkout-stripe", () => CheckoutStripePage.render());
+        Router.register("success", () => SuccessPage.render());
 
         // Placeholder for future routes
         // Router.register("contact", () => ContactPage.render());
