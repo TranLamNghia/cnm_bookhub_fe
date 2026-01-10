@@ -17,7 +17,19 @@ const ProfilePage = {
 
     loadProvinces: async function () {
         try {
-            const provinces = await LocationAPI.getAllProvinces();
+            let provinces = await LocationAPI.getAllProvinces();
+
+            // Handle double-encoded JSON or internal server string response
+            if (typeof provinces === 'string') {
+                try { provinces = JSON.parse(provinces); } catch (e) { }
+            }
+
+            // Ensure array
+            if (!Array.isArray(provinces)) {
+                console.error("Provinces data is not an array:", provinces);
+                return;
+            }
+
             const cityEl = document.getElementById('profile-city');
             if (cityEl) {
                 // Keep default option
@@ -49,7 +61,20 @@ const ProfilePage = {
                 return;
             }
 
-            const wards = await LocationAPI.getAllWards(provinceCode);
+            let wards = await LocationAPI.getAllWards(provinceCode);
+
+            // Handle double-encoded JSON or internal server string response
+            if (typeof wards === 'string') {
+                try { wards = JSON.parse(wards); } catch (e) { }
+            }
+
+            // Ensure array
+            if (!Array.isArray(wards)) {
+                console.error("Wards data is not an array:", wards);
+                // If invalid data, maybe show empty or don't crash
+                wards = [];
+            }
+
             wards.forEach(w => {
                 const opt = document.createElement('option');
                 opt.value = w.code; // Use code
@@ -82,17 +107,15 @@ const ProfilePage = {
     loadUserInfo: async function () {
         try {
             let user = await UserAPI.getMe();
-            console.log("Logged User Info:", user); // DEBUG
 
             if (typeof user === 'string') {
                 try { user = JSON.parse(user); } catch (e) { }
             }
-            console.log("Parsed User:", user); // DEBUG
 
             // Update Sidebar
             const avatarSidebar = document.getElementById('sidebar-avatar');
             const nameSidebar = document.getElementById('sidebar-name');
-            const defaultAvatar = "https://ui-avatars.com/api/?name=" + encodeURIComponent(user.full_name || "User") + "&background=eff6ff&color=2563eb";
+            const defaultAvatar = "img/user.png";
 
             if (avatarSidebar) avatarSidebar.src = user.avatar_url || defaultAvatar;
             if (nameSidebar) nameSidebar.textContent = user.full_name || user.email || "Người dùng";
@@ -119,7 +142,6 @@ const ProfilePage = {
                 const cityEl = document.getElementById('profile-city');
                 if (cityEl) {
                     cityEl.value = user.ward.province.code;
-                    // Pass false to keep it disabled in View Mode
                     await this.loadWards(user.ward.province.code, user.ward.code, false);
                 }
             }
@@ -196,15 +218,78 @@ const ProfilePage = {
                 }
             });
 
-            btnSave.addEventListener('click', () => {
-                // Mock Save
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Đã lưu thay đổi',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                resetForm();
+            btnSave.addEventListener('click', async () => {
+                // 1. Collect Data
+                const fullname = document.getElementById('profile-fullname').value.trim();
+                const email = document.getElementById('profile-email').value.trim();
+                const phone = document.getElementById('profile-phone').value.trim();
+                const cityCode = document.getElementById('profile-city').value;
+                const wardCode = document.getElementById('profile-district').value; // Mapped to ward_code
+                const addressDetail = document.getElementById('profile-address').value.trim();
+                const avatarUrl = document.getElementById('avatar-preview').src;
+
+                // 2. Validation
+                if (!fullname) {
+                    Utils.showToast('error', 'Vui lòng nhập họ và tên');
+                    return;
+                }
+                if (!email) {
+                    Utils.showToast('error', 'Vui lòng nhập email');
+                    return;
+                }
+                if (!phone) {
+                    Utils.showToast('error', 'Vui lòng nhập số điện thoại');
+                    return;
+                }
+                if (!cityCode || cityCode === "") {
+                    Utils.showToast('error', 'Vui lòng chọn Tỉnh/Thành phố');
+                    return;
+                }
+                if (!wardCode || wardCode === "") {
+                    Utils.showToast('error', 'Vui lòng chọn Phường/Xã');
+                    return;
+                }
+                if (!addressDetail) {
+                    Utils.showToast('error', 'Vui lòng nhập địa chỉ chi tiết');
+                    return;
+                }
+
+                // 3. Call API
+                try {
+                    const payload = {
+                        full_name: fullname,
+                        avatar_url: avatarUrl,
+                        email: email,
+                        phone_number: phone,
+                        ward_code: wardCode,
+                        address_detail: addressDetail
+                    };
+                    let res = await UserAPI.updateMe(payload);
+
+                    if (typeof res === 'string') {
+                        try { res = JSON.parse(res); } catch (e) { }
+                    }
+
+                    if (res && Number(res.code) === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: res.message || 'Cập nhật thông tin thành công',
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+
+                        resetForm();
+                        this.loadUserInfo();
+
+                    } else {
+                        throw new Error(res.message || "Update failed");
+                    }
+
+                } catch (e) {
+                    console.error(e);
+                    Utils.showToast('error', 'Không thể cập nhật thông tin: ' + e.message);
+                }
             });
         }
 

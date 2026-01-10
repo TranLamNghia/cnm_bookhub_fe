@@ -1,5 +1,5 @@
 const API = {
-    baseUrl: 'https://c28500f2-d1d8-4ea6-ae8e-cc23a30596e8.mock.pstmn.io',
+    baseUrl: 'https://e367ffd6-066d-44d2-9cbf-921f15303471.mock.pstmn.io',
 
     request: async function (endpoint, method = 'GET', body = null) {
         // Support absolute URLs
@@ -20,8 +20,6 @@ const API = {
             method,
             headers,
         };
-
-        console.log("Request Headers:", headers); // DEBUG: check auth token
 
         if (body) {
             config.body = JSON.stringify(body);
