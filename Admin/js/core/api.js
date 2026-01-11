@@ -1,11 +1,13 @@
 const API = {
-  baseURL: "https://c28500f2-d1d8-4ea6-ae8e-cc23a30596e8.mock.pstmn.io",
+  baseURL: "http://localhost:8000/api",
 
   async request(endpoint, options = {}) {
     try {
+      const token = localStorage.getItem("authToken");
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         headers: {
           "Content-Type": "application/json",
+          "Authorization": token ? `Bearer ${token}` : "",
           ...options.headers,
         },
         ...options,
