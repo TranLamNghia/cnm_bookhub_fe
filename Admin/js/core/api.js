@@ -4,12 +4,20 @@ const API = {
   async request(endpoint, options = {}) {
     try {
       const token = localStorage.getItem("authToken");
+      const isFormData = options.body instanceof FormData;
+
+      const headers = {
+        "Authorization": token ? `Bearer ${token}` : "",
+        ...options.headers,
+      };
+
+      // Chú ý: Nếu là FormData, fetch sẽ tự động set Content-Type với boundary chính xác
+      if (!isFormData) {
+        headers["Content-Type"] = "application/json";
+      }
+
       const response = await fetch(`${this.baseURL}${endpoint}`, {
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token ? `Bearer ${token}` : "",
-          ...options.headers,
-        },
+        headers,
         ...options,
       });
 

@@ -26,7 +26,7 @@ const BookDetailPage = {
   bindData(book) {
     document.getElementById("book-title").textContent = book.title
     document.getElementById("book-author").textContent = book.author
-    document.getElementById("book-image").src = book.image_url
+    document.getElementById("book-image").src = book.image_urls
     document.getElementById("book-price").textContent = book.price.toLocaleString() + " đ"
     document.getElementById("book-stock").textContent = book.stock
     document.getElementById("book-category").textContent = book.category_name
@@ -53,7 +53,7 @@ const BookDetailPage = {
 
       if (result.isConfirmed) {
         try {
-          // await BooksAPI.delete(book.id);
+          await BooksAPI.delete(book.id);
           Utils.showToast("success", "Xóa sách thành công!");
           setTimeout(() => {
             Router.navigate("books");
