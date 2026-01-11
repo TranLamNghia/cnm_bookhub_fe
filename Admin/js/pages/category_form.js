@@ -57,37 +57,17 @@ const CategoryFormPage = {
 
             // Extract core data
             const books = detailResponse.books || [];
-            const categoryDetail = detailResponse.category || detailResponse;
-
-            // Extra validation: Category must have an ID or Name
-            if (!categoryDetail || !categoryDetail.name) {
-                console.warn("Category object missing name:", categoryDetail);
-                Utils.showToast("error", "Không tìm thấy danh mục này.");
-                Router.navigate("categories");
-                return;
-            }
-
-            let categoryBasic = null;
-            try {
-                const listResponse = await CategoriesAPI.getAllNumberOfBookCategory();
-                const categories = Array.isArray(listResponse) ? listResponse : (listResponse.data || []);
-                categoryBasic = categories.find(c => c.id == id);
-            } catch (err) {
-                console.warn("Could not fetch list status, defaulting.", err);
-            }
-
-            // Merge info (Basic has status, Detail has name/desc/books)
-            const category = { ...categoryBasic, ...categoryDetail };
+            const category = detailResponse.category || detailResponse;
 
             document.getElementById("category-name").value = category.name || "";
-            document.getElementById("category-desc").value = category.description || category[" description"] || "";
+            document.getElementById("category-desc").value = category.description || "";
 
-            // Status based on deleted_at
-            // If categoryBasic didn't find it, we default to Active (assuming it exists if Detail returned it)
-            // But if Detail returned it, it implies existence.
-            const isDeleted = category.deleted_at !== null && category.deleted_at !== undefined;
+            // Status based on deleted field
+            const isDeleted = category.deleted === true;
             const statusCheckbox = document.getElementById("category-status");
-            statusCheckbox.checked = !isDeleted;
+            if (statusCheckbox) {
+                statusCheckbox.checked = !isDeleted;
+            }
 
             // Handle deleted_at display
             const deletedAtContainer = document.getElementById("deleted-at-container");
@@ -123,7 +103,7 @@ const CategoryFormPage = {
         booksSection.style.display = "block";
         container.innerHTML = books.map(book => `
             <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; background: #fff;">
-                <img src="${book.image_url}" alt="${book.title}" style="width: 100%; height: 200px; object-fit: cover; display: block;">
+                <img src="${book.image_urls}" alt="${book.title}" style="width: 100%; height: 200px; object-fit: cover; display: block;">
                 <div style="padding: 12px;">
                     <h4 style="margin: 0 0 4px; font-size: 14px; font-weight: 600; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${book.title}">${book.title}</h4>
                 </div>

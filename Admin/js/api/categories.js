@@ -19,104 +19,44 @@ window.CategoriesAPI = {
   },
 
   getCategoryName: async () => {
-    // if (CategoriesAPI.USE_MOCK_DATA) {
-    //   await new Promise(r => setTimeout(r, 200));
-    //   return CategoriesAPI.getMockData().map(c => ({ id: c.id, name: c.name }));
-    // }
-    return await API.request("/category/getcategoryName");
+    // Return simple list for dropdowns (load 100 max)
+    const res = await API.get("/category/?limit=100");
+    return res.items || [];
   },
 
-  getAllCategory: async () => {
-    // if (CategoriesAPI.USE_MOCK_DATA) {    
-    //   await new Promise(r => setTimeout(r, 300));
-    //   return CategoriesAPI.getMockData();
-    // }
-    return await API.request("/category/getAllCategory");
+  getAllCategory: async (limit = 10, offset = 1, name = "") => {
+    let url = `/category/?limit=${limit}&offset=${offset}`;
+    if (name) url += `&name=${encodeURIComponent(name)}`;
+    return await API.get(url);
   },
 
   getCategoryDetail: async (id) => {
-    if (CategoriesAPI.USE_MOCK_DATA) {
-      await new Promise(r => setTimeout(r, 200));
-      const cats = CategoriesAPI.getMockData();
-      const cat = cats.find(c => c.id == id);
-      if (!cat) throw new Error("Danh mục không tồn tại");
+    // Note: backend GET /category/{id} returns just CategoryDTO
+    // if the page expects {category, books}, we might need to fetch books separately
+    const cat = await API.get(`/category/${id}`);
+    // Fetch some books for this category if needed (imitating mock behavior)
+    let books = [];
+    try {
+      // Assuming a /books endpoint exists that can filter by category
+      const bookRes = await API.get(`/books/?category_id=${id}&limit=5`);
+      books = bookRes.items || [];
+    } catch (e) { }
 
-      // Return structured as existing getCategoryDetail mock comment
-      return {
-        category: cat,
-        books: [] // Mock empty books list for now
-      };
-    }
-
-    return await API.request(`/category?id=${id}`);
+    return {
+      category: cat,
+      books: books
+    };
   },
 
   create: async (data) => {
-    if (CategoriesAPI.USE_MOCK_DATA) {
-      await new Promise(r => setTimeout(r, 500));
-      const cats = CategoriesAPI.getMockData();
-
-      if (!data.name) throw new Error("Vui lòng nhập tên danh mục");
-
-      const newCat = {
-        id: Date.now(),
-        name: data.name,
-        number_of_books: 0,
-        deleted_at: null
-      };
-      cats.push(newCat);
-      CategoriesAPI.saveMockData(cats);
-
-      return {
-        code: 201,
-        message: "Thêm danh mục thành công!",
-        data: newCat
-      };
-    }
-
-    return await API.request("/category", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    return await API.post("/category/", data);
   },
 
   update: async (id, data) => {
-    if (CategoriesAPI.USE_MOCK_DATA) {
-      await new Promise(r => setTimeout(r, 400));
-      const cats = CategoriesAPI.getMockData();
-      const index = cats.findIndex(c => c.id == id);
-
-      if (index === -1) throw new Error("Không tìm thấy danh mục");
-
-      cats[index] = { ...cats[index], ...data };
-      CategoriesAPI.saveMockData(cats);
-
-      return {
-        code: 200,
-        message: "Cập nhật danh mục thành công!",
-        data: cats[index]
-      };
-    }
-
-    return await API.request(`/category?id=${id}`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
+    return await API.put(`/category/${id}`, data);
   },
 
   delete: async (id) => {
-    if (CategoriesAPI.USE_MOCK_DATA) {
-      await new Promise(r => setTimeout(r, 400));
-      const cats = CategoriesAPI.getMockData();
-      const filtered = cats.filter(c => c.id != id);
-      CategoriesAPI.saveMockData(filtered);
-
-      return {
-        code: 200,
-        message: "Xóa danh mục thành công!"
-      };
-    }
-
-    return await API.request(`/category?id=${id}`, { method: "DELETE" });
+    return await API.delete(`/category/${id}`);
   },
 };

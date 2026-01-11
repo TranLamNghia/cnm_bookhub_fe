@@ -52,11 +52,9 @@ const BookFormPage = {
       categories.forEach((category) => {
         const option = document.createElement("option");
         if (typeof category === "object") {
-          option.id = category.id;
-          option.value = category.name;
+          option.value = category.id; // Use ID for backend
           option.text = category.name;
         } else {
-          option.id = category;
           option.value = category;
         }
         categorySelect.appendChild(option);
@@ -209,13 +207,23 @@ const BookFormPage = {
   handleImageUpload(event) {
     const file = event.target.files[0];
     if (file) {
+      this.selectedFile = file; // Lưu lại file để upload khi submit
       const reader = new FileReader();
       reader.onload = (e) => {
         document.getElementById("preview-image").src = e.target.result;
-        // Có thể upload file lên server ở đây nếu cần
       };
       reader.readAsDataURL(file);
     }
+  },
+
+  async uploadImage(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await API.request("/files/upload_single", {
+      method: "POST",
+      body: formData
+    });
+    return res.url;
   },
 
   async handleSubmit(event) {
@@ -227,7 +235,15 @@ const BookFormPage = {
     submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang lưu...';
 
     try {
-      const formData = this.getFormData();
+      let formData = this.getFormData();
+
+      // Nếu có file mới được chọn, upload lên Cloudinary trước
+      if (this.selectedFile) {
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tải ảnh...';
+        const uploadedUrl = await this.uploadImage(this.selectedFile);
+        formData.image_urls = uploadedUrl;
+      }
+
       let response;
 
       if (this.isEditMode) {
@@ -261,11 +277,11 @@ const BookFormPage = {
     return {
       title: document.getElementById("book-title").value.trim(),
       author: document.getElementById("book-author").value.trim(),
-      category_id: document.getElementById("book-category").value,
+      category_id: parseInt(document.getElementById("book-category").value),
       price: parseInt(document.getElementById("book-price").value) || 0,
       stock: parseInt(document.getElementById("book-stock").value) || 0,
       description: document.getElementById("book-description").value.trim(),
-      image_url: imageUrl || (previewImage.includes("data:image") ? previewImage : previewImage),
+      image_urls: imageUrl || (previewImage.includes("data:image") ? previewImage : previewImage),
     };
   },
 };

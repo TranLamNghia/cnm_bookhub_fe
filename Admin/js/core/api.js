@@ -1,13 +1,23 @@
 const API = {
-  baseURL: "https://c28500f2-d1d8-4ea6-ae8e-cc23a30596e8.mock.pstmn.io",
+  baseURL: "http://localhost:8000/api",
 
   async request(endpoint, options = {}) {
     try {
+      const token = localStorage.getItem("authToken");
+      const isFormData = options.body instanceof FormData;
+
+      const headers = {
+        "Authorization": token ? `Bearer ${token}` : "",
+        ...options.headers,
+      };
+
+      // Chú ý: Nếu là FormData, fetch sẽ tự động set Content-Type với boundary chính xác
+      if (!isFormData) {
+        headers["Content-Type"] = "application/json";
+      }
+
       const response = await fetch(`${this.baseURL}${endpoint}`, {
-        headers: {
-          "Content-Type": "application/json",
-          ...options.headers,
-        },
+        headers,
         ...options,
       });
 

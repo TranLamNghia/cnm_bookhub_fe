@@ -91,7 +91,7 @@ window.UsersAPI = {
         }
 
         // Real API Call
-        let url = `/user/getAllUsers?limit=${limit}&offset=${offset}`;
+        let url = `/users/all?limit=${limit}&offset=${offset}`;
         if (user_name) url += `&user_name=${encodeURIComponent(user_name)}`;
         return await API.get(url);
     },
@@ -107,7 +107,7 @@ window.UsersAPI = {
         }
         console.log(id);
         // Real API Call
-        return await API.get(`/user?id=${id}`);
+        return await API.get(`/users/admin/${id}`);
     },
 
     create: async function (data) {
@@ -147,7 +147,7 @@ window.UsersAPI = {
         }
 
         // Real API Call
-        return await API.post("/user/register", data);
+        return await API.post("/auth/register", data);
     },
 
     update: async function (id, data) {

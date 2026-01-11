@@ -54,11 +54,7 @@ const BooksPage = {
       } else {
         // Format chuẩn phân trang
         this.currentData = response.items || [];
-        this.totalItems = response.total || 0;
-        // Ưu tiên dùng totalPage từ server trả về, nếu không có thì tự tính
-        const calcTotal = response.totalPage || Math.ceil(this.totalItems / limit);
-        // Đảm bảo totalPages không nhỏ hơn currentPage (để không bị mất nút trang hiện tại)
-        this.totalPages = Math.max(calcTotal, this.currentPage);
+        this.totalPages = response.totalPage || 1;
       }
 
       this.updateStats();
@@ -93,11 +89,9 @@ const BooksPage = {
       categories.forEach((category) => {
         const option = document.createElement("option");
         if (typeof category === "object") {
-          option.id = category.id;
-          option.value = category.name;
+          option.value = category.id; // Use ID for backend filter
           option.text = category.name;
         } else {
-          option.id = category;
           option.value = category;
         }
         categorySelect.appendChild(option);
@@ -140,7 +134,7 @@ const BooksPage = {
     return `
         <tr>
             <td class="td-image">
-                <img src="${book.image_url}" alt="${book.title}" class="book-thumb">
+                <img src="${book.image_urls}" alt="${book.title}" class="book-thumb">
             </td>
             <td><strong>${book.title}</strong></td>
             <td>${authorDisplay}</td>
@@ -296,9 +290,9 @@ const BooksPage = {
 
     if (result.isConfirmed) {
       try {
-        // await API.deleteBook(id);
+        await BooksAPI.delete(id);
         Utils.showToast("success", "Xóa sách thành công!");
-        // this.loadData();
+        this.loadData();
       } catch (error) {
         console.error("Error deleting book:", error);
         Utils.showToast("error", "Có lỗi xảy ra khi xóa sách.");
