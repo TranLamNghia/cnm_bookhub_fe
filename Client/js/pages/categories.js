@@ -148,11 +148,18 @@ const CategoriesPage = {
         let html = "";
         books.forEach(book => {
             const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.price);
+            
+            // Xử lý image_urls: có thể là string chứa nhiều URLs phân cách bởi dấu phẩy, hoặc một URL duy nhất
+            let imageUrl = 'img/default-book.png';
+            if (book.image_urls) {
+                // Nếu có nhiều URLs, lấy URL đầu tiên
+                imageUrl = book.image_urls.split(',')[0].trim();
+            }
 
             html += `
                 <div class="book-card" onclick="window.location.hash='#/book-detail?id=${book.id}'">
                     <div class="book-image-container">
-                        <img src="${book.image_url || 'img/default-book.png'}" class="book-cover" alt="${book.title}">
+                        <img src="${imageUrl}" class="book-cover" alt="${book.title}">
                     </div>
                     <div class="book-info">
                         <h3 class="book-title">${book.title}</h3>

@@ -14,13 +14,24 @@ const CategoriesPage = {
     }
   },
 
-  loadData: async function () {
+  loadData: async function (page = 1) {
     try {
-      const response = await CategoriesAPI.getAllCategory();
-      // Xử lý response tùy theo cấu trúc trả về (mảng trực tiếp hoặc object có data)
-      this.currentData = Array.isArray(response) ? response : (response.data || []);
+      this.currentPage = page;
+      const limit = 10;
+      const response = await CategoriesAPI.getAllCategory(limit, page);
+
+      // Handle standardized response format
+      if (Array.isArray(response)) {
+        this.currentData = response;
+        this.totalPages = 1;
+      } else {
+        this.currentData = response.items || [];
+        this.totalPages = response.totalPage || 1;
+      }
+
       this.renderTable();
       this.updateStats();
+      this.renderPagination();
     } catch (error) {
       console.error("Error loading categories:", error);
       Utils.showToast("error", "Không thể tải danh sách danh mục");
@@ -51,13 +62,11 @@ const CategoriesPage = {
 
     tbody.innerHTML = displayData.map((cat, index) => {
       const safeName = cat.name || "";
-      const desc = "Mô tả ngắn cho danh mục " + safeName + "...";
+      const desc = cat.description || "Chưa có mô tả cho danh mục " + safeName;
+      const count = cat.number_of_books || 0;
 
-      // Sử dụng dữ liệu thực từ API
-      const count = cat.number_of_books !== undefined ? cat.number_of_books : 0;
-
-      // Xử lý status dựa trên deleted_at
-      const isDeleted = cat.deleted_at !== null;
+      // Xử lý status dựa trên trường deleted
+      const isDeleted = cat.deleted === true;
       const status = isDeleted ? "hidden" : "active";
       const statusText = isDeleted ? "Ẩn" : "Hiển thị";
 
@@ -130,6 +139,20 @@ const CategoriesPage = {
     }
   },
 
+  renderPagination: function () {
+    const container = document.querySelector(".pagination");
+    if (!container) return;
+
+    const totalPages = this.totalPages || 1;
+    let html = "";
+
+    for (let i = 1; i <= totalPages; i++) {
+      const isActive = i === this.currentPage;
+      html += `<button onclick="CategoriesPage.loadData(${i})" class="page-btn ${isActive ? 'active' : ''}">${i}</button>`;
+    }
+    container.innerHTML = html;
+  },
+
   openForm: function (id = null) {
     if (id) {
       // Edit Mode
@@ -195,7 +218,7 @@ const CategoriesPage = {
 
     if (result.isConfirmed) {
       try {
-        // await CategoriesAPI.delete(id);
+        await CategoriesAPI.delete(id);
         Utils.showToast("success", "Xóa danh mục thành công!");
         this.loadData();
       } catch (error) {

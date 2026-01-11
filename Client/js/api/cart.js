@@ -1,18 +1,46 @@
 window.CartAPI = {
-    addToCart: async (book_id, quantity) => {
-        return await API.request(`/cart/addBook?book_id=${book_id}&limit=${quantity}`, 'POST');
+    // Helper function để lấy user_id từ localStorage
+    _getUserId: function() {
+        const userStr = localStorage.getItem('user_info');
+        if (!userStr) {
+            throw new Error('User not logged in');
+        }
+        const user = JSON.parse(userStr);
+        return user.id;
     },
 
-    getCart: async () => {
-        return await API.request('/cart');
+    // Thêm sản phẩm vào giỏ hàng
+    addToCart: async function(book_id, quantity = 1) {
+        const user_id = this._getUserId();
+        return await API.request(`/cart/items?user_id=${user_id}`, 'POST', {
+            book_id: book_id,
+            quantity: quantity
+        });
     },
 
-    delete: async (book_id) => {
-        return await API.request(`/cart/deleteBook?book_id=${book_id}`, 'DELETE');
+    // Lấy giỏ hàng
+    getCart: async function() {
+        const user_id = this._getUserId();
+        return await API.request(`/cart/?user_id=${user_id}`);
     },
 
-    update: async (book_id, quantity) => {
-        // User specified 'quanlity' in the URL parameter
-        return await API.request(`/cart/update_quality?book_id=${book_id}&quanlity=${quantity}`, 'PUT');
+    // Xóa sản phẩm khỏi giỏ hàng (hard delete)
+    delete: async function(book_id) {
+        const user_id = this._getUserId();
+        return await API.request(`/cart/items/${book_id}?user_id=${user_id}`, 'DELETE');
+    },
+
+    // Cập nhật số lượng sản phẩm
+    update: async function(book_id, quantity) {
+        const user_id = this._getUserId();
+        return await API.request(`/cart/items/${book_id}?user_id=${user_id}`, 'PUT', {
+            quantity: quantity
+        });
+    },
+
+    // Soft delete (đánh dấu xóa)
+    softDelete: async function(book_id) {
+        const user_id = this._getUserId();
+        return await API.request(`/cart/items/${book_id}?user_id=${user_id}`, 'POST');
     }
 };

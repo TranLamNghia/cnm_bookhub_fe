@@ -39,8 +39,30 @@ const Layout = {
     // Logout
     const logoutBtn = document.querySelector(".btn-logout")
     if (logoutBtn) {
-      logoutBtn.addEventListener("click", () => {
-        alert("Đăng xuất thành công!")
+      logoutBtn.addEventListener("click", async () => {
+        const result = await Swal.fire({
+          title: "Bạn có chắc muốn đăng xuất?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#6366f1",
+          cancelButtonColor: "#94a3b8",
+          confirmButtonText: "Đăng xuất",
+          cancelButtonText: "Hủy",
+        })
+
+        if (result.isConfirmed) {
+          try {
+            // Call logout API (optional but good practice)
+            await API.post("/auth/jwt/logout")
+          } catch (error) {
+            console.warn("Lỗi khi gọi logout API:", error)
+          } finally {
+            // Always clear token and redirect
+            localStorage.removeItem("authToken")
+            // Use an absolute path if possible or ensure the relative path is solid
+            window.location.href = window.location.origin + "/Auth/index.html"
+          }
+        }
       })
     }
 

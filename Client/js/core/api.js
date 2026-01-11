@@ -1,5 +1,5 @@
 const API = {
-    baseUrl: 'https://e367ffd6-066d-44d2-9cbf-921f15303471.mock.pstmn.io',
+    baseUrl: 'http://localhost:8000/api',
 
     request: async function (endpoint, method = 'GET', body = null) {
         // Support absolute URLs

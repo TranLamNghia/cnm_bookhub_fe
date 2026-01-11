@@ -25,6 +25,16 @@
                 </div>
 
                 <div class="flex justify-between items-center">
+                    <span class="text-gray-500 dark:text-gray-400">Trạng thái đơn hàng</span>
+                    <div class="flex items-center gap-2 font-medium" id="success-status">
+                        <span class="inline-flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm animate-spin">sync</span>
+                            <span>Đang tải...</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center">
                     <span class="text-gray-500 dark:text-gray-400">Tổng thanh toán</span>
                     <span class="font-bold text-primary text-lg" id="success-amount">0đ</span>
                 </div>
@@ -34,6 +44,16 @@
                     <div class="flex items-center gap-2 font-medium text-gray-900 dark:text-white" id="success-method">
                         <!-- Icon will be injected here -->
                         <span>...</span>
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-gray-200 dark:border-gray-600">
+                    <div class="flex items-start gap-2">
+                        <span class="material-symbols-outlined text-gray-500 text-sm mt-0.5">location_on</span>
+                        <div class="flex-1">
+                            <span class="text-gray-500 dark:text-gray-400 text-xs block mb-1">Địa chỉ giao hàng</span>
+                            <span class="text-gray-900 dark:text-white font-medium text-sm" id="success-address">Đang tải...</span>
+                        </div>
                     </div>
                 </div>
             </div>

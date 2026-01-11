@@ -16,6 +16,20 @@ window.OrdersAPI = {
         return await API.post("/order", data);
     },
 
+    requestOrder: async function (paymentMethod, orderItems) {
+        // paymentMethod: "cod" hoặc "online" (lowercase)
+        // orderItems: array of { book_id: UUID, quantity: int }
+        return await API.post("/orders/request-order", {
+            payment_method: paymentMethod.toLowerCase(),
+            order_items: orderItems
+        });
+    },
+
+    getOrderStatus: async function (orderId) {
+        // Lấy trạng thái đơn hàng theo order_id
+        return await API.get(`/orders/${orderId}/status`);
+    },
+
     updateStatus: async function (id, status) {
         return await API.put(`/order/${id}/status`, { status });
     },
