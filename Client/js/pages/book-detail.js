@@ -103,7 +103,13 @@ const BookDetailPage = {
         // Image
         const img = document.querySelector('.main-image');
         if (img) {
-            img.src = book.image_url || 'img/default-book.png';
+            // Xử lý image_urls: có thể là string chứa nhiều URLs phân cách bởi dấu phẩy, hoặc một URL duy nhất
+            let imageUrl = 'img/default-book.png';
+            if (book.image_urls) {
+                // Nếu có nhiều URLs, lấy URL đầu tiên
+                imageUrl = book.image_urls.split(',')[0].trim();
+            }
+            img.src = imageUrl;
             img.alt = book.title;
         }
     },
@@ -135,9 +141,17 @@ const BookDetailPage = {
             let html = "";
             list.forEach(book => {
                 const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.price);
+                
+                // Xử lý image_urls: có thể là string chứa nhiều URLs phân cách bởi dấu phẩy, hoặc một URL duy nhất
+                let imageUrl = 'img/default-book.png';
+                if (book.image_urls) {
+                    // Nếu có nhiều URLs, lấy URL đầu tiên
+                    imageUrl = book.image_urls.split(',')[0].trim();
+                }
+                
                 html += `
                     <div class="mini-book-item" onclick="window.location.hash='#/book-detail?id=${book.id}'; window.location.reload();">
-                        <img src="${book.image_url || 'img/default-book.png'}" class="mini-book-cover">
+                        <img src="${imageUrl}" class="mini-book-cover">
                         <div class="mini-book-info">
                             <h4>${book.title}</h4>
                             <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">${book.author}</div>
@@ -180,31 +194,12 @@ const BookDetailPage = {
 
                 const quantity = parseInt(qtyInput.value) || 1;
                 try {
-                    let result = await CartAPI.addToCart(this.currentBook.id, quantity);
-                    if (typeof result === 'string') {
-                        try { result = JSON.parse(result); } catch (e) { }
-                    }
-
-                    console.log(result);
-                    if (result.code != 200) {
-                        Utils.showToast('error', result.message || "Lỗi không xác định");
-                    } else {
-                        Utils.showToast('success', 'Đã thêm vào giỏ hàng thành công!');
-                    }
+                    await CartAPI.addToCart(this.currentBook.id, quantity);
+                    Utils.showToast('success', 'Đã thêm vào giỏ hàng thành công!');
                 } catch (error) {
                     console.error(error);
-
-                    let errorTitle = 'Lỗi';
-                    let errorMsg = "Lỗi thêm vào giỏ hàng: " + (error.message || "Unknown error");
-                    let icon = 'error';
-
-                    if (error.status === 400 || (error.message && error.message.includes("Không đủ số lượng"))) {
-                        errorTitle = 'Hết hàng';
-                        errorMsg = error.message || "Không đủ số lượng sách, hãy giảm số lượng lại!";
-                        icon = 'warning';
-                    }
-
-                    Utils.showToast(icon, errorTitle + ": " + errorMsg);
+                    let errorMsg = error.message || "Không thể thêm vào giỏ hàng";
+                    Utils.showToast('error', errorMsg);
                 }
             };
         }
