@@ -5,6 +5,5 @@ const HomePage = {
     },
 
     initEvents: function () {
-
     }
 };

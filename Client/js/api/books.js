@@ -4,6 +4,7 @@ window.BooksAPI = {
     if (queryParams) {
       url += `?${queryParams}`;
     }
+
     return await API.request(url);
   },
 

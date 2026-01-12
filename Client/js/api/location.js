@@ -1,9 +1,9 @@
 const LocationAPI = {
     getAllProvinces: async () => {
-        return await API.request('/province/getAllProvinces');
+        return await API.request('/province/');
     },
 
     getAllWards: async (provinceCode) => {
-        return await API.request(`/ward/getAllWards?province_code=${provinceCode}`);
+        return await API.request(`/ward/?province_code=${provinceCode}`);
     }
 };

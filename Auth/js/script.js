@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // State Variables
     let currentEmail = "";
+    let currentOtp = ""; // Store real OTP from backend
     let otpContext = "forgot"; // 'forgot' or 'register'
 
 
@@ -172,7 +173,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     // OLD: mainWrapper.classList.remove("show-register");
 
                     // NEW: Redirect to OTP View
-                    showToast("Đăng ký thành công! Vui lòng kiểm tra mã xác thực.", "success");
+                    showToast("Đăng ký thành công! Đang gửi mã xác thực...", "info");
+
+                    // Trigger Send OTP immediately for verification
+                    try {
+                        const otpRes = await AuthAPI.sendOtp(email);
+                        if (otpRes.success && otpRes.otp_code) {
+                            currentOtp = otpRes.otp_code;
+                            console.log("OTP Sent (Debug):", currentOtp);
+                            showToast(`Mã xác thực đã gửi đến ${email}`, "success");
+                        } else {
+                            showToast("Không thể gửi mã xác thực, vui lòng thử lại.", "error");
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
 
                     currentEmail = email;
                     otpContext = "register";
@@ -207,19 +222,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- MOCK LOGIC (For Demo Video) ---
-            showToast(`Mã OTP đã gửi đến ${email}`, "success");
-            currentEmail = email;
-            otpContext = "forgot";
+            // --- REAL API LOGIC ---
+            setLoading(sendOtpBtn, true);
+            try {
+                const response = await AuthAPI.sendOtp(email);
+                if (response.success && response.otp_code) {
+                    currentOtp = response.otp_code;
+                    console.log("OTP Sent (Debug):", currentOtp);
+                    showToast(response.message, "success");
 
-            // Update UI text for context
-            const otpTitle = document.querySelector('.view-otp h1');
-            const otpSub = document.querySelector('.view-otp .subtitle strong');
-            if (otpTitle) otpTitle.textContent = "Khôi phục tài khoản";
-            if (otpSub) otpSub.textContent = email;
+                    currentEmail = email;
+                    otpContext = "forgot";
 
-            viewOtp.classList.add("active");
-            startOtpTimer();
+                    // Update UI text for context
+                    const otpTitle = document.querySelector('.view-otp h1');
+                    const otpSub = document.querySelector('.view-otp .subtitle strong');
+                    if (otpTitle) otpTitle.textContent = "Khôi phục tài khoản";
+                    if (otpSub) otpSub.textContent = email;
+
+                    viewOtp.classList.add("active");
+                    startOtpTimer();
+                } else {
+                    showToast(response.message || "Gửi OTP thất bại", "error");
+                }
+            } catch (error) {
+                showToast("Lỗi hệ thống!", "error");
+            } finally {
+                setLoading(sendOtpBtn, false);
+            }
         });
     }
 
@@ -273,9 +303,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- MOCK LOGIC ---
-            showToast("Đã gửi mã mới!", "info");
-            startOtpTimer();
+            // --- REAL LOGIC ---
+            const response = await AuthAPI.sendOtp(currentEmail);
+            if (response.success && response.otp_code) {
+                currentOtp = response.otp_code;
+                showToast("Đã gửi lại mã mới!", "success");
+                startOtpTimer();
+            } else {
+                showToast("Không thể gửi lại mã!", "error");
+            }
         });
     }
 
@@ -291,8 +327,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- MOCK LOGIC (For Demo Video) ---
-            if (otp === "123456") {
+            // --- REAL LOGIC ---
+            if (otp === currentOtp) {
 
                 if (otpContext === "register") {
                     showToast("Xác thực tài khoản thành công!", "success");

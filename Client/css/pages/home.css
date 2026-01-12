@@ -1,4 +1,3 @@
-/* --- HERO SECTION --- */
 .hero-section {
     position: relative;
     border-radius: 24px;
@@ -11,12 +10,10 @@
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1507842217121-9d59754baebc?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') center/cover;
     margin-bottom: 48px;
 }
-
 .hero-content {
     max-width: 500px;
     z-index: 2;
 }
-
 .hero-tag {
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(4px);
@@ -27,20 +24,17 @@
     display: inline-block;
     margin-bottom: 16px;
 }
-
 .hero-title {
     font-size: 48px;
     font-weight: 800;
     line-height: 1.1;
     margin-bottom: 16px;
 }
-
 .hero-desc {
     font-size: 16px;
     margin-bottom: 32px;
     opacity: 0.9;
 }
-
 .btn-hero {
     background: var(--primary);
     color: white;
@@ -49,7 +43,6 @@
     font-weight: 600;
     display: inline-block;
 }
-
 .btn-hero-outline {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(4px);
@@ -60,28 +53,22 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     margin-left: 12px;
 }
-
-/* --- CATEGORIES & SECTIONS --- */
 .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 24px;
 }
-
 .section-title {
     font-size: 24px;
     font-weight: 700;
 }
-
 .view-all {
     color: var(--primary);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
 }
-
-/* Categories List */
 .categories-list {
     display: flex;
     gap: 16px;
@@ -89,7 +76,6 @@
     overflow-x: auto;
     padding-bottom: 8px;
 }
-
 .cat-tag {
     background: var(--surface);
     padding: 10px 20px;
@@ -104,21 +90,17 @@
     cursor: pointer;
     transition: all 0.2s;
 }
-
 .cat-tag:hover {
     border-color: var(--primary);
     color: var(--primary);
     background: #eff6ff;
 }
-
-/* Book Grid (Home specific part, though structure is shared) */
 .book-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 24px;
     margin-bottom: 48px;
 }
-
 .book-card {
     background: var(--surface);
     border-radius: 12px;
@@ -126,24 +108,20 @@
     transition: transform 0.2s, box-shadow 0.2s;
     border: 1px solid transparent;
 }
-
 .book-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
     border-color: var(--border);
 }
-
 .book-cover {
     width: 100%;
     height: 300px;
     object-fit: cover;
     background: #e5e7eb;
 }
-
 .book-info {
     padding: 16px;
 }
-
 .book-title {
     font-weight: 700;
     margin-bottom: 4px;
@@ -153,27 +131,22 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
-
 .book-author {
     color: var(--text-muted);
     font-size: 13px;
     margin-bottom: 12px;
 }
-
 .book-price {
     font-weight: 700;
     color: var(--primary);
     font-size: 18px;
 }
-
 .old-price {
     font-size: 13px;
     color: var(--text-muted);
     text-decoration: line-through;
     margin-left: 8px;
 }
-
-/* Newsletter */
 .newsletter {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     border-radius: 20px;
@@ -182,13 +155,11 @@
     color: white;
     margin-top: 64px;
 }
-
 .newsletter h2 {
     font-size: 32px;
     font-weight: 800;
     margin-bottom: 12px;
 }
-
 .newsletter p {
     opacity: 0.9;
     margin-bottom: 32px;
@@ -196,7 +167,6 @@
     margin-left: auto;
     margin-right: auto;
 }
-
 .newsletter-form {
     display: flex;
     justify-content: center;
@@ -204,7 +174,6 @@
     max-width: 500px;
     margin: 0 auto;
 }
-
 .newsletter-form input {
     flex: 1;
     padding: 12px 20px;
@@ -212,7 +181,6 @@
     border: none;
     outline: none;
 }
-
 .btn-dark {
     background: #111827;
     color: white;

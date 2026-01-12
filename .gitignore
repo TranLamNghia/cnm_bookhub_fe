@@ -1,0 +1,9 @@
+# System Files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Config
+Client/js/env.js

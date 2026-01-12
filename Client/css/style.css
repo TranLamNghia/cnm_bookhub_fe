@@ -1,17 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
 :root {
     --primary: #2563eb;
-    /* Blue */
     --primary-dark: #1d4ed8;
     --background: #f9fafb;
-    /* Light Gray */
     --surface: #ffffff;
-    /* White */
     --text-main: #111827;
-    /* Dark Text */
     --text-muted: #6b7280;
-    /* Gray Text */
     --border: #e5e7eb;
     --danger: #ef4444;
     --success: #10b981;
@@ -19,30 +13,24 @@
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
-
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
-
 body {
     font-family: 'Inter', sans-serif;
     background-color: var(--background);
     color: var(--text-main);
     line-height: 1.5;
 }
-
 a {
     text-decoration: none;
     color: inherit;
 }
-
 button {
     font-family: inherit;
 }
-
-/* --- HEADER --- */
 header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -55,7 +43,6 @@ header {
     top: 0;
     z-index: 100;
 }
-
 .header-container {
     display: flex;
     align-items: center;
@@ -63,7 +50,6 @@ header {
     width: 100%;
     margin: 0 auto;
 }
-
 .logo {
     display: flex;
     align-items: center;
@@ -72,18 +58,15 @@ header {
     font-weight: 800;
     color: var(--text-main);
 }
-
 .logo i {
     color: var(--primary);
 }
-
 .search-bar {
     flex: 1;
     max-width: 500px;
     margin: 0 40px;
     position: relative;
 }
-
 .search-bar input {
     width: 100%;
     padding: 12px 16px 12px 48px;
@@ -94,13 +77,11 @@ header {
     transition: all 0.2s;
     font-size: 14px;
 }
-
 .search-bar input:focus {
     background: white;
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
     border-color: var(--primary);
 }
-
 .search-bar i {
     position: absolute;
     left: 16px;
@@ -108,31 +89,26 @@ header {
     transform: translateY(-50%);
     color: var(--text-muted);
 }
-
 .nav-links {
     display: flex;
     gap: 24px;
     font-weight: 600;
     font-size: 14px;
 }
-
 .nav-links a:hover {
     color: var(--primary);
 }
-
 .header-actions {
     display: flex;
     align-items: center;
     gap: 20px;
 }
-
 .icon-btn {
     position: relative;
     font-size: 20px;
     color: var(--text-main);
     cursor: pointer;
 }
-
 .badge {
     position: absolute;
     top: -5px;
@@ -148,7 +124,6 @@ header {
     justify-content: center;
     font-weight: bold;
 }
-
 .user-profile {
     display: flex;
     align-items: center;
@@ -158,39 +133,30 @@ header {
     cursor: pointer;
     transition: background 0.2s;
 }
-
 .user-profile:hover {
     background: #f3f4f6;
 }
-
 .avatar {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
 }
-
 .user-name {
     font-size: 14px;
     font-weight: 600;
 }
-
-
-/* --- MAIN CONTENT --- */
 main {
     max-width: 1200px;
     margin: 0 auto;
     padding: 32px 16px;
 }
-
-/* Footer */
 footer {
     background: white;
     padding: 64px 32px 32px;
     border-top: 1px solid var(--border);
     margin-top: 64px;
 }
-
 .footer-grid {
     max-width: 1200px;
     margin: 0 auto;
@@ -199,17 +165,14 @@ footer {
     gap: 48px;
     margin-bottom: 48px;
 }
-
 .footer-col h3 {
     font-size: 16px;
     font-weight: 700;
     margin-bottom: 24px;
 }
-
 .footer-col ul {
     list-style: none;
 }
-
 .footer-col li {
     margin-bottom: 12px;
     color: var(--text-muted);
@@ -217,17 +180,14 @@ footer {
     cursor: pointer;
     transition: color 0.2s;
 }
-
 .footer-col li:hover {
     color: var(--primary);
 }
-
 .social-links {
     display: flex;
     gap: 12px;
     margin-top: 24px;
 }
-
 .social-icon {
     width: 36px;
     height: 36px;
@@ -239,12 +199,10 @@ footer {
     color: var(--text-main);
     transition: all 0.2s;
 }
-
 .social-icon:hover {
     background: var(--primary);
     color: white;
 }
-
 .copyright {
     text-align: center;
     color: var(--text-muted);
@@ -252,8 +210,6 @@ footer {
     border-top: 1px solid var(--border);
     padding-top: 32px;
 }
-
-/* --- AUTH STYLES --- */
 .auth-container {
     display: flex;
     align-items: center;
@@ -262,10 +218,8 @@ footer {
     padding-left: 12px;
     border-left: 1px solid var(--border);
     min-width: 150px;
-    /* Prevent layout shift */
     justify-content: flex-end;
 }
-
 .btn-auth-primary {
     background: var(--primary);
     color: white;
@@ -278,11 +232,9 @@ footer {
     transition: background 0.2s;
     white-space: nowrap;
 }
-
 .btn-auth-primary:hover {
     background: var(--primary-dark);
 }
-
 .btn-auth-outline {
     background: transparent;
     color: var(--text-main);
@@ -295,19 +247,15 @@ footer {
     transition: all 0.2s;
     white-space: nowrap;
 }
-
 .btn-auth-outline:hover {
     border-color: var(--primary);
     color: var(--primary);
     background: #eff6ff;
 }
-
 .auth-loading {
     color: var(--text-muted);
     font-size: 18px;
 }
-
-/* --- HELPER CLASSES --- */
 .view-all {
     color: var(--primary);
     font-size: 14px;

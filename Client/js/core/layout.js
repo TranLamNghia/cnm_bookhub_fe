@@ -7,24 +7,19 @@ const Layout = {
     },
 
     restoreSession: async function () {
-        // 1. Try to get token from URL first
         const urlParams = new URLSearchParams(window.location.search);
         let token = urlParams.get('token');
-        const error = urlParams.get('error'); // Handle potential auth errors
+        const error = urlParams.get('error');
 
         if (token) {
-            // New login via Social
             localStorage.setItem("authToken", token);
-            // Clean URL immediately
             const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
             window.history.replaceState({}, document.title, cleanUrl);
         } else {
-            // Restore from Storage
             token = localStorage.getItem("authToken");
         }
 
         if (token) {
-            // 2. Verify and Fetch Profile
             try {
                 const response = await fetch(`${API_BASE_URL}/users/me`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -33,7 +28,6 @@ const Layout = {
                 if (response.ok) {
                     const user = await response.json();
 
-                    // Normalize User Object
                     const userInfo = {
                         name: user.full_name || user.email.split('@')[0],
                         avatar: user.avatar_url || "img/user.png",
@@ -41,26 +35,20 @@ const Layout = {
                         id: user.id,
                         is_superuser: user.is_superuser
                     };
-                    localStorage.setItem("user_info", JSON.stringify(userInfo));
 
-                    // Update UI
+                    localStorage.setItem("user_info", JSON.stringify(userInfo));
                     this.checkAuth();
                 } else {
-                    // Token expired or invalid
                     console.warn("Token invalid, clearing... Status:", response.status);
                     localStorage.removeItem("authToken");
                     localStorage.removeItem("user_info");
-                    this.checkAuth(); // Update UI to Guest
+                    this.checkAuth();
                 }
             } catch (e) {
                 console.error("Fetch User Error:", e);
-                // On network error, maybe keep the token? Or simple fail.
-                // For now, let's not aggressively delete on network error, but UI won't update fully if checkAuth relies on user_info which might be stale.
             }
         } else if (error) {
-            // Handle Social Login Error (Optional)
             console.error("Social Auth Error:", error);
-            // Could show a toast here if SweetAlert is loaded
         }
     },
 
@@ -71,7 +59,6 @@ const Layout = {
                 reject("Không tìm thấy #layout-container");
                 return;
             }
-
             fetch("layouts/client-layout.html")
                 .then(response => response.text())
                 .then(html => {
@@ -86,29 +73,26 @@ const Layout = {
 
     renderBody: async function (pagePath) {
         const pageBody = document.getElementById("page-body");
+
         if (!pageBody) {
             console.error("Layout chưa load xong hoặc thiếu #page-body");
             return;
         }
-
         const response = await fetch(pagePath);
         const html = await response.text();
         pageBody.innerHTML = html;
-
-        // Scroll to top
         window.scrollTo(0, 0);
     },
 
     attachLayoutEvents: function () {
-        // Highlighting Active Nav
         window.addEventListener('hashchange', () => this.updateActiveNav());
         this.updateActiveNav();
-
-        // Cart Icon Click
         const cartBtn = document.getElementById("btn-cart-header");
+
         if (cartBtn) {
             cartBtn.addEventListener("click", () => {
                 const token = localStorage.getItem("authToken");
+
                 if (token) {
                     window.location.hash = "#/cart";
                 } else {
@@ -131,9 +115,7 @@ const Layout = {
 
     updateActiveNav: function () {
         const hash = window.location.hash.slice(1) || 'home';
-        // Simple logic to highlight nav link
         document.querySelectorAll('.nav-item').forEach(link => {
-            // Remove active class (if you add one in CSS)
             link.style.color = "";
         });
     },
@@ -143,15 +125,13 @@ const Layout = {
         if (!authContainer) return;
 
         const token = localStorage.getItem("authToken");
-        const userStr = localStorage.getItem("user_info"); // Assuming we store user info alongside token
+        const userStr = localStorage.getItem("user_info");
 
         if (token) {
-            // --- LOGGED IN STATE ---
             let user = userStr ? JSON.parse(userStr) : {
                 name: "Thành viên",
                 avatar: "img/user.png"
             };
-
             authContainer.innerHTML = `
                 <div class="user-profile" id="user-profile-btn">
                     <img src="${user.avatar}" class="avatar" alt="Avatar">
@@ -159,14 +139,11 @@ const Layout = {
                     ${user.is_superuser ? '<small style="display:block; font-size: 0.8em; color: var(--primary-color)">(Admin)</small>' : ''}
                 </div>
             `;
-
-            // Navigate to Profile on Click
             document.getElementById("user-profile-btn").addEventListener("click", () => {
                 window.location.hash = "#/profile";
             });
-
+            if (window.ChatWidget) window.ChatWidget.init();
         } else {
-            // --- GUEST STATE ---
             authContainer.innerHTML = `
                 <button class="btn-auth-outline" onclick="window.location.href='../Auth/index.html'">Đăng ký</button>
                 <button class="btn-auth-primary" onclick="window.location.href='../Auth/index.html'">Đăng nhập</button>
@@ -177,10 +154,12 @@ const Layout = {
     logout: function () {
         localStorage.removeItem("authToken");
         localStorage.removeItem("user_info");
+
+        if (window.ChatWidget) window.ChatWidget.clearHistory();
+        else localStorage.removeItem("chat_history");
         window.location.href = "index.html";
     },
 
-    // Legacy support if needed, but checkAuth replaces it
     loadUserProfile: function () {
         this.checkAuth();
     }

@@ -1,16 +1,13 @@
 const API = {
-    baseUrl: 'http://localhost:8000/api',
+    baseUrl: CONFIG.API_BASE_URL,
 
     request: async function (endpoint, method = 'GET', body = null) {
-        // Support absolute URLs
         const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
-        console.log(url);
 
         const headers = {
             'Content-Type': 'application/json',
         };
 
-        // Inject Auth Token
         const token = localStorage.getItem('authToken');
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
@@ -28,7 +25,6 @@ const API = {
         try {
             const response = await fetch(url, config);
 
-            // Check if response is JSON
             const contentType = response.headers.get("content-type");
             let data;
             if (contentType && contentType.indexOf("application/json") !== -1) {
@@ -38,7 +34,6 @@ const API = {
             }
 
             if (!response.ok) {
-                // Throw error with status and message
                 throw {
                     status: response.status,
                     message: data.message || response.statusText || 'API Error',
@@ -50,11 +45,10 @@ const API = {
 
         } catch (error) {
             console.error(`API Error [${method} ${endpoint}]:`, error);
-            throw error; // Re-throw to be handled by caller
+            throw error;
         }
     },
 
-    // Shorthand methods
     get: function (endpoint) {
         return this.request(endpoint, 'GET');
     },
@@ -72,5 +66,4 @@ const API = {
     }
 };
 
-// Make it globally available if needed, or stick to just window.Api
 window.API = API;

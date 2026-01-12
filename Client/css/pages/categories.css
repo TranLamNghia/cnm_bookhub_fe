@@ -2,8 +2,6 @@
     height: auto !important;
     display: block !important;
 }
-
-/* --- BREADCRUMB --- */
 .breadcrumb {
     max-width: 1200px;
     margin: 0 auto 24px;
@@ -14,21 +12,16 @@
     color: var(--text-muted);
     font-size: 14px;
 }
-
 .breadcrumb a:hover {
     color: var(--primary);
 }
-
 .breadcrumb i {
     font-size: 10px;
 }
-
 .breadcrumb span:last-child {
     color: var(--text-main);
     font-weight: 500;
 }
-
-/* --- CATEGORY PAGE LAYOUT --- */
 .category-page-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -36,23 +29,18 @@
     display: flex;
     gap: 32px;
 }
-
-/* Sidebar */
 .sidebar-filters {
     width: 250px;
     flex-shrink: 0;
 }
-
 .filter-group {
     margin-bottom: 24px;
     padding-bottom: 24px;
     border-bottom: 1px solid var(--border);
 }
-
 .filter-group:last-child {
     border-bottom: none;
 }
-
 .filter-title {
     display: flex;
     justify-content: space-between;
@@ -61,13 +49,11 @@
     font-weight: 700;
     margin-bottom: 16px;
 }
-
 .reset-filter {
     font-size: 13px;
     color: var(--primary);
     font-weight: 400;
 }
-
 .filter-subtitle {
     display: flex;
     justify-content: space-between;
@@ -77,13 +63,11 @@
     margin-bottom: 16px;
     cursor: pointer;
 }
-
 .filter-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
-
 .custom-checkbox {
     display: flex;
     align-items: center;
@@ -93,11 +77,9 @@
     user-select: none;
     color: var(--text-main);
 }
-
 .custom-checkbox input {
     display: none;
 }
-
 .checkmark {
     width: 18px;
     height: 18px;
@@ -109,12 +91,10 @@
     justify-content: center;
     transition: all 0.2s;
 }
-
 .custom-checkbox input:checked~.checkmark {
     background: var(--primary);
     border-color: var(--primary);
 }
-
 .checkmark:after {
     content: "\f00c";
     font-family: "Font Awesome 6 Free";
@@ -123,25 +103,21 @@
     font-size: 10px;
     display: none;
 }
-
 .custom-checkbox input:checked~.checkmark:after {
     display: block;
 }
-
 .filter-more {
     font-size: 13px;
     color: var(--primary);
     font-weight: 500;
     margin-top: 4px;
 }
-
 .price-inputs {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-bottom: 12px;
 }
-
 .price-inputs input {
     width: 100%;
     padding: 8px;
@@ -151,7 +127,6 @@
     text-align: center;
     background: #f9fafb;
 }
-
 .btn-apply-filter {
     width: 100%;
     padding: 8px;
@@ -163,35 +138,27 @@
     cursor: pointer;
     transition: all 0.2s;
 }
-
 .btn-apply-filter:hover {
     background: var(--primary);
     color: white;
 }
-
-
-/* Content Area */
 .category-content {
     flex: 1;
 }
-
 .cat-header {
     margin-bottom: 24px;
 }
-
 .cat-title {
     font-size: 28px;
     font-weight: 800;
     margin-bottom: 4px;
 }
-
 .result-count {
     color: var(--text-muted);
     font-size: 14px;
     margin-bottom: 16px;
     display: block;
 }
-
 .sort-bar {
     display: flex;
     justify-content: space-between;
@@ -201,7 +168,6 @@
     border-bottom: 1px solid var(--border);
     gap: 16px;
 }
-
 .search-mini {
     display: flex;
     align-items: center;
@@ -211,9 +177,7 @@
     padding: 0 4px 0 12px;
     width: 300px;
     margin-right: auto;
-    /* Push to right if needed, or adjust flex layout */
 }
-
 .search-mini input {
     border: none;
     outline: none;
@@ -221,7 +185,6 @@
     font-size: 14px;
     width: 100%;
 }
-
 .search-mini button {
     background: transparent;
     border: none;
@@ -229,18 +192,15 @@
     padding: 8px;
     cursor: pointer;
 }
-
 .search-mini button:hover {
     color: var(--primary);
 }
-
 .active-filters-row {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
     margin-bottom: 24px;
 }
-
 .filter-chip {
     background: #eff6ff;
     color: var(--primary);
@@ -253,28 +213,23 @@
     gap: 8px;
     cursor: pointer;
 }
-
 .filter-chip.white {
     background: white;
     border: 1px solid var(--border);
     color: var(--text-main);
 }
-
 .filter-chip i {
     font-size: 12px;
 }
-
 .sort-actions {
     display: flex;
     align-items: center;
     gap: 12px;
 }
-
 .sort-actions span {
     font-size: 14px;
     color: var(--text-muted);
 }
-
 .sort-select {
     padding: 8px 32px 8px 12px;
     border-radius: 6px;
@@ -285,14 +240,12 @@
     color: var(--text-main);
     cursor: pointer;
 }
-
 .view-mode {
     display: flex;
     border: 1px solid var(--border);
     border-radius: 6px;
     overflow: hidden;
 }
-
 .view-mode button {
     padding: 8px 12px;
     background: white;
@@ -301,20 +254,15 @@
     color: var(--text-muted);
     border-right: 1px solid var(--border);
 }
-
 .view-mode button:last-child {
     border-right: none;
 }
-
-
-/* --- BOOK GRID (BOX LAYOUT) --- */
 .book-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: 32px;
     margin-bottom: 48px;
 }
-
 .book-card {
     background: white;
     border-radius: 16px;
@@ -323,16 +271,13 @@
     border: 1px solid transparent;
     display: flex;
     flex-direction: column;
-    /* Box shadow for "floating" effect */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
     cursor: pointer;
 }
-
 .book-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
-
 .book-image-container {
     background: #f9fafb;
     border-radius: 12px;
@@ -344,7 +289,6 @@
     justify-content: center;
     height: 280px;
 }
-
 .book-badge {
     position: absolute;
     top: 12px;
@@ -356,25 +300,20 @@
     font-weight: 700;
     z-index: 10;
 }
-
 .book-cover {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
-    /* Add shadow to the book cover itself */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s;
 }
-
 .book-card:hover .book-cover {
     transform: scale(1.05);
 }
-
 .book-info {
     flex: 1;
     margin-bottom: 16px;
 }
-
 .book-title {
     font-size: 16px;
     font-weight: 700;
@@ -387,19 +326,16 @@
     overflow: hidden;
     line-height: 1.4;
 }
-
 .book-author {
     color: var(--text-muted);
     font-size: 13px;
 }
-
 .book-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: auto;
 }
-
 .book-price {
     font-weight: 800;
     color: var(--primary);
@@ -408,7 +344,6 @@
     flex-direction: column;
     line-height: 1.2;
 }
-
 .old-price {
     font-size: 12px;
     color: var(--text-muted);
@@ -416,13 +351,11 @@
     font-weight: 500;
     margin-top: 2px;
 }
-
 .btn-cart-icon {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     background: #eff6ff;
-    /* Light blue */
     color: var(--primary);
     border: none;
     display: flex;
@@ -432,14 +365,11 @@
     cursor: pointer;
     transition: all 0.2s;
 }
-
 .btn-cart-icon:hover {
     background: var(--primary);
     color: white;
     transform: scale(1.1);
 }
-
-/* --- PAGINATION (UPDATED) --- */
 .pagination {
     display: flex;
     justify-content: center;
@@ -447,12 +377,10 @@
     gap: 12px;
     margin-top: 64px;
 }
-
 .page-btn {
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    /* Slightly rounded corners */
     border: none;
     background: transparent;
     color: var(--text-muted);
@@ -464,32 +392,26 @@
     justify-content: center;
     transition: all 0.2s;
 }
-
 .page-btn:hover:not(.active) {
     background: #f3f4f6;
     color: var(--primary);
 }
-
 .page-btn.active {
     background: var(--primary);
     color: white;
     box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
 }
-
 .page-dots {
     color: var(--text-muted);
     font-weight: 700;
     font-size: 16px;
     padding: 0 8px;
 }
-
 .page-btn.prev,
 .page-btn.next {
     color: var(--text-muted);
     font-size: 14px;
 }
-
-/* --- CATEGORY ITEMS (Single Select) --- */
 .category-item {
     padding: 10px 14px;
     border-radius: 8px;
@@ -503,20 +425,16 @@
     align-items: center;
     justify-content: space-between;
 }
-
 .category-item:hover {
     background: #f3f4f6;
     color: var(--primary);
 }
-
 .category-item.active {
     background: #eff6ff;
-    /* Light blue background */
     color: var(--primary);
     font-weight: 600;
     border-color: #dbeafe;
 }
-
 .category-item.active::after {
     content: "\f00c";
     font-family: "Font Awesome 6 Free";

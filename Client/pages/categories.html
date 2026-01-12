@@ -4,9 +4,7 @@
     <i class="fa-solid fa-chevron-right"></i>
     <span>Danh mục Sách</span>
 </div>
-
 <div class="category-page-container">
-    <!-- SIDEBAR FILTERS -->
     <aside class="sidebar-filters">
         <div class="filter-group">
             <h3 class="filter-title">
@@ -14,20 +12,15 @@
                 <a href="#" class="reset-filter">Xóa tất cả</a>
             </h3>
         </div>
-
-        <!-- Category Filter -->
         <div class="filter-group">
             <h4 class="filter-subtitle">
                 Thể loại
                 <i class="fa-solid fa-chevron-up"></i>
             </h4>
             <div class="filter-list" id="category-filter-list">
-                <!-- Categories will be populated here -->
                 <div class="loader-spinner">Loading...</div>
             </div>
         </div>
-
-        <!-- Price Filter -->
         <div class="filter-group">
             <h4 class="filter-subtitle">
                 Khoảng giá
@@ -40,18 +33,13 @@
             <button class="btn-apply-filter">Áp dụng</button>
         </div>
     </aside>
-
-    <!-- MAIN CONTENT -->
     <div class="category-content">
-        <!-- Page Header -->
         <div class="cat-header">
             <h1 class="cat-title"></h1>
-
             <div class="sort-bar">
                 <div class="search-mini">
                     <input type="text" placeholder="Tìm kiếm sách...">
                 </div>
-
                 <div class="sort-actions">
                     <span>Sắp xếp:</span>
                     <select class="sort-select">
@@ -61,16 +49,10 @@
                 </div>
             </div>
         </div>
-
-        <!-- Book Grid -->
         <div class="book-grid" id="category-book-grid">
-            <!-- Items will be rendered by JS -->
             <div class="loader-spinner">Loading...</div>
         </div>
-
-        <!-- Infinite Scroll Trigger / Loader -->
         <div id="scroll-sentinel" style="height: 1px; width: 100%; margin-bottom: 20px;"></div>
-
         <div id="infinite-scroll-trigger" style="text-align: center; padding: 20px; display: none;">
             <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: var(--primary);"></i>
         </div>
