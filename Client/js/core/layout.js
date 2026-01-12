@@ -168,7 +168,7 @@ const Layout = {
         } else {
             // --- GUEST STATE ---
             authContainer.innerHTML = `
-                <button class="btn-auth-outline" onclick="window.location.href='../Auth/index.html'">Đăng ký</button>
+                
                 <button class="btn-auth-primary" onclick="window.location.href='../Auth/index.html'">Đăng nhập</button>
             `;
         }

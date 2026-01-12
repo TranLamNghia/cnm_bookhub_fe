@@ -24,17 +24,34 @@ const AuthAPI = {
             const data = await response.json();
 
             if (response.ok) {
+                const token = data.access_token;
+
+                // Check verification status
+                const userProfile = await this.getProfile(token);
+                if (userProfile.success && userProfile.user) {
+                    // Check is_verify as requested by user
+                    if (!userProfile.user.is_verified) {
+                        return {
+                            success: false,
+                            needVerify: true,
+                            message: "Tài khoản chưa được xác thực. Hệ thống đang gửi mã OTP..."
+                        };
+                    }
+                }
+
                 return {
                     success: true,
                     message: "Đăng nhập thành công!",
-                    token: data.access_token, // Returns { access_token, token_type }
-                    // User info usually needs a separate call if not in token, 
-                    // but we can fake it or call /users/me later.
+                    token: token,
                 };
             } else {
+                let message = data.detail || "Email hoặc mật khẩu không chính xác!";
+                if (message === "LOGIN_BAD_CREDENTIALS") {
+                    message = "Email hoặc mật khẩu không chính xác!";
+                }
                 return {
                     success: false,
-                    message: data.detail || "Email hoặc mật khẩu không chính xác!"
+                    message: message
                 };
             }
         } catch (error) {
@@ -99,6 +116,29 @@ const AuthAPI = {
     },
 
     /**
+     * API: Send OTP for Verification (New)
+     * POST /otp/send
+     */
+    async sendVerificationOtp(email) {
+        try {
+            const response = await fetch(`${this.baseUrl}/otp/send`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email })
+            });
+
+            if (response.ok) {
+                return { success: true, message: "Đã gửi mã OTP xác thực." };
+            }
+            return { success: false, message: "Gửi OTP thất bại." };
+        } catch (error) {
+            return { success: false, message: "Lỗi kết nối server!" };
+        }
+    },
+
+    /**
      * API: Send OTP (Forgot Password)
      * @param {string} email 
      */
@@ -148,22 +188,81 @@ const AuthAPI = {
      * Default FastAPI-Users: POST /auth/verify { token: "string" }
      */
     async verifyOtp(email, otp) {
-        // WARNING: This depends on backend implementation. 
-        // Standard fastAPI-users 'verify' takes a long JWT string, not a 6-digit OTP.
-        // If your backend doesn't support 6-digit OTP, this will fail.
+        try {
+            const response = await fetch(`${this.baseUrl}/otp/verify`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, otp_code: otp })
+            });
 
-        // For the sake of the user's request "API have already", 
-        // I will point to /auth/verify assuming 'otp' might be the token? 
-        // Or if it's a custom endpoint. 
-        // Let's assume standard behavior is Link-based, so this UI might be for a different flow.
+            const data = await response.json();
 
-        console.warn("Verify OTP: Backend typically uses Link verification (JWT), not 6-digit OTP.");
+            if (!response.ok) {
+                console.error("Verify OTP Failed:", data);
+            }
 
-        // Return Mock success to not break flow if they are just testing UI/Social
-        return {
-            success: false,
-            message: "Backend sử dụng xác thực qua Email Link, không phải mã OTP 6 số."
-        };
+            if (response.ok) {
+                return {
+                    success: true,
+                    message: "Xác thực OTP thành công!"
+                };
+            } else {
+                return {
+                    success: false,
+                    message: data.detail || "Mã OTP không chính xác hoặc đã hết hạn."
+                };
+            }
+        } catch (error) {
+            console.error("Verify OTP Error:", error);
+            return {
+                success: false,
+                message: "Lỗi kết nối server!"
+            };
+        }
+    },
+
+    /**
+     * API: Forgot Password (Send Reset Link)
+     * @param {string} email 
+     */
+    async forgotPassword(email) {
+        try {
+            const response = await fetch(`${this.baseUrl}/auth/forgot-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email })
+            });
+
+            // Status 202 Accepted is common for this
+            if (response.ok) {
+                return {
+                    success: true,
+                    message: "Link đặt lại mật khẩu đã được gửi đến email của bạn."
+                };
+            } else {
+                // Try to parse if json calls
+                let message = "Gửi yêu cầu thất bại.";
+                try {
+                    const data = await response.json();
+                    message = data.detail || message;
+                } catch (e) { }
+
+                return {
+                    success: false,
+                    message: message
+                };
+            }
+        } catch (error) {
+            console.error("Forgot Password Error:", error);
+            return {
+                success: false,
+                message: "Lỗi kết nối server!"
+            };
+        }
     },
 
     /**
