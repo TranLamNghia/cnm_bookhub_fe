@@ -1,33 +1,26 @@
-/* --- CART PAGE --- */
 .cart-page {
     max-width: 1200px;
     margin: 0 auto;
     padding: 32px 16px 64px;
 }
-
 .cart-container {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 32px;
 }
-
 @media (max-width: 992px) {
     .cart-container {
         grid-template-columns: 1fr;
     }
 }
-
-/* Left: Items */
 .page-header {
     margin-bottom: 24px;
 }
-
 .page-header h1 {
     font-size: 28px;
     font-weight: 800;
     margin-bottom: 8px;
 }
-
 .cart-item {
     display: flex;
     align-items: center;
@@ -38,7 +31,6 @@
     margin-bottom: 16px;
     border: 1px solid var(--border);
 }
-
 .cart-item .cover {
     width: 80px;
     height: 100px;
@@ -46,27 +38,22 @@
     border-radius: 8px;
     background: #f3f4f6;
 }
-
 .cart-item .info {
     flex: 1;
 }
-
 .cart-item .title {
     font-weight: 700;
     font-size: 16px;
     margin-bottom: 4px;
 }
-
 .muted {
     color: var(--text-muted);
     font-size: 14px;
 }
-
 .cart-item .price {
     font-weight: 600;
     width: 100px;
 }
-
 .qty-control {
     display: flex;
     align-items: center;
@@ -74,7 +61,6 @@
     border-radius: 6px;
     overflow: hidden;
 }
-
 .qty-btn {
     width: 32px;
     height: 32px;
@@ -84,12 +70,10 @@
     font-size: 16px;
     color: var(--text-muted);
 }
-
 .qty-btn:hover {
     background: #f9fafb;
     color: var(--primary);
 }
-
 .qty-input {
     width: 40px;
     height: 32px;
@@ -100,14 +84,12 @@
     border-left: 1px solid var(--border);
     border-right: 1px solid var(--border);
 }
-
 .line-price {
     font-weight: 700;
     color: var(--primary);
     width: 120px;
     text-align: right;
 }
-
 .remove {
     background: none;
     border: none;
@@ -117,11 +99,9 @@
     text-decoration: underline;
     margin-left: 16px;
 }
-
 .remove:hover {
     color: var(--danger);
 }
-
 .continue {
     display: inline-block;
     margin-top: 24px;
@@ -129,8 +109,6 @@
     color: var(--primary);
     font-size: 14px;
 }
-
-/* Right: Summary */
 .summary-card,
 .coupon-card {
     background: white;
@@ -139,24 +117,20 @@
     border: 1px solid var(--border);
     margin-bottom: 24px;
 }
-
 .summary-card h3 {
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 24px;
 }
-
 .summary-row {
     display: flex;
     justify-content: space-between;
     margin-bottom: 12px;
     font-size: 14px;
 }
-
 .discount {
     color: var(--success);
 }
-
 .summary-total {
     display: flex;
     justify-content: space-between;
@@ -167,12 +141,10 @@
     font-weight: 800;
     font-size: 18px;
 }
-
 .total-amount {
     color: var(--primary);
     font-size: 24px;
 }
-
 .btn-checkout {
     width: 100%;
     background: var(--primary);
@@ -185,34 +157,27 @@
     cursor: pointer;
     transition: background 0.2s;
 }
-
 .btn-checkout:hover {
     background: var(--primary-dark);
 }
-
 .btn-checkout:disabled,
 .btn-checkout.disabled {
     background: #ccc;
     cursor: not-allowed;
     opacity: 0.7;
 }
-
 .coupon-header {
     font-weight: 700;
     margin-bottom: 8px;
 }
-
-/* Payment Methods */
 .payment-methods {
     margin: 16px 0;
 }
-
 .payment-methods h4 {
     font-size: 15px;
     font-weight: 700;
     margin-bottom: 12px;
 }
-
 .payment-option {
     display: flex;
     align-items: center;
@@ -222,11 +187,9 @@
     font-size: 14px;
     color: var(--text-main);
 }
-
 .payment-option input {
     display: none;
 }
-
 .radio-mark {
     width: 20px;
     height: 20px;
@@ -235,11 +198,9 @@
     position: relative;
     transition: all 0.2s;
 }
-
 .payment-option input:checked+.radio-mark {
     border-color: var(--primary);
 }
-
 .payment-option input:checked+.radio-mark::after {
     content: '';
     position: absolute;

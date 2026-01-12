@@ -11,7 +11,7 @@ const AuthAPI = {
         const formData = new URLSearchParams();
         formData.append('username', username);
         formData.append('password', password);
-
+        console.log(`${this.baseUrl}/auth/jwt/login`);
         try {
             const response = await fetch(`${this.baseUrl}/auth/jwt/login`, {
                 method: 'POST',
@@ -68,6 +68,7 @@ const AuthAPI = {
      * @param {object} data { email, password }
      */
     async register(data) {
+        console.log(`${this.baseUrl}/auth/register`);
         try {
             // FastAPI Users /register expects { email, password }
             const response = await fetch(`${this.baseUrl}/auth/register`, {
@@ -144,8 +145,8 @@ const AuthAPI = {
      */
     async sendOtp(email) {
         try {
-            // /auth/forgot-password expects { email }
-            const response = await fetch(`${this.baseUrl}/auth/forgot-password`, {
+            console.log("Sending OTP to:", email);
+            const response = await fetch(`${this.baseUrl}/mail/send-mail-otp`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -153,19 +154,22 @@ const AuthAPI = {
                 body: JSON.stringify({ email })
             });
 
-            if (response.ok || response.status === 202) {
+            const data = await response.json();
+
+            if (response.ok && data.otp_code) {
                 return {
                     success: true,
-                    message: `Chúng tôi đã gửi hướng dẫn tới ${email}`
+                    message: `Mã OTP đã được gửi đến ${email}`,
+                    otp_code: data.otp_code
                 };
             } else {
-                const data = await response.json();
                 return {
                     success: false,
-                    message: data.detail || "Không thể gửi yêu cầu."
+                    message: "Không thể gửi mã OTP. Vui lòng thử lại."
                 };
             }
         } catch (error) {
+            console.error(error);
             return {
                 success: false,
                 message: "Lỗi kết nối server!"

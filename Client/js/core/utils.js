@@ -1,6 +1,5 @@
 const Utils = {
-    // Hiển thị Toast notification với SweetAlert2
-    showToast: function (icon, title, timer = 3000) {
+    showToast: function (icon, title, timer = 1000) {
         Swal.fire({
             icon: icon,
             title: title,

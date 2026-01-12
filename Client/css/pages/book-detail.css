@@ -1,10 +1,8 @@
-/* --- BOOK DETAIL PAGE --- */
 .book-detail-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 16px 64px;
 }
-
 .product-top {
     display: flex;
     gap: 48px;
@@ -13,13 +11,10 @@
     padding: 32px;
     border-radius: 16px;
 }
-
-/* Gallery */
 .product-gallery {
     width: 400px;
     flex-shrink: 0;
 }
-
 .main-image-container {
     position: relative;
     border-radius: 12px;
@@ -27,13 +22,11 @@
     margin-bottom: 16px;
     border: 1px solid var(--border);
 }
-
 .main-image {
     width: 100%;
     height: auto;
     display: block;
 }
-
 .discount-badge {
     position: absolute;
     top: 12px;
@@ -45,12 +38,10 @@
     font-weight: 700;
     font-size: 14px;
 }
-
 .thumbnail-list {
     display: flex;
     gap: 12px;
 }
-
 .thumbnail {
     width: 80px;
     height: 80px;
@@ -60,33 +51,26 @@
     cursor: pointer;
     transition: all 0.2s;
 }
-
 .thumbnail.active {
     border-color: var(--primary);
 }
-
 .thumbnail:hover {
     opacity: 0.8;
 }
-
 .thumbnail img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
-
-/* Info */
 .product-info {
     flex: 1;
 }
-
 .product-title {
     font-size: 32px;
     font-weight: 800;
     margin-bottom: 16px;
     line-height: 1.2;
 }
-
 .product-meta {
     display: flex;
     gap: 12px;
@@ -94,31 +78,25 @@
     font-size: 14px;
     margin-bottom: 16px;
 }
-
 .separator {
     color: var(--border);
 }
-
 .product-rating {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-bottom: 24px;
 }
-
 .stars {
     color: #F59E0B;
-    /* Amber */
     font-size: 14px;
 }
-
 .rating-text {
     color: var(--text-muted);
     font-size: 14px;
     text-decoration: underline;
     cursor: pointer;
 }
-
 .product-price-box {
     display: flex;
     align-items: center;
@@ -128,19 +106,16 @@
     padding: 16px;
     border-radius: 12px;
 }
-
 .current-price {
     font-size: 32px;
     font-weight: 700;
     color: var(--primary);
 }
-
 .original-price {
     font-size: 18px;
     color: var(--text-muted);
     text-decoration: line-through;
 }
-
 .discount-tag {
     background: #FEF2F2;
     color: var(--danger);
@@ -149,14 +124,11 @@
     font-weight: 600;
     font-size: 14px;
 }
-
 .product-short-desc {
     color: var(--text-muted);
     margin-bottom: 32px;
     line-height: 1.6;
 }
-
-/* Actions */
 .product-actions {
     display: flex;
     align-items: center;
@@ -165,12 +137,10 @@
     padding-bottom: 32px;
     border-bottom: 1px solid var(--border);
 }
-
 .quantity-selector span {
     font-weight: 600;
     margin-right: 12px;
 }
-
 .qty-btn-group {
     display: inline-flex;
     border: 1px solid var(--border);
@@ -178,7 +148,6 @@
     overflow: hidden;
     vertical-align: middle;
 }
-
 .qty-btn-group button {
     width: 36px;
     height: 36px;
@@ -188,12 +157,10 @@
     font-size: 16px;
     color: var(--text-muted);
 }
-
 .qty-btn-group button:hover {
     background: #f9fafb;
     color: var(--primary);
 }
-
 .qty-btn-group input {
     width: 48px;
     text-align: center;
@@ -203,12 +170,10 @@
     font-weight: 600;
     outline: none;
 }
-
 .action-buttons {
     display: flex;
     gap: 16px;
 }
-
 .btn-add-cart {
     background: var(--primary);
     color: white;
@@ -222,11 +187,9 @@
     gap: 8px;
     transition: background 0.2s;
 }
-
 .btn-add-cart:hover {
     background: var(--primary-dark);
 }
-
 .btn-buy-now {
     background: white;
     color: var(--primary);
@@ -237,19 +200,15 @@
     cursor: pointer;
     transition: all 0.2s;
 }
-
 .btn-buy-now:hover {
     background: #eff6ff;
 }
-
-/* Policy Grid */
 .policy-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     padding-top: 24px;
 }
-
 .policy-item {
     display: flex;
     flex-direction: column;
@@ -259,26 +218,21 @@
     color: var(--text-muted);
     font-size: 13px;
 }
-
 .policy-item i {
     font-size: 20px;
     color: var(--primary);
 }
-
-/* Detail Content Layout */
 .product-content-layout {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 32px;
 }
-
 .detail-tabs {
     display: flex;
     gap: 32px;
     border-bottom: 2px solid var(--border);
     margin-bottom: 32px;
 }
-
 .tab-btn {
     background: none;
     border: none;
@@ -290,64 +244,51 @@
     position: relative;
     top: 2px;
 }
-
 .tab-btn.active {
     color: var(--primary);
     border-bottom: 2px solid var(--primary);
 }
-
 .tab-content {
     background: white;
     padding: 32px;
     border-radius: 12px;
     margin-bottom: 32px;
-    /* Box Shadow optional */
 }
-
-/* Review Section */
 .reviews-section {
     background: white;
     padding: 32px;
     border-radius: 12px;
 }
-
 .review-item {
     padding-bottom: 24px;
     margin-bottom: 24px;
     border-bottom: 1px solid var(--border);
 }
-
 .review-item:last-child {
     border-bottom: none;
     padding-bottom: 0;
     margin-bottom: 0;
 }
-
 .review-header {
     display: flex;
     gap: 12px;
     margin-bottom: 12px;
     position: relative;
 }
-
 .reviewer-name {
     font-weight: 600;
     font-size: 14px;
 }
-
 .review-date {
     margin-left: auto;
     color: var(--text-muted);
     font-size: 13px;
 }
-
 .review-text {
     font-size: 14px;
     color: #4b5563;
     line-height: 1.6;
 }
-
-/* Side Info Box */
 .info-box,
 .related-books-box {
     background: white;
@@ -355,13 +296,11 @@
     border-radius: 12px;
     margin-bottom: 24px;
 }
-
 .box-title {
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 24px;
 }
-
 .info-row {
     display: flex;
     justify-content: space-between;
@@ -369,22 +308,18 @@
     border-bottom: 1px dotted var(--border);
     font-size: 14px;
 }
-
 .info-row span:first-child {
     color: var(--text-muted);
 }
-
 .info-row span:last-child {
     font-weight: 500;
 }
-
 .mini-book-item {
     display: flex;
     gap: 12px;
     margin-bottom: 16px;
     cursor: pointer;
 }
-
 .mini-book-cover {
     width: 60px;
     height: 90px;
@@ -392,7 +327,6 @@
     border-radius: 4px;
     background: #eee;
 }
-
 .mini-book-info h4 {
     font-size: 14px;
     font-weight: 600;
@@ -403,7 +337,6 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
-
 .mini-book-price {
     color: var(--primary);
     font-weight: 700;

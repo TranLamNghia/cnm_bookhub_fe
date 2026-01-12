@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // State Variables
     let currentEmail = "";
+    let currentOtp = ""; // Store real OTP from backend
     let otpContext = "forgot"; // 'forgot' or 'register'
 
 
@@ -210,7 +211,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     // OLD: mainWrapper.classList.remove("show-register");
 
                     // NEW: Redirect to OTP View
-                    showToast("Đăng ký thành công! Vui lòng kiểm tra mã xác thực.", "success");
+                    showToast("Đăng ký thành công! Đang gửi mã xác thực...", "info");
+
+                    // Trigger Send OTP immediately for verification
+                    try {
+                        const otpRes = await AuthAPI.sendOtp(email);
+                        if (otpRes.success && otpRes.otp_code) {
+                            currentOtp = otpRes.otp_code;
+                            console.log("OTP Sent (Debug):", currentOtp);
+                            showToast(`Mã xác thực đã gửi đến ${email}`, "success");
+                        } else {
+                            showToast("Không thể gửi mã xác thực, vui lòng thử lại.", "error");
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
 
                     currentEmail = email;
                     otpContext = "register";
@@ -327,9 +342,15 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- MOCK LOGIC ---
-            showToast("Đã gửi mã mới!", "info");
-            startOtpTimer();
+            // --- REAL LOGIC ---
+            const response = await AuthAPI.sendOtp(currentEmail);
+            if (response.success && response.otp_code) {
+                currentOtp = response.otp_code;
+                showToast("Đã gửi lại mã mới!", "success");
+                startOtpTimer();
+            } else {
+                showToast("Không thể gửi lại mã!", "error");
+            }
         });
     }
 

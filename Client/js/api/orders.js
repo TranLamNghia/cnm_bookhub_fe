@@ -1,5 +1,5 @@
 window.OrdersAPI = {
-    getAll: async function (params = {}) { // limit, offset, order_id, order_status, order_date
+    getAll: async function (params = {}) { 
         let url = `/order/getAll?limit=${params.limit || 10}&offset=${params.offset || 1}`;
         if (params.order_id) url += `&order_id=${encodeURIComponent(params.order_id)}`;
         if (params.order_status && params.order_status !== 'all') url += `&order_status=${encodeURIComponent(params.order_status)}`;
@@ -9,7 +9,7 @@ window.OrdersAPI = {
     },
 
     getById: async function (id) {
-        return await API.get(`/order/${id}`);
+        return await API.get(`/orders/${id}`);
     },
 
     create: async function (data) {
@@ -17,8 +17,6 @@ window.OrdersAPI = {
     },
 
     requestOrder: async function (paymentMethod, orderItems) {
-        // paymentMethod: "cod" hoặc "online" (lowercase)
-        // orderItems: array of { book_id: UUID, quantity: int }
         return await API.post("/orders/request-order", {
             payment_method: paymentMethod.toLowerCase(),
             order_items: orderItems
@@ -26,7 +24,6 @@ window.OrdersAPI = {
     },
 
     getOrderStatus: async function (orderId) {
-        // Lấy trạng thái đơn hàng theo order_id
         return await API.get(`/orders/${orderId}/status`);
     },
 
@@ -36,5 +33,9 @@ window.OrdersAPI = {
 
     cancel: async function (id) {
         return this.updateStatus(id, "cancelled");
+    },
+
+    getHistory: async function () {
+        return await API.get("/orders/history");
     }
 };

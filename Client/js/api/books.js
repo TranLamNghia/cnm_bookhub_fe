@@ -4,11 +4,12 @@ window.BooksAPI = {
     if (queryParams) {
       url += `?${queryParams}`;
     }
+
     return await API.request(url);
   },
 
   getBookById: async (id) => {
-    return await API.request(`/books/${id}`);
+    return await API.get(`/books/${id}`);
   },
 
   getRelatedBooks: async (category_id, limit = 4) => {
