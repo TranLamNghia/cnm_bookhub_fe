@@ -8,7 +8,7 @@ window.BooksAPI = {
   },
 
   getBookById: async (id) => {
-    return await API.request(`/books/${id}`);
+    return await API.get(`/books/${id}`);
   },
 
   getRelatedBooks: async (category_id, limit = 4) => {

@@ -2,7 +2,7 @@ const CartPage = {
   render: async function () {
     await Layout.renderBody("pages/cart.html");
     // Đợi DOM được render xong trước khi gọi loadCart
-    await new Promise(resolve => setTimeout(resolve, 0));
+    await new Promise((resolve) => setTimeout(resolve, 0));
     await this.loadCart();
   },
 
@@ -27,9 +27,10 @@ const CartPage = {
       }
 
       // Kiểm tra user đã đăng nhập chưa
-      const userStr = localStorage.getItem('user_info');
+      const userStr = localStorage.getItem("user_info");
       if (!userStr) {
-        container.innerHTML = '<div class="empty-cart"><p>Vui lòng đăng nhập để xem giỏ hàng.</p></div>';
+        container.innerHTML =
+          '<div class="empty-cart"><p>Vui lòng đăng nhập để xem giỏ hàng.</p></div>';
         return;
       }
 
@@ -83,7 +84,8 @@ const CartPage = {
         const isInvalid = quantity === 0;
         if (isInvalid) hasInvalidItem = true;
 
-        const price = new Intl.NumberFormat("vi-VN").format(item.price || 0) + " đ";
+        const price =
+          new Intl.NumberFormat("vi-VN").format(item.price || 0) + " đ";
         const linePrice =
           new Intl.NumberFormat("vi-VN").format((item.price || 0) * quantity) +
           " đ";
@@ -94,10 +96,13 @@ const CartPage = {
 
         // Xử lý image_urls: có thể là string chứa nhiều URLs phân cách bởi dấu phẩy, hoặc một URL duy nhất
         // Fallback về image_url nếu không có image_urls (cho tương thích ngược)
-        let imageUrl = item.image_urls || item.image_url || "https://via.placeholder.com/100x150";
-        if (imageUrl && imageUrl.includes(',')) {
-            // Nếu có nhiều URLs, lấy URL đầu tiên
-            imageUrl = imageUrl.split(',')[0].trim();
+        let imageUrl =
+          item.image_urls ||
+          item.image_url ||
+          "https://via.placeholder.com/100x150";
+        if (imageUrl && imageUrl.includes(",")) {
+          // Nếu có nhiều URLs, lấy URL đầu tiên
+          imageUrl = imageUrl.split(",")[0].trim();
         }
 
         html += `
@@ -350,13 +355,16 @@ const CartPage = {
             const bookId = i.book_id || i.id;
             return {
               book_id: bookId,
-              quantity: Number(i.quantity) || 1
+              quantity: Number(i.quantity) || 1,
             };
           });
 
           // 6. Call API to request order
           try {
-            const res = await OrdersAPI.requestOrder(paymentMethodVal, orderItems);
+            const res = await OrdersAPI.requestOrder(
+              paymentMethodVal,
+              orderItems
+            );
 
             // Parse response nếu cần
             let orderResponse = res;
@@ -370,43 +378,47 @@ const CartPage = {
 
             // Backend trả về: { payment_method, id, payment_intent_id }
             const orderId = orderResponse.id || orderResponse.data?.id;
-            const paymentIntentId = orderResponse.payment_intent_id || orderResponse.data?.payment_intent_id || "";
+            const paymentIntentId =
+              orderResponse.payment_intent_id ||
+              orderResponse.data?.payment_intent_id ||
+              "";
 
             if (!orderId) {
               throw new Error("Không nhận được ID đơn hàng từ server");
             }
 
-             // 7. Process based on payment method
-             if (isOnline && paymentIntentId) {
-               // Thanh toán online - lưu thông tin vào sessionStorage
-               sessionStorage.setItem("payment_intent_id", paymentIntentId);
-               sessionStorage.setItem("order_id", orderId);
+            // 7. Process based on payment method
+            if (isOnline && paymentIntentId) {
+              // Thanh toán online - lưu thông tin vào sessionStorage
+              sessionStorage.setItem("payment_intent_id", paymentIntentId);
+              sessionStorage.setItem("order_id", orderId);
 
-               // Clear cart UI immediately (backend đã clear cart)
-               this.items = [];
-               this.renderCartItems([]);
+              // Clear cart UI immediately (backend đã clear cart)
+              this.items = [];
+              this.renderCartItems([]);
 
-               // Redirect to Stripe checkout page
-               window.location.hash = "#/checkout-stripe";
-               return;
-             } else {
-               // Thanh toán COD - lưu order_id vào sessionStorage
-               sessionStorage.setItem("order_id", orderId);
+              // Redirect to Stripe checkout page
+              window.location.hash = "#/checkout-stripe";
+              return;
+            } else {
+              // Thanh toán COD - lưu order_id vào sessionStorage
+              sessionStorage.setItem("order_id", orderId);
 
-               // Clear Cart UI & State
-               this.items = [];
-               this.renderCartItems([]);
+              // Clear Cart UI & State
+              this.items = [];
+              this.renderCartItems([]);
 
-               // Redirect to success page
-               window.location.hash = "#/order-status";
-             }
+              // Redirect to success page
+              window.location.hash = "#/order-status";
+            }
           } catch (err) {
             console.error("Request order error:", err);
-            const errorMessage = err.message || err.data?.message || "Không thể tạo đơn hàng";
+            const errorMessage =
+              err.message || err.data?.message || "Không thể tạo đơn hàng";
             Swal.fire({
               title: "Lỗi",
               text: errorMessage,
-              icon: "error"
+              icon: "error",
             });
           }
         } catch (error) {
