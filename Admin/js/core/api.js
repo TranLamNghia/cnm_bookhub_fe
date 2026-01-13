@@ -23,6 +23,10 @@ const API = {
 
       if (!response.ok) throw new Error(`Lỗi HTTP: ${response.status}`);
 
+      if (response.status === 204) {
+        return null;
+      }
+
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.indexOf("application/json") !== -1) {
         return await response.json();
@@ -56,6 +60,13 @@ const API = {
   async put(endpoint, body) {
     return await this.request(endpoint, {
       method: "PUT",
+      body: JSON.stringify(body),
+    });
+  },
+
+  async patch(endpoint, body) {
+    return await this.request(endpoint, {
+      method: "PATCH",
       body: JSON.stringify(body),
     });
   },

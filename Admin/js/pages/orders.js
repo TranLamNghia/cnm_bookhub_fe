@@ -36,8 +36,11 @@ const OrdersPage = {
         order_date: this.currentDate        // Maps date to order_date
       };
 
+      console.log('📋 [OrdersPage.loadOrders] Calling API with params:', params);
       const response = await OrdersAPI.getAll(params);
+      console.log('📋 [OrdersPage.loadOrders] Full API Response:', response);
       const orders = response.items || [];
+      console.log('📋 [OrdersPage.loadOrders] Orders array:', orders);
 
       this.renderTable(orders);
       this.renderPagination(response.totalPage, response.total);

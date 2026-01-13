@@ -1,5 +1,5 @@
 window.OrdersAPI = {
-    USE_MOCK_DATA: true,
+    USE_MOCK_DATA: false,
     MOCK_KEY: "BOOKHUB_MOCK_ORDERS",
 
     // In-memory cache for current session (resets on F5)
@@ -79,7 +79,7 @@ window.OrdersAPI = {
     },
 
     getAll: async function (params = {}) { // limit, offset, order_id, order_status, order_date
-        if (!OrdersAPI.USE_MOCK_DATA) {
+        if (OrdersAPI.USE_MOCK_DATA) {
             await new Promise(r => setTimeout(r, 400));
             const orders = OrdersAPI.getMockData();
 
@@ -119,12 +119,16 @@ window.OrdersAPI = {
         }
 
         // Real API Call
-        let url = `/order/getAll?limit=${params.limit}&offset=${params.offset}`;
+        let url = `/orders/getAll?limit=${params.limit}&offset=${params.offset}`;
         if (params.order_id) url += `&order_id=${encodeURIComponent(params.order_id)}`;
         if (params.order_status && params.order_status !== 'all') url += `&order_status=${encodeURIComponent(params.order_status)}`;
         if (params.order_date) url += `&order_date=${encodeURIComponent(params.order_date)}`;
 
-        return await API.get(url);
+        console.log('🔵 [OrdersAPI.getAll] Request URL:', url);
+        console.log('🔵 [OrdersAPI.getAll] Request params:', params);
+        const response = await API.get(url);
+        console.log('🟢 [OrdersAPI.getAll] Response:', response);
+        return response;
     },
 
     getById: async function (id) {
@@ -135,7 +139,24 @@ window.OrdersAPI = {
             if (order) return order;
             throw new Error("Không tìm thấy đơn hàng");
         }
-        return await API.get(`/order/${id}`);
+        console.log('🔵 [OrdersAPI.getById] Request ID:', id);
+        const response = await API.get(`/orders/${id}`);
+        console.log('🟢 [OrdersAPI.getById] Response:', response);
+        return response;
+    },
+
+    getAdminById: async function (id) {
+        if (OrdersAPI.USE_MOCK_DATA) {
+            await new Promise(r => setTimeout(r, 300));
+            const orders = OrdersAPI.getMockData();
+            const order = orders.find(o => o.id === id);
+            if (order) return order;
+            throw new Error("Không tìm thấy đơn hàng");
+        }
+        console.log('🔵 [OrdersAPI.getAdminById] Request ID:', id);
+        const response = await API.get(`/orders/admin/${id}`);
+        console.log('🟢 [OrdersAPI.getAdminById] Response:', response);
+        return response;
     },
 
     create: async function (data) {
@@ -164,7 +185,7 @@ window.OrdersAPI = {
                 data: newOrder
             };
         }
-        return await API.post("/order", data);
+        return await API.post("/orders", data);
     },
 
     updateStatus: async function (id, status) {
@@ -177,14 +198,11 @@ window.OrdersAPI = {
 
             orders[index].status = status;
             OrdersAPI.saveMockData(orders);
-
-            return {
-                code: 200,
-                message: "Cập nhật trạng thái thành công!",
-                data: orders[index]
-            };
+            return;
         }
-        return await API.put(`/order/${id}/status`, { status });
+        console.log('🔵 [OrdersAPI.updateStatus] Request:', { id, status });
+        await API.patch(`/orders/admin/${id}/status`, { status });
+        console.log('🟢 [OrdersAPI.updateStatus] Success');
     },
 
     cancel: async function (id) {

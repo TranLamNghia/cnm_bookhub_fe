@@ -1,5 +1,6 @@
 window.BooksAPI = {
   getAllBooksClient: async (queryParams) => {
+    console.log("getAllBooksClient", queryParams);
     let url = `/books/`;
     if (queryParams) {
       url += `?${queryParams}`;

@@ -30,11 +30,13 @@ const OrderDetailPage = {
 
     loadOrder: async function () {
         try {
-            const order = await OrdersAPI.getById(this.orderId);
+            console.log('📄 [OrderDetailPage.loadOrder] Loading order ID:', this.orderId);
+            const order = await OrdersAPI.getAdminById(this.orderId);
+            console.log('📄 [OrderDetailPage.loadOrder] Order data received:', order);
             this.order = order;
             this.populateData(order);
         } catch (error) {
-            console.error("Error loading order:", error);
+            console.error("❌ [OrderDetailPage.loadOrder] Error loading order:", error);
             Utils.showToast("error", "Lỗi khi tải thông tin đơn hàng");
         }
     },
@@ -54,7 +56,8 @@ const OrderDetailPage = {
         const methodMap = {
             'cod': '<i class="fa-solid fa-money-bill-1 text-success"></i> Thanh toán khi nhận hàng (COD)',
             'banking': '<i class="fa-solid fa-building-columns text-primary"></i> Chuyển khoản',
-            'vnpay': '<i class="fa-solid fa-qrcode text-info"></i> VNPAY'
+            'vnpay': '<i class="fa-solid fa-qrcode text-info"></i> VNPAY',
+            'online': '<i class="fa-solid fa-credit-card text-primary"></i> Thanh toán online'
         };
         document.getElementById("payment-method-display").innerHTML = methodMap[order.payment_method] || order.payment_method;
 
@@ -103,6 +106,7 @@ const OrderDetailPage = {
         // --- Status Update Select ---
         const statusSelect = document.getElementById("order-status-update");
         const btnUpdate = document.getElementById("btn-update-status");
+        // Backend returns status in format: waiting_for_confirmation, delivery_in_progress, completed, cancelled
         statusSelect.value = order.status;
 
         const isFinalStatus = ['completed', 'cancelled'].includes(order.status);
@@ -126,11 +130,12 @@ const OrderDetailPage = {
     updateStatus: async function () {
         const newStatus = document.getElementById("order-status-update").value;
         try {
-            const res = await OrdersAPI.updateStatus(this.orderId, newStatus);
-            Utils.showToast("success", res.message || "Cập nhật trạng thái thành công!");
+            console.log('🔄 [OrderDetailPage.updateStatus] Updating status:', { orderId: this.orderId, newStatus });
+            await OrdersAPI.updateStatus(this.orderId, newStatus);
+            Utils.showToast("success", "Cập nhật trạng thái thành công!");
             this.loadOrder(); // Reload to refresh UI logic (e.g. cancel button)
         } catch (error) {
-            console.error(error);
+            console.error("❌ [OrderDetailPage.updateStatus] Error:", error);
             Utils.showToast("error", "Lỗi cập nhật trạng thái");
         }
     },
@@ -150,11 +155,13 @@ const OrderDetailPage = {
         if (!result.isConfirmed) return;
 
         try {
+            console.log('🚫 [OrderDetailPage.cancelOrder] Cancelling order ID:', this.orderId);
             const res = await OrdersAPI.cancel(this.orderId);
+            console.log('🚫 [OrderDetailPage.cancelOrder] Cancel response:', res);
             Utils.showToast("success", res.message || "Đã hủy đơn hàng!");
             this.loadOrder();
         } catch (error) {
-            console.error(error);
+            console.error("❌ [OrderDetailPage.cancelOrder] Error:", error);
             Utils.showToast("error", "Lỗi khi hủy đơn hàng");
         }
     },

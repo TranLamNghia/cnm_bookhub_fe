@@ -1,8 +1,7 @@
-const USE_MOCK_DATA = false; // Set to false to use real API
-
+const USE_MOCK_DATA = false; // Set false để chạy API thật
 const MOCK_STORAGE_KEY = "BOOKHUB_MOCK_USERS";
 
-// Dữ liệu mẫu ban đầu
+// --- DỮ LIỆU MẪU (MOCK DATA) ---
 const DEFAULT_MOCK_USERS = [
     {
         id: "1",
@@ -66,7 +65,7 @@ const DEFAULT_MOCK_USERS = [
     }
 ];
 
-// Helper to manage Mock Data
+// --- HELPER QUẢN LÝ MOCK ---
 const MockHelper = {
     getData: () => {
         const stored = localStorage.getItem(MOCK_STORAGE_KEY);
@@ -82,40 +81,42 @@ const MockHelper = {
     }
 };
 
+// --- API CHÍNH ---
 window.UsersAPI = {
+    // 1. Lấy danh sách Users
     getAll: async function (limit = 10, offset = 1, user_name = "") {
         if (USE_MOCK_DATA) {
-            // Simulate network delay
             await new Promise(r => setTimeout(r, 300));
             return MockHelper.getData();
         }
 
-        // Real API Call
-        let url = `/users/all?limit=${limit}&offset=${offset}`;
+        // [SỬA] Cập nhật đúng đường dẫn: /admin/users/
+        let url = `/admin/users/?limit=${limit}&offset=${offset}`; // FastAPI thường cần dấu / ở cuối với List
         if (user_name) url += `&user_name=${encodeURIComponent(user_name)}`;
+
         return await API.get(url);
     },
 
+    // 2. Lấy chi tiết 1 User
     getById: async function (id) {
         if (USE_MOCK_DATA) {
             await new Promise(r => setTimeout(r, 200));
             const users = MockHelper.getData();
             const user = users.find(u => u.id == id);
             if (user) return user;
-            // Throw error or return null if not found
             throw new Error("User not found (Mock)");
         }
-        console.log(id);
-        // Real API Call
-        return await API.get(`/users/admin/${id}`);
+
+        // [SỬA] Cập nhật đúng đường dẫn: /admin/users/{id}
+        return await API.get(`/admin/users/${id}`);
     },
 
+    // 3. Tạo User mới
     create: async function (data) {
         if (USE_MOCK_DATA) {
             await new Promise(r => setTimeout(r, 500));
             const users = MockHelper.getData();
 
-            // Validate Duplicates
             if (users.some(u => u.email === data.email)) {
                 throw new Error("Email này đã được sử dụng!");
             }
@@ -125,31 +126,27 @@ window.UsersAPI = {
 
             const newUser = {
                 ...data,
-                id: Date.now().toString(), // Generate simplified ID
+                id: Date.now().toString(),
                 created_at: new Date().toISOString(),
-                is_active: true // Default to active
+                is_active: true
             };
             if (!newUser.role) newUser.role = "user";
 
             users.push(newUser);
             MockHelper.saveData(users);
 
-            // Return structured response or just data? 
-            // The existing code expects "data" to be the user object or API response.
-            // If I return the user object, that's fine. 
-            // The PAGE logic will handle the "Success" message if it succeeds.
-            // But user asked "API send more message". 
-            // So let's return { data: newUser, message: "Thêm mới thành công!" }
             return {
                 data: newUser,
                 message: "Thêm mới thành công!"
             };
         }
 
-        // Real API Call
+        // [GHI CHÚ] API tạo user thường nằm ở /auth/register
+        // Nếu backend admin có route tạo riêng thì sửa thành: /admin/users/
         return await API.post("/auth/register", data);
     },
 
+    // 4. Cập nhật thông tin User
     update: async function (id, data) {
         if (USE_MOCK_DATA) {
             await new Promise(r => setTimeout(r, 400));
@@ -157,10 +154,7 @@ window.UsersAPI = {
             const index = users.findIndex(u => u.id == id);
 
             if (index !== -1) {
-                // Merge existing user with new data
                 users[index] = { ...users[index], ...data };
-
-                MockHelper.saveData(users);
                 MockHelper.saveData(users);
                 return {
                     code: 200,
@@ -171,10 +165,11 @@ window.UsersAPI = {
             throw new Error("User not found for update (Mock)");
         }
 
-        // Real API Call
-        return await API.patch(`/users/${id}`, data);
+        // [SỬA] Đổi method thành PUT và đường dẫn đúng chuẩn /admin/users/{id}
+        return await API.put(`/admin/users/${id}`, data);
     },
 
+    // 5. Xóa User
     delete: async function (id) {
         if (USE_MOCK_DATA) {
             await new Promise(r => setTimeout(r, 400));
@@ -182,7 +177,6 @@ window.UsersAPI = {
             const filtered = users.filter(u => u.id != id);
 
             if (users.length === filtered.length) {
-                // Nothing deleted?
                 console.warn("Mock user not found to delete");
             }
 
@@ -194,11 +188,28 @@ window.UsersAPI = {
             };
         }
 
-        // Real API Call
-        return await API.delete(`/users/${id}`);
+        // [SỬA] Cập nhật đúng đường dẫn: /admin/users/{id}
+        return await API.delete(`/admin/users/${id}`);
     },
 
-    // Optional: Helper to reset mock data via console
+    // 6. [MỚI] Toggle Active (Khóa/Mở khóa tài khoản)
+    // Chức năng này có trong ảnh (màu xanh ngọc PATCH) nhưng code cũ của bạn thiếu
+    toggleActive: async function (id) {
+        if (USE_MOCK_DATA) {
+            await new Promise(r => setTimeout(r, 200));
+            const users = MockHelper.getData();
+            const index = users.findIndex(u => u.id == id);
+            if (index !== -1) {
+                users[index].is_active = !users[index].is_active;
+                MockHelper.saveData(users);
+                return { message: "Đổi trạng thái thành công" };
+            }
+        }
+
+        // Gọi API PATCH /admin/users/{id}/toggle-active
+        return await API.patch(`/admin/users/${id}/toggle-active`);
+    },
+
     resetMock: function () {
         MockHelper.reset();
     }
