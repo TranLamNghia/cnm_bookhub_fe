@@ -71,6 +71,25 @@ document.addEventListener("DOMContentLoaded", () => {
         otpContext = "forgot"; // Set context
         document.querySelector('.view-otp h1').textContent = "Nhập mã xác thực"; // Reset title default
     });
+    // Back to Login from Email Sent View
+    const backToLoginSent = document.getElementById("back-to-login-sent");
+    if (backToLoginSent) {
+        backToLoginSent.addEventListener("click", () => {
+            const viewEmailSent = document.querySelector('.view-email-sent');
+            const loginView = document.querySelector('.view-login-forgot');
+
+            if (viewEmailSent) {
+                viewEmailSent.style.display = 'none';
+                viewEmailSent.classList.remove('active');
+            }
+            if (loginView) {
+                loginView.style.display = 'block'; // Or flex, based on logic
+                // Reset flip to show login side
+                if (flipContainer) flipContainer.classList.remove("flipped"); // Changed "flip" to "flipped" to match existing class
+            }
+        });
+    }
+
     if (backToLoginFlip) backToLoginFlip.addEventListener("click", () => flipContainer.classList.remove("flipped"));
     if (goToRegister) goToRegister.addEventListener("click", () => mainWrapper.classList.add("show-register"));
     if (backToLoginSlide) backToLoginSlide.addEventListener("click", () => mainWrapper.classList.remove("show-register"));
@@ -128,7 +147,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
 
                 } else {
-                    showToast("Sai tài khoản hoặc mật khẩu!", "error");
+                    if (response.needVerify) {
+                        showToast(response.message, "info");
+
+                        // Auto send OTP
+                        await AuthAPI.sendVerificationOtp(email);
+
+                        // Switch to OTP View
+                        currentEmail = email;
+                        otpContext = "register"; // Treating verify as register completion
+
+                        const otpTitle = document.querySelector('.view-otp h1');
+                        const otpSub = document.querySelector('.view-otp .subtitle strong');
+                        if (otpTitle) otpTitle.textContent = "Xác thực tài khoản";
+                        if (otpSub) otpSub.textContent = email;
+
+                        viewOtp.classList.add("active");
+                        startOtpTimer();
+                    } else {
+                        showToast(response.message || "Sai tài khoản hoặc mật khẩu!", "error");
+                    }
                 }
             } catch (error) {
                 console.error(error);
@@ -213,42 +251,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // --- 3. FORGOT PASSWORD (SEND OTP) ---
-    if (sendOtpBtn) {
-        sendOtpBtn.addEventListener("click", async () => {
+    // --- 3. FORGOT PASSWORD (VERIFY EMAIL) ---
+    const verifyEmailBtn = document.getElementById("btn-verify-email");
+    if (verifyEmailBtn) {
+        verifyEmailBtn.addEventListener("click", async () => {
             const email = document.getElementById("forgot-email").value.trim();
             if (!email) {
                 showToast("Vui lòng nhập email!", "warning");
                 return;
             }
 
-            // --- REAL API LOGIC ---
-            setLoading(sendOtpBtn, true);
+            // --- API INTEGRATION ---
+            setLoading(verifyEmailBtn, true);
             try {
-                const response = await AuthAPI.sendOtp(email);
-                if (response.success && response.otp_code) {
-                    currentOtp = response.otp_code;
-                    console.log("OTP Sent (Debug):", currentOtp);
+                // Use forgotPassword (Link) instead of sendOtp (Code)
+                const response = await AuthAPI.forgotPassword(email);
+
+                if (response.success) {
                     showToast(response.message, "success");
 
-                    currentEmail = email;
-                    otpContext = "forgot";
+                    // Switch to Email Sent View instead of OTP
+                    document.querySelector('.view-login-forgot').style.display = 'none';
+                    const viewEmailSent = document.querySelector('.view-email-sent');
+                    const sentEmailSpan = document.getElementById('sent-email-address');
 
-                    // Update UI text for context
-                    const otpTitle = document.querySelector('.view-otp h1');
-                    const otpSub = document.querySelector('.view-otp .subtitle strong');
-                    if (otpTitle) otpTitle.textContent = "Khôi phục tài khoản";
-                    if (otpSub) otpSub.textContent = email;
-
-                    viewOtp.classList.add("active");
-                    startOtpTimer();
+                    if (sentEmailSpan) sentEmailSpan.textContent = email;
+                    if (viewEmailSent) {
+                        viewEmailSent.classList.add('active');
+                        viewEmailSent.style.display = 'flex';
+                    }
                 } else {
-                    showToast(response.message || "Gửi OTP thất bại", "error");
+                    showToast(response.message || "Gửi yêu cầu thất bại", "error");
                 }
             } catch (error) {
-                showToast("Lỗi hệ thống!", "error");
+                console.error(error);
+                showToast("Lỗi kết nối server!", "error");
             } finally {
-                setLoading(sendOtpBtn, false);
+                setLoading(verifyEmailBtn, false);
             }
         });
     }
@@ -327,27 +366,35 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- REAL LOGIC ---
-            if (otp === currentOtp) {
+            // --- API INTEGRATION ---
+            setLoading(confirmOtpBtn, true);
+            try {
+                const response = await AuthAPI.verifyOtp(currentEmail, otp);
 
-                if (otpContext === "register") {
-                    showToast("Xác thực tài khoản thành công!", "success");
-                    // Wait a bit then go back to login
-                    setTimeout(() => {
-                        resetViews();
-                        // Pre-fill email in login form
-                        const loginEmail = document.getElementById("login-email");
-                        if (loginEmail) loginEmail.value = currentEmail;
-                    }, 1500);
+                if (response.success) {
+                    showToast(response.message, "success");
+
+                    if (otpContext === "register") {
+                        // Wait a bit then go back to login
+                        setTimeout(() => {
+                            resetViews();
+                            // Pre-fill email in login form
+                            const loginEmail = document.getElementById("login-email");
+                            if (loginEmail) loginEmail.value = currentEmail;
+                        }, 1500);
+                    } else {
+                        // Forgot Password Flow
+                        viewReset.classList.add("active");
+                        viewOtp.classList.remove("active");
+                    }
                 } else {
-                    // Forgot Password Flow
-                    showToast("Xác thực thành công!", "success");
-                    viewReset.classList.add("active");
-                    viewOtp.classList.remove("active");
+                    showToast(response.message || "Mã OTP không chính xác!", "error");
                 }
-
-            } else {
-                showToast("Mã OTP không chính xác!", "error");
+            } catch (error) {
+                console.error(error);
+                showToast("Lỗi kết nối server!", "error");
+            } finally {
+                setLoading(confirmOtpBtn, false);
             }
         });
     }
@@ -368,26 +415,38 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // --- MOCK LOGIC (For Demo Video) ---
-            showToast("Đặt lại mật khẩu thành công! Hãy đăng nhập.", "success");
-            resetViews();
-
-            /* --- API INTEGRATION ---
+            // --- API INTEGRATION ---
             setLoading(resetPassBtn, true);
             try {
-                const response = await AuthAPI.resetPassword(currentEmail, newPass);
+                // Get token from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const token = urlParams.get('token');
+
+                if (!token) {
+                    showToast("Token không hợp lệ hoặc đã hết hạn!", "error");
+                    return;
+                }
+
+                const response = await AuthAPI.resetPassword(token, newPass);
                 if (response.success) {
                     showToast(response.message, "success");
-                    resetViews(); 
+                    // Delay slightly to show toast then reset views
+                    setTimeout(() => {
+                        resetViews();
+                        // Clear URL params to avoid re-triggering reset view on refresh
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        // Show login view explicitly
+                        document.querySelector('.view-login-forgot').style.display = 'block';
+                    }, 1500);
                 } else {
                     showToast(response.message || "Đặt lại mật khẩu thất bại", "error");
                 }
             } catch (error) {
+                console.error(error);
                 showToast("Lỗi kết nối server!", "error");
             } finally {
                 setLoading(resetPassBtn, false);
             }
-            */
         });
     }
 
@@ -454,6 +513,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const token = urlParams.get('token');
     const error = urlParams.get('error');
 
+    // CASE 1: SOCIAL LOGIN SUCCESS
     if (token) {
         // 1. Store Token
         localStorage.setItem("authToken", token);
@@ -465,8 +525,37 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
             const profile = await AuthAPI.getProfile(token);
             if (profile.success && profile.user) {
-                // Show toast? usage might be tricky if redirecting fast
-                // Just redirect
+                // Check is_verified
+                if (!profile.user.is_verified) {
+                    showToast("Tài khoản chưa được xác thực. Hệ thống đang gửi mã OTP...", "info");
+
+                    // Auto send OTP
+                    await AuthAPI.sendVerificationOtp(profile.user.email);
+
+                    // Switch to OTP View
+                    // Need to access variables from DOMContentLoaded scope or query them again 
+                    // Since this is inside DOMContentLoaded, we can access them if they are defined in scope.
+                    // However, the View elements (viewOtp, flipContainer etc) are defined at top of DOMContentLoaded.
+
+                    // We need to set currentEmail and otpContext
+                    currentEmail = profile.user.email;
+                    otpContext = "register";
+
+                    const otpTitle = document.querySelector('.view-otp h1');
+                    const otpSub = document.querySelector('.view-otp .subtitle strong');
+                    if (otpTitle) otpTitle.textContent = "Xác thực tài khoản";
+                    if (otpSub) otpSub.textContent = currentEmail;
+
+                    const viewOtp = document.querySelector(".view-otp"); // Re-select to be safe or use variable from top
+                    if (viewOtp) viewOtp.classList.add("active");
+
+                    // Trigger timer
+                    startOtpTimer(); // Assumes startOtpTimer is defined in scope
+
+                    return; // Stop redirect
+                }
+
+                // Redirect if verified
                 if (profile.user.is_superuser) {
                     window.location.href = "../Admin/index.html";
                 } else {
