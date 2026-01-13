@@ -68,12 +68,10 @@ const UsersPage = {
 
     tbody.innerHTML = displayData.map(user => {
       const roleLower = (user.role || 'user').toLowerCase();
-      // Role coloring: Admin (purple/blue), others (light green/gray)
-      // "Client" or "User" -> Light Green as requested ("green nhạt")
       const isClient = roleLower !== 'admin' && roleLower !== 'superuser';
       const roleStyle2 = roleLower === 'admin'
         ? 'background: #6366f1; color: white;'
-        : 'background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;'; // Light green style for User/Client
+        : 'background: #dcfce7; color: #166534; border: 1px solid #bbf7d0;';
 
       const roleText = (user.role || 'USER').toUpperCase();
       const idDisplay = user.id ? '#' + user.id.slice(-4).toUpperCase() : 'N/A';

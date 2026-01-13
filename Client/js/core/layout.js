@@ -1,5 +1,3 @@
-const API_BASE_URL = "http://localhost:8000/api";
-
 const Layout = {
     init: async function () {
         await this.restoreSession();
@@ -21,10 +19,10 @@ const Layout = {
 
         if (token) {
             try {
-                const response = await fetch(`${API_BASE_URL}/users/me`, {
+                const response = await fetch(`${CONFIG.API_BASE_URL}/users/me`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
+                console.log(`${CONFIG.API_BASE_URL}/users/me`);
                 if (response.ok) {
                     const user = await response.json();
 

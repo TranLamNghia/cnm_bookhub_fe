@@ -1,5 +1,5 @@
-const AuthAPI = {
-    baseUrl: "http://localhost:8000/api",
+window.AuthAPI = {
+    baseUrl: CONFIG.API_BASE_URL,
 
     /**
      * API: Login
@@ -7,7 +7,7 @@ const AuthAPI = {
      * @param {string} password 
      */
     async login(username, password) {
-        // Body must be x-www-form-urlencoded for OAuth2PasswordBearer
+
         const formData = new URLSearchParams();
         formData.append('username', username);
         formData.append('password', password);
@@ -311,6 +311,7 @@ const AuthAPI = {
      * @param {string} token 
      */
     async getProfile(token) {
+        console.log(`${this.baseUrl}/users/me`);
         try {
             const response = await fetch(`${this.baseUrl}/users/me`, {
                 method: 'GET',
@@ -318,7 +319,6 @@ const AuthAPI = {
                     'Authorization': `Bearer ${token}`
                 }
             });
-
             if (response.ok) {
                 const user = await response.json();
                 return { success: true, user: user };

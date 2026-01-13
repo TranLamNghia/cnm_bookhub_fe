@@ -3,7 +3,7 @@ const API = {
 
     request: async function (endpoint, method = 'GET', body = null) {
         const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
-
+        console.log(url);
         const headers = {
             'Content-Type': 'application/json',
         };

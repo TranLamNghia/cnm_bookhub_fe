@@ -103,7 +103,7 @@ const ChatWidget = {
         this.showTypingIndicator();
         setTimeout(() => {
             this.removeTypingIndicator();
-            this.simulateAIResponse(text);
+            this.sendMessageToAI(text);
         }, 1500);
     },
 
@@ -125,35 +125,107 @@ const ChatWidget = {
         this.body.scrollTop = this.body.scrollHeight;
     },
 
-    simulateAIResponse: function (query) {
-        const mockResponses = [
-            "Tuyệt vời! Cuốn sách này đang rất hot, bạn xem thử nhé:",
-            "Dựa trên ý của bạn, mình tìm thấy cuốn này rất phù hợp:",
-            "Mình nghĩ bạn sẽ thích cuốn này đấy, đang được giảm giá!",
-            "Đây là một lựa chọn kinh điển trong thể loại này:"
-        ];
+    sendMessageToAI: async function (query) {
+        try {
+            const response = await ChatAPI.chatWithAI(query);
+            let data = response;
+            if (typeof data === 'string') {
+                try { data = JSON.parse(data); } catch (e) { }
+            }
 
-        const randomIntro = mockResponses[Math.floor(Math.random() * mockResponses.length)];
-        const mockBooks = [
-            { title: "Tâm Lý Học Tội Phạm", price: "159.000đ", img: "https://salt.tikicdn.com/cache/w1200/ts/product/05/7e/17/740880509a5b3a88c3479ae73a55ec70.jpg" },
-            { title: "Nhà Giả Kim", price: "79.000đ", img: "https://salt.tikicdn.com/cache/w1200/ts/product/45/3b/fc/aa81d0a534b45706ae1eee1e344e80d9.jpg" },
-            { title: "Đắc Nhân Tâm", price: "86.000đ", img: "https://salt.tikicdn.com/cache/w1200/ts/product/77/82/35/3d1685e92751336c5352c8085a21073d.jpg" }
-        ];
+            const aiText = (data && data.response) ? data.response : "Xin lỗi, tôi không hiểu ý bạn.";
+            let htmlContent = "";
 
-        const randomBook = mockBooks[Math.floor(Math.random() * mockBooks.length)];
-        const htmlContent = `
-            ${randomIntro}
-            <div class="book-card-chat">
-                <img src="${randomBook.img}" alt="${randomBook.title}">
-                <div class="book-card-info">
-                    <h4 class="book-card-title">${randomBook.title}</h4>
-                    <span class="book-card-price">${randomBook.price}</span>
-                    <a href="#/book-detail" class="book-card-btn">Đi xem sao</a>
-                </div>
-            </div>
-        `;
-        this.addMessage(htmlContent, "ai", true);
-        this.saveHistory();
+            // Check if we have suggested books
+            if (data && data.data && Array.isArray(data.data) && data.data.length > 0) {
+
+                // --- LOGIC TÁCH TEXT (INTRO - LIST - CONCLUSION) ---
+                // Regex tìm phần danh sách (Bắt đầu bằng số. hoặc dấu *)
+                // Ví dụ: "\n1. Book A\n2. Book B"
+                const listRegex = /(\n\d+\..*?)(?=\n\n(?:[^\d]|$)|$)/s;
+
+                // Hoặc đơn giản là tách theo 2 dòng mới nếu format AI chuẩn
+                // Nhưng AI có thể trả về format không nhất quán.
+                // Thử cách an toàn: Split theo "\n\n"
+                const parts = aiText.split('\n\n');
+
+                let intro = "";
+                let conclusion = "";
+
+                // Heuristic:
+                // Part 0 -> Intro
+                // Middle -> List (Ignore user wants to remove text list)
+                // Last -> Conclusion
+
+                if (parts.length >= 3) {
+                    intro = parts[0];
+                    conclusion = parts[parts.length - 1];
+                } else if (parts.length === 2) {
+                    // Có thể là Intro + List hoặc List + Conclusion?
+                    // Nếu part[1] bắt đầu bằng số -> Intro + List
+                    if (/^\d+\./.test(parts[1].trim()) || /^\*/.test(parts[1].trim())) {
+                        intro = parts[0];
+                        conclusion = ""; // Không có conclusion
+                    } else {
+                        // Intro + Conclusion (ít khi xảy ra nếu có sách)
+                        intro = parts[0];
+                        conclusion = parts[1];
+                    }
+                } else {
+                    // Dồn hết vào intro
+                    intro = aiText;
+                }
+
+                // Helper to format text (Newlines + Bold)
+                const formatText = (text) => {
+                    return text
+                        .replace(/\n/g, '<br>')
+                        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                };
+
+                // Render Intro
+                htmlContent += `<div class="ai-text-response">${formatText(intro)}</div>`;
+
+                // Render Book Carousel/List
+                htmlContent += `<div class="chat-book-list">`;
+                data.data.forEach(book => {
+                    const price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(book.price);
+                    htmlContent += `
+                        <div class="book-card-chat">
+                            <img src="${book.image_url || 'img/default-book.png'}" alt="${book.title}">
+                            <div class="book-card-info">
+                                <h4 class="book-card-title">${book.title}</h4>
+                                <span class="book-card-price">${price}</span>
+                                <a href="#/book-detail?id=${book.id}" class="book-card-btn" onclick="ChatWidget.toggle()">Chi tiết</a>
+                            </div>
+                        </div>
+                    `;
+                });
+                htmlContent += `</div>`;
+
+                // Render Conclusion
+                if (conclusion) {
+                    htmlContent += `<div class="ai-text-response" style="margin-top: 10px;">${formatText(conclusion)}</div>`;
+                }
+
+            } else {
+                // Normal Text Response (No Books)
+                // Also apply bold formatting here
+                const formatText = (text) => {
+                    return text
+                        .replace(/\n/g, '<br>')
+                        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+                };
+                htmlContent = `<div class="ai-text-response">${formatText(aiText)}</div>`;
+            }
+
+            this.addMessage(htmlContent, "ai", true);
+            this.saveHistory();
+
+        } catch (error) {
+            console.error("Chat Error:", error);
+            this.addMessage("Xin lỗi, hiện tại tôi không thể phản hồi. Vui lòng thử lại sau.", "ai");
+        }
     },
 
     showTypingIndicator: function () {

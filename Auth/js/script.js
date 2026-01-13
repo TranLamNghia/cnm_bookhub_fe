@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
     // --- ELEMENTS ---
-    const API_BASE = "http://localhost:5501/api"; // Added API_BASE definition
     const mainWrapper = document.getElementById("main-wrapper");
     const flipContainer = document.getElementById("flip-container");
 
@@ -467,14 +466,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-
-
-const API_BASE_URL = "http://localhost:8000/api";
-
 // SOCIAL LOGIN
 async function loginWithGoogle() {
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/google/authorize`, {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/auth/google/authorize`, {
             credentials: 'include' // Important: To allow setting 'state' cookie for OAuth
         });
         const data = await response.json();
@@ -491,7 +486,7 @@ async function loginWithGoogle() {
 
 async function loginWithGithub() {
     try {
-        const response = await fetch(`${API_BASE_URL}/auth/github/authorize`, {
+        const response = await fetch(`${CONFIG.API_BASE_URL}/auth/github/authorize`, {
             credentials: 'include' // Important: To allow setting 'state' cookie for OAuth
         });
         const data = await response.json();
