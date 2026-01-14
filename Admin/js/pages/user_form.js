@@ -121,23 +121,37 @@ const UserFormPage = {
                 document.getElementById("user-avatar-url").value = userData.avatar_url || "";
             }
 
-            // 2. Populate Location (Province/Ward)
-            // Assuming userData.ward structure: { code: "...", full_name: "...", province: { code: "...", full_name: "..." } }
+            const wardCode = userData.ward_code;
 
-            if (userData.ward && userData.ward.province) {
-                const pInfo = userData.ward.province; // Expected: { code, full_name }
-                const wInfo = userData.ward;          // Expected: { code, full_name }
+            if (wardCode) {
+                // Lookup full details from FE cache/API to find Province Code
+                const fullWard = await LocationsAPI.getWardByCode(wardCode);
 
-                // 1. Select Province
-                // Try finding by Code first, then by Name
-                const selectedPCode = this.setSelectOption("user-province", pInfo.code, pInfo.full_name);
+                if (fullWard) {
+                    const pCode = fullWard.province_code;
+                    const wCode = fullWard.code;
 
-                // 2. Load Wards if a province was successfully selected
-                if (selectedPCode) {
-                    await this.loadWards(selectedPCode);
+                    if (pCode) {
+                        // 1. Select Province
+                        const selectedPCode = this.setSelectOption("user-province", pCode);
 
-                    // 3. Select Ward
-                    this.setSelectOption("user-ward", wInfo.code, wInfo.full_name);
+                        // 2. Load Wards based on found province
+                        if (selectedPCode) {
+                            await this.loadWards(selectedPCode);
+
+                            // 3. Select Ward
+                            this.setSelectOption("user-ward", wCode);
+                        }
+                    }
+                }
+            } else if (userData.ward && typeof userData.ward === 'object') {
+                // Fallback for older API structure if any
+                if (userData.ward.province) {
+                    const selectedPCode = this.setSelectOption("user-province", userData.ward.province.code);
+                    if (selectedPCode) {
+                        await this.loadWards(selectedPCode);
+                        this.setSelectOption("user-ward", userData.ward.code);
+                    }
                 }
             }
 

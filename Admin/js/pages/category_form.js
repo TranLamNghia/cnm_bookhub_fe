@@ -121,13 +121,7 @@ const CategoryFormPage = {
         // Save Button
         document.getElementById("btn-save").onclick = () => this.saveCategory();
 
-        // Auto Slug Generation
-        const nameInput = document.getElementById("category-name");
-        nameInput.addEventListener("input", () => {
-            const value = nameInput.value;
-            const slug = "/" + (Utils.removeVietnameseTones ? Utils.removeVietnameseTones(value) : value).toLowerCase().replace(/\s+/g, '-');
-            document.getElementById("category-slug").value = slug;
-        });
+
     },
 
     saveCategory: async function () {

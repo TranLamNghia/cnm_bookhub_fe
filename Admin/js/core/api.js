@@ -1,5 +1,5 @@
 const API = {
-  baseURL: "http://localhost:8000/api",
+  baseURL: CONFIG.API_BASE_URL,
 
   async request(endpoint, options = {}) {
     try {
@@ -20,7 +20,7 @@ const API = {
         headers,
         ...options,
       });
-
+      console.log(`${this.baseURL}${endpoint}`);
       if (!response.ok) throw new Error(`Lỗi HTTP: ${response.status}`);
 
       const contentType = response.headers.get("content-type");

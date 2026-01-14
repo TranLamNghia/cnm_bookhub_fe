@@ -5,5 +5,6 @@ const HomePage = {
     },
 
     initEvents: function () {
+        // No special dynamic events needed for static page
     }
 };

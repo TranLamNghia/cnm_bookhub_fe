@@ -1,138 +1,127 @@
 <link rel="stylesheet" href="css/pages/home.css">
 <main>
+    <!-- HERO SECTION -->
     <section class="hero-section">
         <div class="hero-content">
-            <span class="hero-tag">Ưu đãi đặc biệt</span>
-            <h1 class="hero-title">Khám phá thế giới <br> tri thức vô tận</h1>
-            <p class="hero-desc">Hàng ngàn đầu sách hấp dẫn đang chờ đón bạn. Giảm giá 20% cho đơn hàng đầu tiên của
-                thành viên mới.</p>
+            <span class="hero-tag">Chào mừng đến với BookHub</span>
+            <h1 class="hero-title">Kết nối tri thức <br> Khơi nguồn cảm hứng</h1>
+            <p class="hero-desc">Nền tảng quản lý và phát hành sách trực tuyến hàng đầu. Khám phá kho tàng tri thức
+                vô tận và tham gia cộng đồng độc giả sôi nổi ngay hôm nay.</p>
             <div class="hero-actions">
-                <a href="#" class="btn-hero">Mua ngay</a>
-                <a href="#" class="btn-hero-outline">Tìm hiểu thêm</a>
+                <a href="#/categories" class="btn-hero">Khám phá ngay</a>
             </div>
         </div>
     </section>
-    <section class="categories-section">
-        <div class="section-header">
-            <h2 class="section-title">Danh mục phổ biến</h2>
-            <a href="#/categories" class="view-all">Xem tất cả</a>
-        </div>
-        <div class="categories-list">
-            <div class="cat-tag"><i class="fa-solid fa-book"></i> Văn học</div>
-            <div class="cat-tag"><i class="fa-solid fa-chart-line"></i> Kinh tế</div>
-            <div class="cat-tag"><i class="fa-solid fa-child-reaching"></i> Thiếu nhi</div>
-            <div class="cat-tag"><i class="fa-solid fa-brain"></i> Tâm lý - Kỹ năng</div>
-            <div class="cat-tag"><i class="fa-solid fa-user-tie"></i> Tiểu sử</div>
-            <div class="cat-tag"><i class="fa-solid fa-earth-americas"></i> Ngoại ngữ</div>
-            <div class="cat-tag"><i class="fa-solid fa-flask"></i> Khoa học</div>
-        </div>
-    </section>
-    <section class="featured-books">
-        <div class="section-header">
-            <h2 class="section-title">Sách nổi bật</h2>
-            <div style="display: flex; gap: 8px;">
-                <button class="icon-btn"
-                    style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i
-                        class="fa-solid fa-chevron-left"></i></button>
-                <button class="icon-btn"
-                    style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center;"><i
-                        class="fa-solid fa-chevron-right"></i></button>
-            </div>
-        </div>
-        <div class="book-grid">
-            <div class="book-card">
-                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800"
-                    class="book-cover" alt="Book">
-                <div class="book-info">
-                    <h3 class="book-title">Nhà Giả Kim</h3>
-                    <p class="book-author">Paulo Coelho</p>
-                    <div class="book-price">67.150đ <span class="old-price">79.000đ</span></div>
+
+    <!-- ABOUT SECTION -->
+    <section class="about-section" id="about-us">
+        <div class="container-custom">
+            <div class="about-grid">
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                        alt="About BookHub" class="rounded-img shadow-lg">
                 </div>
-            </div>
-            <div class="book-card">
-                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=800"
-                    class="book-cover" alt="Book">
-                <div class="book-info">
-                    <h3 class="book-title">Đắc Nhân Tâm</h3>
-                    <p class="book-author">Dale Carnegie</p>
-                    <div class="book-price">86.000đ</div>
-                </div>
-            </div>
-            <div class="book-card">
-                <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800"
-                    class="book-cover" alt="Book">
-                <div class="book-info">
-                    <h3 class="book-title">Tuổi Trẻ Đáng Giá Bao Nhiêu</h3>
-                    <p class="book-author">Rosie Nguyễn</p>
-                    <div class="book-price">80.000đ</div>
-                </div>
-            </div>
-            <div class="book-card">
-                <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=800"
-                    class="book-cover" alt="Book">
-                <div class="book-info">
-                    <h3 class="book-title">Đại Gia Gatsby</h3>
-                    <p class="book-author">F. Scott Fitzgerald</p>
-                    <div class="book-price">115.000đ</div>
-                </div>
-            </div>
-            <div class="book-card">
-                <img src="https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&q=80&w=800"
-                    class="book-cover" alt="Book">
-                <div class="book-info">
-                    <h3 class="book-title">Sapiens: Lược Sử Loài Người</h3>
-                    <p class="book-author">Yuval Noah Harari</p>
-                    <div class="book-price">155.000đ <span class="old-price">189.000đ</span></div>
-                </div>
-            </div>
-        </div>
-        <div style="text-align: center;">
-            <button class="icon-btn"
-                style="font-size: 14px; font-weight: 600; padding: 10px 24px; border: 1px solid var(--border); border-radius: 8px;">Xem
-                thêm sách nổi bật</button>
-        </div>
-    </section>
-    <section class="featured-books" style="margin-top: 64px;">
-        <div class="section-header">
-            <h2 class="section-title">Sách mới về</h2>
-            <a href="#" class="view-all">Xem tất cả</a>
-        </div>
-        <div class="book-grid">
-            <div class="book-card">
-                <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&q=80&w=800"
-                    class="book-cover" alt="Book">
-                <div class="book-info">
-                    <h3 class="book-title">Clean Code</h3>
-                    <p class="book-author">Robert C. Martin</p>
-                    <div class="book-price">320.000đ</div>
-                </div>
-            </div>
-            <div class="book-card">
-                <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800"
-                    class="book-cover" alt="Book">
-                <div class="book-info">
-                    <h3 class="book-title">Thế Giới Của Sophie</h3>
-                    <p class="book-author">Jostein Gaarder</p>
-                    <div class="book-price">145.000đ</div>
-                </div>
-            </div>
-            <div class="book-card">
-                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800"
-                    class="book-cover" alt="Book">
-                <div class="book-info">
-                    <h3 class="book-title">Rừng Na Uy</h3>
-                    <p class="book-author">Haruki Murakami</p>
-                    <div class="book-price">110.000đ</div>
+                <div class="about-content">
+                    <h2 class="section-title">Về BookHub</h2>
+                    <p class="section-desc">
+                        BookHub là cầu nối giữa những người yêu sách và kho tàng tri thức nhân loại. Chúng tôi tin rằng
+                        mỗi cuốn sách là một cơ hội để mở mang tầm mắt và nuôi dưỡng tâm hồn.
+                    </p>
+                    <ul class="about-list">
+                        <li><i class="fa-solid fa-check-circle"></i> Kết nối độc giả và tác giả.</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Trải nghiệm mua sắm trực tuyến mượt mà.</li>
+                        <li><i class="fa-solid fa-check-circle"></i> Cộng đồng chia sẻ review và cảm nhận chân thực.
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
-    <section class="newsletter">
-        <h2>Đăng ký nhận tin</h2>
-        <p>Nhận thông báo về sách mới, sự kiện tác giả và ưu đãi độc quyền trực tiếp vào hộp thư của bạn.</p>
-        <div class="newsletter-form">
-            <input type="email" placeholder="Nhập địa chỉ email của bạn">
-            <button class="btn-dark">Đăng ký</button>
+
+    <!-- FEATURES SECTION -->
+    <section class="features-section">
+        <div class="container-custom">
+            <div class="section-header-center">
+                <h2 class="section-title">Tại sao chọn BookHub?</h2>
+                <p class="section-subtitle">Những tính năng vượt trội mang lại trải nghiệm tốt nhất cho bạn.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon bg-blue-100 text-blue-600">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3>Kho sách khổng lồ</h3>
+                    <p>Hơn 10,000+ đầu sách đa dạng thể loại từ văn học, kinh tế đến khoa học.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon bg-green-100 text-green-600">
+                        <i class="fa-solid fa-feather"></i>
+                    </div>
+                    <h3>Giao diện tinh tế</h3>
+                    <p>Thiết kế hiện đại, thân thiện, giúp bạn dễ dàng tìm kiếm và đọc sách.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon bg-purple-100 text-purple-600">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <h3>Cộng đồng sôi nổi</h3>
+                    <p>Tham gia thảo luận, viết review và kết bạn với những người cùng đam mê.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon bg-orange-100 text-orange-600">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <h3>Hỗ trợ 24/7</h3>
+                    <p>Đội ngũ chăm sóc khách hàng luôn sẵn sàng giải đáp mọi thắc mắc của bạn.</p>
+                </div>
+            </div>
         </div>
     </section>
+
+    <!-- TESTIMONIALS SECTION -->
+    <section class="testimonials-section">
+        <div class="container-custom">
+            <div class="section-header-center">
+                <h2 class="section-title">Độc giả nói gì về chúng tôi?</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="quote">"BookHub đã thay đổi hoàn toàn thói quen đọc sách của tôi. Giao diện đẹp và rất dễ
+                        sử dụng!"</p>
+                    <div class="author">
+                        <img src="https://ui-avatars.com/api/?name=Nguyen+Van+A&background=random" alt="User">
+                        <div>
+                            <h4>Nguyễn Văn A</h4>
+                            <span>Sinh viên</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="quote">"Tôi tìm được rất nhiều sách hay mà nhà sách truyền thống không có. Dịch vụ giao
+                        hàng cực nhanh."</p>
+                    <div class="author">
+                        <img src="https://ui-avatars.com/api/?name=Tran+Thi+B&background=random" alt="User">
+                        <div>
+                            <h4>Trần Thị B</h4>
+                            <span>Nhân viên văn phòng</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★☆</div>
+                    <p class="quote">"Một cộng đồng tuyệt vời để chia sẻ cảm nhận về sách. Rất đáng để trải nghiệm."</p>
+                    <div class="author">
+                        <img src="https://ui-avatars.com/api/?name=Le+Van+C&background=random" alt="User">
+                        <div>
+                            <h4>Lê Văn C</h4>
+                            <span>Freelancer</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
 </main>

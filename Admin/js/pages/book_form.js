@@ -86,10 +86,10 @@ const BookFormPage = {
     document.getElementById("book-price").value = book.price || 0;
     document.getElementById("book-stock").value = book.stock || 0;
     document.getElementById("book-description").value = book.description || "";
-    document.getElementById("book-image-url").value = book.image_url || "";
+    document.getElementById("book-image-url").value = book.image_urls || "";
 
-    if (book.image_url) {
-      document.getElementById("preview-image").src = book.image_url;
+    if (book.image_urls) {
+      document.getElementById("preview-image").src = book.image_urls;
     }
 
     const categorySelect = document.getElementById("book-category");

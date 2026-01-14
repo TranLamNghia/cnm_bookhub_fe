@@ -175,7 +175,7 @@ const CategoriesPage = {
             }
 
             html += `
-                <div class="book-card" onclick="window.location.hash='#/book-detail?id=${book.id}'">
+                <div class="book-card" data-price="${book.price}" onclick="window.location.hash='#/book-detail?id=${book.id}'">
                     <div class="book-image-container">
                         <img src="${imageUrl}" class="book-cover" alt="${book.title}">
                     </div>
@@ -200,6 +200,8 @@ const CategoriesPage = {
             grid.innerHTML = html;
         }
 
+        // Re-apply filter to new items
+        this.filterBooks();
     },
 
     initInfiniteScroll: function () {
@@ -253,23 +255,16 @@ const CategoriesPage = {
 
         const applyPriceBtn = document.querySelector('.btn-apply-filter');
         if (applyPriceBtn) {
-            applyPriceBtn.addEventListener('click', () => {
-                const inputs = document.querySelectorAll('.price-inputs input');
-                if (inputs.length >= 2) {
-                    this.state.min_price = inputs[0].value || null;
-                    this.state.max_price = inputs[1].value || null;
-                }
-
-                const searchInput = document.querySelector('.search-mini input');
-                if (searchInput) {
-                    this.state.book_name = searchInput.value;
-                }
-
-                this.state.offset = 1;
-                this.state.hasMore = true;
-                this.loadBooks(false);
-            });
+            applyPriceBtn.style.display = 'none'; // Hide apply button
         }
+
+        // Reactive Price Filter Inputs
+        const priceInputs = document.querySelectorAll('.price-inputs input');
+        priceInputs.forEach(input => {
+            input.addEventListener('input', () => {
+                this.filterBooks();
+            });
+        });
 
         const resetBtn = document.querySelector('.reset-filter');
         if (resetBtn) {
@@ -285,13 +280,34 @@ const CategoriesPage = {
                 if (sortSelect) sortSelect.value = 'price_asc';
                 const items = document.querySelectorAll('.category-item');
                 items.forEach(item => item.classList.remove('active'));
-                const priceInputs = document.querySelectorAll('.price-inputs input');
-                priceInputs.forEach(i => i.value = '');
+                const priceInputFields = document.querySelectorAll('.price-inputs input');
+                priceInputFields.forEach(i => i.value = '');
                 this.state.hasMore = true;
                 this.loadBooks(false);
             });
         }
+    },
 
+    filterBooks: function () {
+        // Read inputs
+        const inputs = document.querySelectorAll('.price-inputs input');
+        if (inputs.length < 2) return;
+
+        let min = parseInt(inputs[0].value.replace(/\D/g, '')) || 0;
+        let max = parseInt(inputs[1].value.replace(/\D/g, '')) || Infinity;
+
+        // If user clears max input, treat as Infinity. 
+        if (!inputs[1].value) max = Infinity;
+
+        const cards = document.querySelectorAll('.book-card');
+        cards.forEach(card => {
+            const price = parseInt(card.dataset.price);
+            if (price >= min && price <= max) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
     },
 
     attachCategoryListeners: function () {

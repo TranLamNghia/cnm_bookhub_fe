@@ -153,6 +153,16 @@ const Layout = {
         localStorage.removeItem("authToken");
         localStorage.removeItem("user_info");
 
+        const userInfo = JSON.parse(localStorage.getItem("user_info"));
+        const userId = userInfo ? userInfo.id : null;
+
+        if (userId) {
+            fetch(`http://localhost:8001/chat/reset/${userId}`, {
+                method: 'DELETE',
+                keepalive: true
+            }).catch(err => console.log("Lỗi ngầm:", err));
+        }
+
         if (window.ChatWidget) window.ChatWidget.clearHistory();
         else localStorage.removeItem("chat_history");
         window.location.href = "index.html";

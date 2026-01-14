@@ -137,6 +137,57 @@ const CategoriesPage = {
         this.saveCategory();
       };
     }
+
+    // Export Button
+    const exportBtn = document.getElementById("btn-export-excel");
+    if (exportBtn) {
+      exportBtn.onclick = () => this.exportToExcel();
+    }
+  },
+
+  exportToExcel: async function () {
+    try {
+      // Fetch all categories (assuming max 1000 for export)
+      const response = await CategoriesAPI.getAllCategory(1000, 1);
+      let items = [];
+
+      if (Array.isArray(response)) {
+        items = response;
+      } else {
+        items = response.items || [];
+      }
+
+      if (items.length === 0) {
+        Utils.showToast("info", "Không có dữ liệu để xuất!");
+        return;
+      }
+
+      // CSV Header
+      let csvContent = "Mã danh mục,Tên danh mục,Số lượng sách\n";
+
+      // CSV Rows
+      items.forEach(cat => {
+        const safeName = (cat.name || "").replace(/,/g, " "); // Escape commas
+        const count = cat.number_of_books || 0;
+        csvContent += `${cat.id},${safeName},${count}\n`;
+      });
+
+      // Create Blob with BOM for Excel UTF-8 support
+      const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+
+      // Trigger download
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "danh_sach_danh_muc.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    } catch (error) {
+      console.error("Export error:", error);
+      Utils.showToast("error", "Lỗi khi xuất dữ liệu");
+    }
   },
 
   renderPagination: function () {
@@ -218,7 +269,7 @@ const CategoriesPage = {
 
     if (result.isConfirmed) {
       try {
-        await CategoriesAPI.delete(id);
+        await CategoriesAPI.softDelete(id);
         Utils.showToast("success", "Xóa danh mục thành công!");
         this.loadData();
       } catch (error) {
